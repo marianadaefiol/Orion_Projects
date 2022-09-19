@@ -1,0 +1,153 @@
+
+(rules PCB HLI-Mdns
+  (snap_angle 
+    fortyfive_degree
+  )
+  (autoroute_settings
+    (fanout off)
+    (eu.mihosoft.freerouting.autoroute on)
+    (postroute on)
+    (vias on)
+    (via_costs 50)
+    (plane_via_costs 5)
+    (start_ripup_costs 100)
+    (start_pass_no 50)
+    (layer_rule "cobre frontal"
+      (active on)
+      (preferred_direction horizontal)
+      (preferred_direction_trace_costs 1.0)
+      (against_preferred_direction_trace_costs 2.4)
+    )
+    (layer_rule "Cobre traseira"
+      (active on)
+      (preferred_direction vertical)
+      (preferred_direction_trace_costs 1.0)
+      (against_preferred_direction_trace_costs 1.7)
+    )
+  )
+  (rule
+    (width 250.0)
+    (clear 200.2)
+    (clear 125.0 (type smd_to_turn_gap))
+    (clear 50.0 (type smd_smd))
+  )
+  (padstack "Via[0-1]_600:400_um"
+    (shape
+      (circle "cobre frontal" 600.0 0.0 0.0)
+    )
+    (shape
+      (circle "Cobre traseira" 600.0 0.0 0.0)
+    )
+    (attach off)
+  )
+  (padstack "Via[0-1]_900:400_um"
+    (shape
+      (circle "cobre frontal" 900.0 0.0 0.0)
+    )
+    (shape
+      (circle "Cobre traseira" 900.0 0.0 0.0)
+    )
+    (attach off)
+  )
+  (via 
+    "Via[0-1]_600:400_um" "Via[0-1]_600:400_um" default
+  )
+  (via 
+    "Via[0-1]_900:400_um" "Via[0-1]_900:400_um" default
+  )
+  (via 
+    "Via[0-1]_600:400_um-kicad_default" "Via[0-1]_600:400_um" "kicad_default"
+  )
+  (via 
+    "Via[0-1]_900:400_um-kicad_default" "Via[0-1]_900:400_um" "kicad_default"
+  )
+  (via 
+    "Via[0-1]_600:400_um-jhgy" "Via[0-1]_600:400_um" jhgy
+  )
+  (via 
+    "Via[0-1]_900:400_um-jhgy" "Via[0-1]_900:400_um" jhgy
+  )
+  (via 
+    "Via[0-1]_600:400_um-sdfs" "Via[0-1]_600:400_um" sdfs
+  )
+  (via 
+    "Via[0-1]_900:400_um-sdfs" "Via[0-1]_900:400_um" sdfs
+  )
+  (via_rule
+    default "Via[0-1]_600:400_um"
+  )
+  (via_rule
+    "kicad_default" "Via[0-1]_600:400_um-kicad_default"
+  )
+  (via_rule
+    jhgy "Via[0-1]_600:400_um-jhgy"
+  )
+  (via_rule
+    sdfs "Via[0-1]_900:400_um-sdfs"
+  )
+  (class default
+    0 "CY_PRESENCE " VDDD +3.3VP "Net-(C18-Pad1)" RESET "Net-(C23-Pad1)" "Net-(C25-Pad1)"
+    "Net-(C26-Pad1)" "Net-(C13-Pad1)" "Net-(C27-Pad1)" "Net-(C19-Pad1)" "Net-(C30-Pad1)" K2 K1 K3
+    K6 K5 K7 K4 KA K9 KB K8
+    KD KC KE NOTE LED2 LED3 +12V COUT
+    CIN +5V INIB "Net-(C4-Pad1)" COUT1 CIN1 "PRINT_IMP" PGED2
+    PGEC2 "PIN-INIB" "PIN-PRINT" "Net-(Q3-Pad1)" "Net-(Q4-Pad1)" "Net-(Q6-Pad1)" "Net-(Q7-Pad1)" "Net-(R6-Pad2)"
+    "PIN-SCL" "PIN-SDA" "Net-(R16-Pad2)" "PIN-CIN" "PIN-COUT" "PIN-CIN1" "Net-(R19-Pad1)" "PIN-COUT1"
+    "Net-(R20-Pad1)" "PIN-PWRMODE" "PIN-S4" "PIN-S3" "PIN-S2" "PIN-S1" "PIN-S0" "PIN-S9"
+    "PIN-S8" "PIN-S11" "PIN-S10" "Net-(U1-Pad40)" "Net-(U1-Pad39)" "Net-(U1-Pad34)" "Net-(U1-Pad33)" TXA
+    RXA "Net-(U1-Pad8)" "Net-(U1-Pad6)" "Net-(U1-Pad5)" "PIN-S7" "PIN-S6" "PIN-S5" "unconnected-(U3-Pad8)"
+    "unconnected-(U3-Pad9)" "unconnected-(U4-Pad4)" "unconnected-(U10-Pad1)" "unconnected-(U10-Pad2)" "unconnected-(U10-Pad3)" "unconnected-(U10-Pad7)" K0 "Net-(C31-Pad1)"
+    "K_0" "K_1" "NOTE_" "K_C" "K_D" "K_5" "K_6" "K_7"
+    "K_8" "K_9" "K_A" "K_B" "K_2" "K_3" "K_E" "K_4"
+    "Net-(C24-Pad1)" +2V5 "Net-(R7-Pad1)" "Net-(C5-Pad1)" "Net-(D1-Pad1)" "Net-(LED1-Pad2)" +5VP "Net-(C7-Pad1)"
+    "PIN-CY" "Net-(C14-Pad1)" "Net-(Q2-Pad1)" GND "Net-(U1-Pad57)" "unconnected-(U1-Pad45)" "unconnected-(U3-Pad7)" "unconnected-(U3-Pad10)"
+    "unconnected-(U5-Pad6)" "unconnected-(U5-Pad7)" "Net-(U5-Pad4)" RXP TXP "Net-(C29-Pad1)" "Net-(Q5-Pad1)" "Net-(C6-Pad1)"
+    "Net-(LED3-Pad2)" VBAT +5VD "Net-(C29-Pad2)" "Net-(C30-Pad2)" "Net-(C28-Pad1)" "Net-(R4-Pad2)" "Net-(R5-Pad1)"
+    "Net-(R8-Pad1)" "Net-(R9-Pad1)" "Net-(R15-Pad2)" "unconnected-(U5-Pad4)" "unconnected-(U7-Pad3)" "unconnected-(U7-Pad5)" "unconnected-(U7-Pad6)" "unconnected-(U7-Pad7)"
+    "unconnected-(U7-Pad8)" "unconnected-(U7-Pad9)" "unconnected-(U7-Pad10)" "unconnected-(U7-Pad11)" "unconnected-(U7-Pad13)" "Net-(U7-Pad14)" "Net-(U7-Pad15)" "unconnected-(U7-Pad21)"
+    "unconnected-(U7-Pad22)" "unconnected-(U7-Pad26)" "unconnected-(U7-Pad27)" "unconnected-(U7-Pad28)" "unconnected-(U7-Pad29)" "unconnected-(U7-Pad31)" "unconnected-(U7-Pad32)" "unconnected-(U10-Pad5)"
+    "unconnected-(U11-Pad3)" "unconnected-(U11-Pad4)" "unconnected-(U11-Pad5)" "unconnected-(U11-Pad12)" "unconnected-(U11-Pad13)" "unconnected-(U11-Pad14)" "unconnected-(U13-Pad3)" "unconnected-(U13-Pad4)"
+    "unconnected-(U13-Pad13)" "unconnected-(U13-Pad14)" "Net-(LED2-Pad2)" "Net-(CON2-Pad1)" "Net-(CON2-Pad2)" "Net-(CON2-Pad3)" "Net-(CON2-Pad5)" "Net-(CON3-Pad16)"
+    "Net-(CON3-Pad17)" "Net-(CON3-Pad24)" "unconnected-(CON4-Pad11)" "unconnected-(CON4-Pad13)" "Net-(CON6-Pad1)" "Net-(CON6-Pad2)" "Net-(CON6-Pad3)" "Net-(CON6-Pad4)"
+    "Net-(CON6-Pad5)" "Net-(CON6-Pad6)" "Net-(CON6-Pad7)" "Net-(CON6-Pad8)" "Net-(CON6-Pad9)" "Net-(CON6-Pad10)" "unconnected-(CON6-Pad11)" "Net-(CON7-Pad7)"
+    "Net-(CON7-Pad8)" "Net-(CON8-Pad1)"
+    (clearance_class default)
+    (via_rule default)
+    (rule
+      (width 250.0)
+    )
+    (circuit 
+      (use_layer cobre frontal Cobre traseira)
+    )
+  )
+  (class "kicad_default"
+    (clearance_class "kicad_default")
+    (via_rule kicad_default)
+    (rule
+      (width 250.0)
+    )
+    (circuit 
+      (use_layer cobre frontal Cobre traseira)
+    )
+  )
+  (class jhgy
+    (clearance_class jhgy)
+    (via_rule jhgy)
+    (rule
+      (width 300.0)
+    )
+    (circuit 
+      (use_layer cobre frontal Cobre traseira)
+    )
+  )
+  (class sdfs
+    (clearance_class sdfs)
+    (via_rule sdfs)
+    (rule
+      (width 200.0)
+    )
+    (circuit 
+      (use_layer cobre frontal Cobre traseira)
+    )
+  )
+)
