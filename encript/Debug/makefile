@@ -64,8 +64,8 @@ all: main-build
 main-build: encript.elf secondary-outputs
 
 # Tool invocations
-encript.elf encript.map: $(OBJS) $(USER_OBJS) C:\Users\Mariana\STM32CubeIDE\workspace_1.9.0\encript\STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "encript.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Mariana\STM32CubeIDE\workspace_1.9.0\encript\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="encript.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+encript.elf encript.map: $(OBJS) $(USER_OBJS) C:\Users\Mari\Desktop\Orion_Projects\encript\STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "encript.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Mari\Desktop\Orion_Projects\encript\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="encript.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
