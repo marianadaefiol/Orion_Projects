@@ -1,0 +1,19 @@
+Informação: Pasta de saída "C:\Users\Mariana\Desktop\Gerber HLI-M" criada.
+Informação: Arquivo posicionamento da frente (lado de cima): 'C:\Users\Mariana\Desktop\Gerber HLI-M\HLI-M-top-pos.csv'.
+Informação: Contagem dos componentes: 111.
+Informação: Arquivo de posicionamento de trás (lado de baixo): 'C:\Users\Mariana\Desktop\Gerber HLI-M\HLI-M-bottom-pos.csv'.
+Informação: Contagem dos componentes: 0.
+Informação: Contagem total dos componentes: 111.
+Informação: O arquivo foi gerado com sucesso.
+Informação: Arquivo posicionamento da frente (lado de cima): 'C:\Users\Mariana\Desktop\Gerber HLI-M\HLI-M-top-pos.csv'.
+Informação: Contagem dos componentes: 111.
+Informação: Arquivo de posicionamento de trás (lado de baixo): 'C:\Users\Mariana\Desktop\Gerber HLI-M\HLI-M-bottom-pos.csv'.
+Informação: Contagem dos componentes: 0.
+Informação: Contagem total dos componentes: 111.
+Informação: O arquivo foi gerado com sucesso.
+Informação: Arquivo posicionamento da frente (lado de cima): 'C:\Users\Mariana\Desktop\Gerber HLI-M\HLI-M-top-pos.csv'.
+Informação: Contagem dos componentes: 111.
+Informação: Arquivo de posicionamento de trás (lado de baixo): 'C:\Users\Mariana\Desktop\Gerber HLI-M\HLI-M-bottom-pos.csv'.
+Informação: Contagem dos componentes: 0.
+Informação: Contagem total dos componentes: 111.
+Informação: O arquivo foi gerado com sucesso.

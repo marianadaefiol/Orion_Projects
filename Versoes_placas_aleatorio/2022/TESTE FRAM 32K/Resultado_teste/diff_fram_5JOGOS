@@ -1,0 +1,30 @@
+1. diferença entre FRAM FORMATADA e APOS JOGAR MACAQUITO: (1 a 1) 
+-> 5A inicial igual, seed para desembaralhamento diferente, conteudo diferente mas com mesmo tamanho até a linha 188; final identico 
+_ 9d a9 a6 2e cb 87 e2 82 7c 50 95 23 5f 2d c3 
+
+2. diferença entre FRAM FORMATADA e APOS JOGAR MACAQUITO e DRACULA: (1 a 1) 
+-> adicionou mais linhas, usou mais memoria
+DIFF: 188 -> 209 
+
+3. diferença entre FRAM FORMATADA e APOS JOGAR MACAQUITO, DRACULA E FORTUNE. (1 a 1) 
+-> adicionou mais linhas, usou mais memoria
+DIFF: 188 -> 209 
+
+4. diferença entre FRAM FORMATADA e APOS JOGAR MACAQUITO, DRACULA, FORTUNE, HECH, OJOS. (1 a 1) 
+-> adicionou mais linhas, usou mais memoria 
+DIFF: 188 -> 220
+
+
+_____________________________________________________________________________________________________________________________________
+
+5. diferença entre FRAM FORMATADA e APOS JOGAR FORTUNE, MACAQUITO E FEITICEIRA. (multijogos) 
+-> adicionou mais linhas, usou mais memoria 
+DIFF: 188 -> 224
+
+6. diferença entre FRAM 3 GAMES e FRAM 5 GAMES: APOS JOGAR FORTUNE, MACAQUITO, FEITICEIRA, OJOS E DRACULA. (Multijogos) 
+-> adicionou mais linhas, usou mais memoria
+DIFF: 224 -> 226 
+
+7. diferença entre FRAM FORMATADA e FRAM 5 GAMES: APOS JOGAR FORTUNE, MACAQUITO, FEITICEIRA, OJOS E DRACULA. (multijogos) 
+-> 
+DIFF: 186 -> 226

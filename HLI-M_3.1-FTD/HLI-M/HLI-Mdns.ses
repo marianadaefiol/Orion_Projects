@@ -1,0 +1,6493 @@
+
+(session "HLI-Mdns.ses"
+  (base_design "HLI-Mdns.dsn")
+  (placement
+    (resolution um 10)
+    (component "Connector_Dsub:DSUB-9_Female_Vertical_P2.77x2.84mm_MountingHoles"
+      (place CON7 1111871 -1072227 front 180)
+    )
+    (component "Package_TO_SOT_SMD:SOT-23"
+      (place Q6 1662430 -956310 front 270)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder
+      (place C3 946636 -511048 front 180)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::1
+      (place C5 1004683 -528394 front 0)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::2
+      (place C7 1138682 -511556 front 0)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::3
+      (place C11 1116330 -746252 front 0)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::4
+      (place C14 1330819 -648185 front 0)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::5
+      (place C17 1331214 -612140 front 0)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::6
+      (place C18 1666240 -685038 front 0)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::7
+      (place C19 1665732 -705104 front 0)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::8
+      (place C20 1579372 -673862 front 0)
+    )
+    (component "Capacitor_Tantalum_SMD:CP_EIA-3528-12_Kemet-T_Pad1.50x2.35mm_HandSolder"
+      (place C21 1589297 -701572 front 0)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::9
+      (place C22 1509141 -628777 front 90)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::10
+      (place C23 1460246 -628650 front 90)
+    )
+    (component "Capacitor_Tantalum_SMD:CP_EIA-3528-12_Kemet-T_Pad1.50x2.35mm_HandSolder::1"
+      (place C25 1441450 -853440 front 270)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::11
+      (place C27 1353947 -813943 front 270)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::12
+      (place C26 1400307 -814324 front 270)
+    )
+    (component Resistor_SMD:R_Array_Convex_4x0603
+      (place CA1 1655518 -511544 front 270)
+    )
+    (component Resistor_SMD:R_Array_Convex_4x0603::1
+      (place CA4 1450848 -511036 front 270)
+    )
+    (component Diode_SMD:D_SMA
+      (place D1 1135126 -612394 front 0)
+    )
+    (component Diode_SMD:D_SMA::1
+      (place D2 1135126 -652272 front 0)
+    )
+    (component Diode_SMD:D_SMA::2
+      (place D8 1041615 -909066 front 0)
+    )
+    (component LED_SMD:LED_0603_1608Metric_Pad1.05x0.95mm_HandSolder
+      (place LED2 1549400 -904608 front 270)
+    )
+    (component LED_SMD:LED_0603_1608Metric_Pad1.05x0.95mm_HandSolder::1
+      (place LED3 1576070 -904608 front 270)
+    )
+    (component "Connector_Dsub:DSUB-25_Male_Vertical_P2.77x2.84mm_MountingHoles"
+      (place CON3 1680090 -377663 front 180)
+    )
+    (component "Package_TO_SOT_SMD:SOT-23::1"
+      (place Q3 1399946 -614703 front 90)
+    )
+    (component "Package_TO_SOT_SMD:SOT-23::2"
+      (place Q5 1317345 -956836 front 270)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder
+      (place R2 1138676 -528652 front 180)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::1
+      (place R3 819544 -453390 front 0)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::2
+      (place R4 1218184 -639064 front 0)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::3
+      (place R5 1218438 -656590 front 180)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::4
+      (place R7 1666240 -666496 front 180)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::5
+      (place R9 1260348 -867664 front 270)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::6
+      (place R8 1242822 -867664 front 270)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::7
+      (place R14 1579372 -656844 front 0)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::8
+      (place R15 1468120 -843280 front 90)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::9
+      (place R17 1549400 -946518 front 90)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::10
+      (place R18 1576070 -946518 front 90)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::11
+      (place R12 1349756 -672592 front 180)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::12
+      (place R13 1350010 -689102 front 0)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::13
+      (place R24 1400363 -644130 front 0)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::14
+      (place R28 1326134 -915924 front 90)
+    )
+    (component Resistor_SMD:R_Array_Convex_4x0603::2
+      (place RA1 1655328 -472936 front 270)
+    )
+    (component Resistor_SMD:R_Array_Convex_4x0603::3
+      (place RA3 1518168 -471666 front 270)
+    )
+    (component Resistor_SMD:R_Array_Convex_4x0603::4
+      (place RA4 1450848 -471666 front 270)
+    )
+    (component Resistor_SMD:R_Array_Convex_4x0603::5
+      (place RA5 1655328 -552946 front 270)
+    )
+    (component Resistor_SMD:R_Array_Convex_4x0603::6
+      (place RA7 1518168 -552946 front 270)
+    )
+    (component Resistor_SMD:R_Array_Convex_4x0603::7
+      (place RA8 1450848 -552946 front 270)
+    )
+    (component "Package_QFP:TQFP-64_10x10mm_P0.5mm"
+      (place U1 1474470 -740410 front 180)
+    )
+    (component "Package_TO_SOT_SMD:SOT-23-6"
+      (place U8 1077468 -479552 front 270)
+    )
+    (component "Package_DFN_QFN:QFN-32-1EP_5x5mm_P0.5mm_EP3.45x3.45mm"
+      (place U7 1076960 -537718 front 180)
+    )
+    (component "Package_SON:VSON-10-1EP_3x3mm_P0.5mm_EP1.2x2mm_ThermalVias"
+      (place U6 1221184 -609520 front 0)
+    )
+    (component "Package_TO_SOT_SMD:SOT-23-5"
+      (place U4 1286764 -597662 front 0)
+    )
+    (component "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+      (place U2 1599946 -750824 front 180)
+    )
+    (component "Package_TO_SOT_SMD:SOT-23-5::1"
+      (place U10 1259586 -714248 front 180)
+    )
+    (component "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm"
+      (place U13 1749806 -941070 front 270)
+    )
+    (component "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm::1"
+      (place U12 1466850 -941690 front 270)
+    )
+    (component "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm::2"
+      (place U11 1228852 -940308 front 270)
+    )
+    (component "Crystal:Crystal_SMD_SeikoEpson_MC146-4Pin_6.7x1.5mm"
+      (place Y1 1376807 -841883 front 270)
+    )
+    (component "Crystal:Resonator_SMD_Murata_CSTxExxV-3Pin_3.0x1.1mm"
+      (place Y2 1362080 -734695 front 270)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::15
+      (place R27 1308100 -915924 front 90)
+    )
+    (component "Package_TO_SOT_SMD:SOT-23::3"
+      (place Q4 1375118 -956841 front 270)
+    )
+    (component "Package_TO_SOT_SMD:SOT-23::4"
+      (place Q7 1611343 -955901 front 270)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::16
+      (place R30 1611376 -915924 front 0)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::17
+      (place R29 1662176 -915923 front 0)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::18
+      (place R10 1759204 -880091 front 90)
+    )
+    (component "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm::1"
+      (place U9 1197864 -783082 front 0)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::19
+      (place R19 1307827 -723392 front 0)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::20
+      (place R20 1307592 -707390 front 0)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::13
+      (place C1 946647 -544830 front 180)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::14
+      (place C6 1004581 -563880 front 180)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::15
+      (place C9 1138682 -565404 front 0)
+    )
+    (component "Package_TO_SOT_SMD:SOT-23-5::2"
+      (place U5 1115568 -706120 front 180)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::16
+      (place C24 1414780 -859790 front 270)
+    )
+    (component "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm::3"
+      (place U3 1299096 -504290 front 180)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::17
+      (place C30 1370846 -505306 front 0)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::18
+      (place C31 1370846 -528166 front 0)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::19
+      (place C28 1371476 -462126 front 0)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::20
+      (place C32 1370846 -549756 front 0)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::21
+      (place C29 1370846 -483716 front 180)
+    )
+    (component Inductor_SMD:L_0805_2012Metric
+      (place L2 1192784 -493522 front 90)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::21
+      (place R11 1776984 -880091 front 90)
+    )
+    (component Resistor_SMD:R_Array_Convex_4x0603::8
+      (place CA2 1585468 -511036 front 270)
+    )
+    (component Resistor_SMD:R_Array_Convex_4x0603::9
+      (place RA2 1585668 -472286 front 270)
+    )
+    (component Resistor_SMD:R_Array_Convex_4x0603::10
+      (place RA6 1585468 -552946 front 270)
+    )
+    (component "6:Molex-0015244449-0"
+      (place CON1 896874 -350803 front 0)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::22
+      (place R1 1004683 -545666 front 180)
+    )
+    (component Inductor_SMD:L_0805_2012Metric::1
+      (place L1 1012698 -477774 front 270)
+    )
+    (component Connector_USB:USB_B_Lumberg_2411_02_Horizontal
+      (place CON2 1111704 -429825 front 90)
+    )
+    (component "Package_TO_SOT_SMD:SOT-23::5"
+      (place Q2 1128014 -956056 front 270)
+    )
+    (component "Connector_Dsub:DSUB-15_Female_Vertical_P2.77x2.84mm_MountingHoles"
+      (place CON6 1472770 -1073610 front 180)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::22
+      (place C2 946404 -528066 front 180)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::23
+      (place C4 1005078 -511302 front 180)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::24
+      (place C8 1138682 -547370 front 0)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::25
+      (place C12 1215898 -562102 front 0)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::26
+      (place C13 1216406 -579374 front 0)
+    )
+    (component Resistor_SMD:R_Array_Convex_4x0603::11
+      (place CA3 1518168 -511036 front 270)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::23
+      (place R22 1137666 -915670 front 270)
+    )
+    (component TestPoint:TestPoint_Pad_D1.5mm
+      (place TP2 802386 -517906 front 90)
+      (place TP6 802386 -544322 front 90)
+    )
+    (component TestPoint:TestPoint_Pad_D1.0mm
+      (place TP4 845566 -531114 front 270)
+      (place TP5 826770 -544322 front 90)
+      (place TP3 826770 -517398 front 90)
+    )
+    (component Resistor_SMD:R_1812_4532Metric
+      (place RT2 1036027 -953516 front 0)
+    )
+    (component "Connector_IDC:IDC-Header_2x07_P2.54mm_Horizontal"
+      (place CON4 1791637 -623316 front 0)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::24
+      (place R25 1244600 -492506 front 90)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::25
+      (place R6 1331316 -629135 front 0)
+    )
+    (component LED_SMD:LED_0603_1608Metric_Pad1.05x0.95mm_HandSolder::2
+      (place LED1 819544 -433070 front 0)
+    )
+    (component "Package_TO_SOT_SMD:SOT-23::6"
+      (place Q1 1286764 -647446 front 0)
+    )
+    (component Capacitor_THT:CP_Radial_D6.3mm_P2.50mm
+      (place C10 1023874 -739140 front 90)
+    )
+    (component "Connector_JST:JST_EH_B3B-EH-A_1x03_P2.50mm_Vertical"
+      (place CON5 1845564 -948436 front 90)
+    )
+    (component Capacitor_THT:CP_Radial_D8.0mm_P3.50mm
+      (place C15 1023874 -660925 front 90)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::26
+      (place R16 1545590 -820166 front 180)
+    )
+    (component "Package_DFN_QFN:DFN-8-1EP_3x2mm_P0.5mm_EP1.3x1.5mm"
+      (place "U9-A" 1270048 -769112 front 0)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::27
+      (place R23 1400708 -585747 front 180)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::28
+      (place R26 1226566 -492506 front 90)
+    )
+    (component "Package_DFN_QFN:DFN-8-1EP_6x5mm_P1.27mm_EP2x2mm"
+      (place "U2-A" 1688084 -750316 front 180)
+    )
+    (component Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder::29
+      (place R21 1120140 -915670 front 90)
+    )
+    (component Resistor_SMD:R_1812_4532Metric::1
+      (place RT1 926592 -445008 front 180)
+    )
+    (component Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder::27
+      (place C16 1331214 -595630 front 0)
+    )
+    (component BH123A:BAT_BH123A
+      (place CON8 859028 -814324 front 270)
+    )
+    (component TestPoint:TestPoint_Pad_1.5x1.5mm
+      (place TP1 775462 -531114 front 90)
+    )
+    (component "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm::2"
+      (place "U10-A" 1197356 -715264 front 0)
+    )
+  )
+  (was_is
+  )
+  (routes 
+    (resolution um 10)
+    (parser
+      (host_cad "KiCad's Pcbnew")
+      (host_version "(6.0.1)")
+    )
+    (library_out 
+      (padstack "Via[0-1]_600:400_um"
+        (shape
+          (circle "cobre frontal" 6000 0 0)
+        )
+        (shape
+          (circle "Cobre traseira" 6000 0 0)
+        )
+        (attach off)
+      )
+      (padstack "Via[0-1]_900:400_um"
+        (shape
+          (circle "cobre frontal" 9000 0 0)
+        )
+        (shape
+          (circle "Cobre traseira" 9000 0 0)
+        )
+        (attach off)
+      )
+    )
+    (network_out 
+      (net 0
+        (wire
+          (path "cobre frontal" 2500
+            1380101 -462126
+            1384820 -462126
+            1392440 -454506
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1380100 -462126
+            1380101 -462126
+          )
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1645800 -528320
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1664210 -528574
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1575950 -527431
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1594360 -527431
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1460500 -527939
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1508640 -527177
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1526290 -528066
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1441960 -527685
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1645800 -529590
+            1652150 -529590
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1522610 -527812
+            1514990 -527812
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1447100 -527490
+            1447930 -528320
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1530870 -524632
+            1527690 -527812
+            1522610 -527812
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1581470 -527626
+            1581030 -528066
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1455100 -527500
+            1454280 -528320
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1575950 -528066
+            1581030 -528066
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1588650 -528066
+            1595000 -528066
+            1598170 -524896
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1454850 -518036
+            1454850 -526726
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1514990 -527812
+            1509910 -527812
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1659520 -528570
+            1658500 -529590
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1658500 -529590
+            1664850 -529590
+            1668220 -526220
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1514170 -526992
+            1514990 -527812
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1514170 -518036
+            1514170 -526726
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1642820 -518544
+            1642820 -525836
+            1645800 -528816
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1463550 -524376
+            1463550 -518036
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1530870 -518036
+            1530870 -524366
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1589470 -527246
+            1588650 -528066
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1572770 -518036
+            1572770 -524366
+            1575950 -527546
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1505470 -518036
+            1505470 -524376
+            1508640 -527546
+            1509910 -527546
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1522170 -527372
+            1522610 -527812
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1581470 -518036
+            1581470 -527106
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1581030 -528066
+            1588650 -528066
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1659520 -518544
+            1659520 -527796
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1652150 -529590
+            1658500 -529590
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1447930 -528320
+            1454280 -528320
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1522170 -518036
+            1522170 -527106
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1651520 -528960
+            1652150 -529590
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1454280 -528320
+            1460630 -528320
+            1463800 -525150
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1651520 -518544
+            1651520 -528186
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1446850 -518036
+            1446850 -526716
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1668220 -525446
+            1668220 -518544
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1589470 -518036
+            1589470 -526726
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1598170 -524376
+            1598170 -518036
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1438150 -518036
+            1438150 -524366
+            1441330 -527546
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1441580 -528320
+            1447930 -528320
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1496970 -684276
+            1496970 -694142
+            1493880 -697230
+            1474470 -697230
+            1471970 -694730
+            1471970 -684276
+          )
+          (type protect)
+        )
+      )
+      (net VDDD
+        (wire
+          (path "cobre frontal" 2500
+            1675365 -658159
+            1782194 -658159
+            1791637 -648716
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1604492 -772606
+            1608522 -772606
+            1635455 -745673
+            1635455 -541440
+            1629811 -535796
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1602069 -981321
+            1602069 -775029
+            1604492 -772606
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1239677 -696214
+            1248211 -704748
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1222106 -696214
+            1239677 -696214
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1239677 -696214
+            1239677 -693026
+            1249467 -683236
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1250148 -756649
+            1229997 -756649
+            1222614 -764032
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1288050 -761612
+            1283087 -756649
+            1250148 -756649
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1250148 -745658
+            1250148 -756649
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1250148 -745658
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1249467 -683236
+            1250148 -683917
+            1250148 -745658
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1249467 -683236
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1298467 -707390
+            1298702 -707625
+            1298702 -723392
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1604492 -773051
+            1611447 -780006
+            1719609 -780006
+            1725875 -773740
+            1725875 -764607
+            1724304 -763036
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1604492 -772606
+            1604492 -773051
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1604492 -773051
+            1583199 -773051
+            1580280 -775970
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1105646 -555218
+            1101335 -555218
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1130057 -555218
+            1105646 -555218
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1105646 -555218
+            1105646 -564462
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1105646 -564462
+            1030684 -564462
+            1021706 -555484
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1105646 -564462
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1012848 -546626
+            1005433 -554041
+            868493 -554041
+            845566 -531114
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1013808 -545666
+            1012848 -546626
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1012848 -546626
+            1021706 -555484
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1023874 -739140
+            1023874 -727887
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1021706 -555484
+            1012621 -564569
+            1012621 -719448
+            1021060 -727887
+            1023874 -727887
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1021706 -555484
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1274346 -548740
+            1166915 -548740
+            1147801 -529626
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1281205 -555598
+            1281204 -555598
+            1274346 -548740
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1147801 -529626
+            1147801 -528652
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1130057 -547370
+            1147801 -529626
+          )
+        )
+        (wire
+          (path "Cobre traseira" 5000
+            1629811 -535796
+            1635200 -535796
+            1635320 -535674
+            1642630 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "Cobre traseira" 5000
+            1598170 -535796
+            1629811 -535796
+          )
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1604492 -772606
+        )
+        (via "Via[0-1]_600:400_um" 1602069 -981321
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1576070 -955643
+            1601748 -981321
+            1602069 -981321
+          )
+        )
+        (wire
+          (path "cobre frontal" 5000
+            1549400 -955643
+            1576070 -955643
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1724304 -763036
+            1708292 -763036
+            1701962 -769366
+            1659084 -769366
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1675365 -666496
+            1677449 -666496
+            1730607 -719654
+            1730607 -756733
+            1724304 -763036
+          )
+        )
+        (wire
+          (path "cobre frontal" 5000
+            1576180 -775970
+            1580280 -775970
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 5000
+            1281205 -555598
+            1288060 -562456
+            1355610 -562456
+            1362220 -555841
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1104193 -722624
+            1134027 -722624
+            1153997 -702654
+            1215666 -702654
+            1222106 -696214
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1100593 -739140
+            1100593 -726224
+            1104193 -722624
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1104193 -722624
+            1104193 -715620
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1675365 -658159
+            1675365 -666496
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1130057 -555218
+            1130057 -565404
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1130057 -547370
+            1130057 -555218
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1675365 -658159
+            1652431 -658159
+            1648560 -662030
+            1648560 -675983
+            1657615 -685038
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1425835 -535674
+            1403680 -557829
+          )
+        )
+        (wire
+          (path "Cobre traseira" 5000
+            1438150 -535674
+            1425835 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "Cobre traseira" 5000
+            1425835 -535674
+            1421580 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1667328 -543378
+            1667328 -543946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1668030 -541999
+            1667328 -542701
+            1667328 -543378
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1659330 -543378
+            1659330 -540810
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1659330 -545946
+            1659330 -543378
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1659330 -543378
+            1667328 -543378
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1659330 -540810
+            1659328 -540812
+            1659328 -543946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1659330 -540810
+            1659330 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1642630 -543946
+            1642630 -535806
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1642630 -545946
+            1642630 -543946
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1643328 -543946
+            1642630 -543946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1530870 -543946
+            1530870 -535806
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1530870 -545946
+            1530870 -543946
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1530168 -543946
+            1530870 -543946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1522170 -543946
+            1522170 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1522170 -545946
+            1522170 -543946
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1522168 -543946
+            1522170 -543946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1514170 -535986
+            1514170 -535674
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1514170 -540966
+            1514170 -535986
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1505470 -543946
+            1505470 -535796
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1505470 -545946
+            1505470 -543946
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1506168 -543946
+            1505470 -543946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1463550 -543946
+            1463550 -535796
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1463550 -545946
+            1463550 -543946
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1462848 -543946
+            1463550 -543946
+          )
+        )
+        (wire
+          (path "Cobre traseira" 5000
+            1454850 -535674
+            1447600 -535674
+            1447540 -535616
+          )
+          (type protect)
+        )
+        (wire
+          (path "Cobre traseira" 5000
+            1463550 -535674
+            1454850 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1454850 -535616
+            1454850 -535674
+          )
+        )
+        (wire
+          (path "Cobre traseira" 5000
+            1447540 -535616
+            1439600 -535616
+            1439540 -535674
+            1438150 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1446850 -535674
+            1447482 -535674
+            1447540 -535616
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1438150 -543946
+            1438150 -535796
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1438150 -545946
+            1438150 -543946
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1438848 -543946
+            1438150 -543946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1052585 -550218
+            1018360 -550218
+            1013808 -545666
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1576180 -775970
+            1575196 -774986
+            1575196 -769874
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1288050 -761612
+            1291551 -761612
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1284548 -761612
+            1288050 -761612
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1100593 -739140
+            1107705 -746252
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1023874 -739140
+            1100593 -739140
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1396900 -562388
+            1399124 -562388
+            1399880 -561632
+          )
+        )
+        (wire
+          (path "cobre frontal" 5000
+            1396600 -562388
+            1396900 -562388
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 5000
+            1362220 -555841
+            1362220 -557641
+            1367040 -562456
+            1392440 -562456
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1362221 -549756
+            1362221 -555840
+            1362220 -555841
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1598170 -543946
+            1598170 -535796
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1598170 -545946
+            1598170 -543946
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1597468 -543946
+            1598170 -543946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1589470 -535986
+            1589470 -535674
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1589470 -540966
+            1589470 -535986
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1581470 -535996
+            1581470 -535674
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1581470 -540971
+            1581470 -535996
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1572770 -543946
+            1572770 -535796
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1572770 -545946
+            1572770 -543946
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1573468 -543946
+            1572770 -543946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1291551 -761612
+            1291551 -730543
+            1298702 -723392
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1572770 -535796
+            1572770 -535674
+          )
+        )
+        (wire
+          (path "cobre frontal" 5000
+            1572080 -775970
+            1576180 -775970
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1514170 -540966
+            1514168 -540968
+            1514168 -543946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1514170 -545946
+            1514170 -540966
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1589470 -540966
+            1589468 -540968
+            1589468 -543946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1589470 -545946
+            1589470 -540966
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1642630 -535806
+            1642630 -535674
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1505470 -535796
+            1505470 -535674
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1463550 -535796
+            1463550 -535674
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1581470 -540971
+            1581468 -540973
+            1581468 -543946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1581470 -545946
+            1581470 -540971
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1668030 -541999
+            1668030 -535806
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1668030 -545946
+            1668030 -541999
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1438150 -535796
+            1438150 -535674
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1530870 -535806
+            1530870 -535674
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1668030 -535674
+            1668030 -535806
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1446850 -540810
+            1446848 -540812
+            1446848 -543946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1446850 -540810
+            1446850 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1446850 -545946
+            1446850 -540810
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1454850 -540781
+            1454848 -540783
+            1454848 -543946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1454850 -540781
+            1454850 -535616
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1454850 -545946
+            1454850 -540781
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 5000
+            1399880 -561632
+            1403680 -557829
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 5000
+            1274350 -548740
+            1281205 -555598
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1651330 -540810
+            1651328 -540812
+            1651328 -543946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1651330 -540810
+            1651330 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1651330 -545946
+            1651330 -540810
+          )
+          (type protect)
+        )
+        (wire
+          (path "Cobre traseira" 5000
+            1505470 -535674
+            1463550 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "Cobre traseira" 5000
+            1530870 -535674
+            1522170 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "Cobre traseira" 5000
+            1572770 -535674
+            1530870 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "Cobre traseira" 5000
+            1522170 -535674
+            1514170 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "Cobre traseira" 5000
+            1514170 -535674
+            1505470 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 5000
+            1393100 -562388
+            1396600 -562388
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 5000
+            1393830 -562456
+            1396530 -562456
+            1396600 -562388
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 5000
+            1392440 -562456
+            1393830 -562456
+          )
+          (type protect)
+        )
+        (wire
+          (path "Cobre traseira" 5000
+            1659330 -535674
+            1660720 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "Cobre traseira" 5000
+            1651330 -535674
+            1659330 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "Cobre traseira" 5000
+            1642630 -535674
+            1651330 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "Cobre traseira" 5000
+            1581470 -535674
+            1572770 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "Cobre traseira" 5000
+            1581470 -535674
+            1589470 -535674
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1651330 -535674
+            1651330 -535616
+          )
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1651330 -535674
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1572770 -535674
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1642630 -535674
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1514170 -535674
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1589470 -535674
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1505470 -535674
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1403680 -557829
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1454850 -535616
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1659330 -535674
+            1659330 -535606
+          )
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1659330 -535674
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1446850 -535674
+            1446850 -535606
+          )
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1446850 -535674
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1438150 -535674
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1463550 -535674
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1668030 -535674
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1581470 -535674
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1598170 -535796
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1522170 -535674
+            1522170 -535606
+          )
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1522170 -535674
+          (type protect)
+        )
+        (via "Via[0-1]_600:400_um" 1530870 -535674
+          (type protect)
+        )
+        (wire
+          (path "Cobre traseira" 5000
+            1589470 -535674
+            1590740 -535674
+            1590860 -535796
+            1598170 -535796
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 5000
+            1392440 -562456
+            1393830 -562456
+          )
+          (type protect)
+        )
+      )
+      (net +3.3VP
+        (wire
+          (path "cobre frontal" 2500
+            1817037 -648716
+            1805119 -636798
+            1646048 -636798
+            1622949 -659897
+            1622949 -662593
+            1604004 -681538
+            1601840 -681538
+            1589623 -693755
+            1580864 -693755
+            1573047 -701572
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1490632 -742365
+            1512133 -742365
+            1521588 -732910
+            1531095 -732910
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1560011 -708487
+            1557016 -711482
+            1484098 -711482
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1179095 -577377
+            1178011 -578461
+            880785 -578461
+            835530 -533206
+            835530 -526158
+            826770 -517398
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1179095 -577377
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1248222 -560101
+            1196371 -560101
+            1179095 -577377
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1248222 -560101
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1354682 -620635
+            1372025 -603292
+            1372025 -591473
+            1348762 -568210
+            1256331 -568210
+            1248222 -560101
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1354682 -620635
+            1397296 -663249
+            1398474 -663249
+            1444847 -709622
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1322589 -612140
+            1331084 -620635
+            1354682 -620635
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1444847 -709622
+            1454242 -719017
+            1476563 -719017
+            1484098 -711482
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1444847 -709622
+            1426559 -727910
+            1417845 -727910
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1490632 -742365
+            1490632 -718016
+            1484098 -711482
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1484098 -711482
+            1486595 -711482
+            1501970 -696107
+            1501970 -684276
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1455962 -654989
+            1454002 -656949
+            1454002 -714841
+            1458129 -718968
+            1476612 -718968
+            1484098 -711482
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1455962 -654989
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1459990 -654005
+            1456946 -654005
+            1455962 -654989
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1459990 -654005
+            1459990 -658566
+            1463640 -662213
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1459990 -649444
+            1459990 -654005
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1562036 -701572
+            1562036 -665055
+            1570247 -656844
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1573047 -701572
+            1562036 -701572
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1560011 -708487
+            1562036 -706462
+            1562036 -701572
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1560011 -708487
+        )
+        (via "Via[0-1]_600:400_um" 1484098 -711482
+        )
+        (via "Via[0-1]_600:400_um" 1490632 -742365
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1460589 -819904
+            1463420 -819904
+            1490632 -792692
+            1490632 -742365
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1460589 -819904
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1468120 -852405
+            1476562 -843963
+            1476562 -829481
+            1466985 -819904
+            1460589 -819904
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1298139 -588162
+            1322117 -612140
+            1322589 -612140
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1501970 -684276
+            1501970 -683785
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1466970 -683785
+            1466970 -684276
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1509140 -646424
+            1509141 -646423
+            1509141 -637402
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1459990 -649444
+            1460246 -649188
+            1460246 -637275
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1459990 -640323
+            1459990 -649444
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1465130 -663706
+            1463640 -662216
+            1463640 -662213
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1465130 -663706
+            1466970 -665544
+            1466970 -683785
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1463290 -661868
+            1465130 -663706
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1509140 -646424
+            1509140 -655447
+            1501970 -662618
+            1501970 -664650
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1509140 -637402
+            1509140 -646424
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1501970 -683785
+            1501970 -667707
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1501970 -664650
+            1501970 -667707
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1501970 -667707
+            1501970 -664650
+          )
+          (type protect)
+        )
+      )
+      (net "Net-(C18-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1531095 -762910
+            1540240 -762910
+            1542289 -764959
+            1550485 -764959
+            1570970 -744474
+            1575196 -744474
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1650331 -743966
+            1644577 -738212
+            1581458 -738212
+            1575196 -744474
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1659084 -743966
+            1650331 -743966
+          )
+        )
+      )
+      (net RESET
+        (wire
+          (path "Cobre traseira" 2500
+            1572575 -719023
+            1577309 -719023
+            1601413 -694919
+            1601413 -675285
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1572575 -719023
+            1571214 -719023
+            1562186 -728051
+            1562186 -731896
+            1546172 -747910
+            1531095 -747910
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1572575 -719023
+        )
+        (via "Via[0-1]_600:400_um" 1601413 -675285
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1573064 -672277
+            1583139 -682352
+            1594346 -682352
+            1601413 -675285
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1573064 -672277
+            1571479 -673862
+            1570747 -673862
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1588497 -656844
+            1573064 -672277
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1791637 -623316
+            1622025 -623316
+            1588497 -656844
+          )
+        )
+      )
+      (net "Net-(C26-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1391160 -801130
+            1395738 -801130
+            1400307 -805699
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1381307 -801130
+            1391160 -801130
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1391160 -801130
+            1391160 -780839
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1381307 -810383
+            1381307 -801130
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1391160 -780839
+            1398230 -777910
+            1417845 -777910
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1417845 -777910
+            1418340 -777910
+          )
+          (type protect)
+        )
+      )
+      (net "Net-(C27-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1372307 -810383
+            1371740 -809816
+            1371740 -805318
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1353950 -805318
+            1353947 -805318
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1353950 -805318
+            1371740 -805318
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1372310 -799654
+            1371740 -800224
+            1371740 -805318
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1372310 -799654
+            1372310 -793425
+            1375240 -786354
+            1385750 -775839
+            1392820 -772910
+            1418340 -772910
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1372310 -805883
+            1372310 -799654
+          )
+          (type protect)
+        )
+      )
+      (net "Net-(C30-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1358760 -508769
+            1362221 -505308
+            1362221 -505306
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1358760 -508769
+            1355300 -512232
+            1340070 -512232
+            1335320 -516990
+            1312170 -516990
+            1306080 -523086
+            1306080 -540866
+            1313950 -548740
+            1323846 -548740
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1362220 -505306
+            1358760 -508769
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1323846 -548740
+            1323850 -548740
+          )
+          (type protect)
+        )
+      )
+      (net K2
+        (wire
+          (path "cobre frontal" 2500
+            1651328 -561946
+            1651328 -569199
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1651328 -569199
+            1637595 -569199
+            1548470 -658324
+            1548470 -710486
+            1541046 -717910
+            1531095 -717910
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1651330 -559946
+            1651330 -561944
+            1651328 -561946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1651520 -481936
+            1651520 -480129
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1651520 -502968
+            1651520 -481936
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1651328 -481936
+            1651520 -481936
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1651520 -502968
+            1651518 -502966
+            1651518 -502544
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1651330 -559946
+            1651330 -556096
+            1647930 -552696
+            1636820 -552696
+            1631190 -547066
+            1631190 -517617
+            1637520 -511294
+            1648620 -511294
+            1651520 -508394
+            1651520 -502968
+          )
+          (type protect)
+        )
+      )
+      (net K1
+        (wire
+          (path "cobre frontal" 2500
+            1678698 -547819
+            1679450 -547066
+            1679450 -517231
+            1673520 -511294
+            1662420 -511294
+            1659520 -508394
+            1659520 -502968
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1659330 -559946
+            1659330 -556096
+            1662720 -552696
+            1673830 -552696
+            1678698 -547819
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1677307 -546431
+            1677310 -546431
+            1678698 -547819
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1677307 -546431
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1644738 -716539
+            1677307 -683970
+            1677307 -546431
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1644738 -716539
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1587480 -700008
+            1587480 -706467
+            1598514 -717501
+            1643776 -717501
+            1644738 -716539
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1587480 -700008
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1514025 -719603
+            1561459 -719603
+            1581054 -700008
+            1587480 -700008
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1514025 -719603
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1531095 -722910
+            1517332 -722910
+            1514025 -719603
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1659330 -559946
+            1659330 -561944
+            1659328 -561946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1659520 -481936
+            1659520 -480129
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1659520 -502968
+            1659520 -481936
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1659328 -481936
+            1659520 -481936
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1659520 -502968
+            1659518 -502966
+            1659518 -502544
+          )
+        )
+      )
+      (net K3
+        (wire
+          (path "cobre frontal" 2500
+            1636930 -559946
+            1543815 -653061
+            1543815 -708358
+            1539263 -712910
+            1531095 -712910
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1636930 -559946
+            1626690 -549716
+            1626690 -515753
+            1637900 -504544
+            1642820 -504544
+            1642820 -498440
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1642630 -559946
+            1636930 -559946
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1642820 -498440
+            1643518 -499138
+            1643518 -502544
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1642820 -498440
+            1642820 -492336
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1643328 -561946
+            1642630 -561248
+            1642630 -559946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1642820 -492336
+            1643328 -491828
+            1643328 -481936
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1642820 -492336
+            1642820 -480129
+          )
+          (type protect)
+        )
+      )
+      (net K6
+        (wire
+          (path "cobre frontal" 2500
+            1504000 -573012
+            1506728 -573012
+            1514168 -565572
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1504000 -573012
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1465357 -704661
+            1504000 -666018
+            1504000 -573012
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1465357 -704661
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1461970 -683785
+            1461970 -701274
+            1465357 -704661
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1514170 -559946
+            1514170 -565570
+            1514168 -565572
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1514168 -561946
+            1514168 -565572
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1514170 -485971
+            1514168 -485969
+            1514168 -480666
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1514170 -485971
+            1514170 -478666
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1514170 -493276
+            1514170 -485971
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1514170 -493276
+            1514168 -493278
+            1514168 -502036
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1514170 -559946
+            1514170 -556566
+            1510300 -552696
+            1499660 -552696
+            1495310 -548336
+            1495310 -515646
+            1500160 -510786
+            1511270 -510786
+            1514170 -507886
+            1514170 -493276
+          )
+          (type protect)
+        )
+      )
+      (net K5
+        (wire
+          (path "cobre frontal" 2500
+            1522168 -561946
+            1522168 -569199
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1522168 -569199
+            1476970 -614397
+            1476970 -683785
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1522170 -559946
+            1522170 -561944
+            1522168 -561946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1522170 -485971
+            1522168 -485969
+            1522168 -480666
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1522170 -485971
+            1522170 -478666
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1522170 -493276
+            1522170 -485971
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1522170 -493276
+            1522168 -493278
+            1522168 -502036
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1522170 -559946
+            1522170 -556096
+            1525560 -552696
+            1536670 -552696
+            1541030 -548336
+            1541030 -515646
+            1536170 -510786
+            1525060 -510786
+            1522170 -507886
+            1522170 -493276
+          )
+          (type protect)
+        )
+      )
+      (net K7
+        (wire
+          (path "cobre frontal" 2500
+            1505589 -561946
+            1504788 -561946
+            1449709 -617025
+            1449709 -657579
+            1456970 -664840
+            1456970 -683785
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1457320 -683923
+            1456970 -684276
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1505589 -561946
+            1505010 -561946
+            1503010 -559946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1506168 -561946
+            1505589 -561946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1505470 -485334
+            1506168 -484636
+            1506168 -480666
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1505470 -485334
+            1505470 -478666
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1505470 -492003
+            1505470 -485334
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1505470 -492003
+            1506168 -492701
+            1506168 -502036
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1503010 -559946
+            1500550 -559946
+            1490800 -550200
+            1490800 -512996
+            1499770 -504036
+            1505470 -504036
+            1505470 -492003
+          )
+          (type protect)
+        )
+      )
+      (net K4
+        (wire
+          (path "cobre frontal" 2500
+            1530168 -561946
+            1530168 -569199
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1530168 -569199
+            1481970 -617397
+            1481970 -683785
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1530870 -559946
+            1530870 -561244
+            1530168 -561946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1530870 -485333
+            1530168 -484631
+            1530168 -480666
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1530870 -485333
+            1530870 -478666
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1530870 -492001
+            1530870 -485333
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1530870 -492001
+            1530168 -492703
+            1530168 -502036
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1530870 -559946
+            1535780 -559946
+            1545530 -550200
+            1545530 -513782
+            1535780 -504036
+            1530870 -504036
+            1530870 -492001
+          )
+          (type protect)
+        )
+      )
+      (net KA
+        (wire
+          (path "cobre frontal" 2500
+            1446848 -561946
+            1446848 -572212
+            1438219 -580841
+            1438219 -644299
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1446850 -559946
+            1446850 -561944
+            1446848 -561946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1461120 -778221
+            1456970 -782371
+            1456970 -797035
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1461120 -778221
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1438219 -644299
+            1438219 -753305
+            1461120 -776206
+            1461120 -778221
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1438219 -644299
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1446850 -500581
+            1446848 -500583
+            1446848 -502036
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1446850 -500581
+            1446850 -493276
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1446850 -559946
+            1446850 -556096
+            1443460 -552696
+            1432350 -552696
+            1427990 -548336
+            1427990 -515646
+            1432850 -510786
+            1443960 -510786
+            1446850 -507886
+            1446850 -500581
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1446850 -493276
+            1446848 -493274
+            1446848 -480666
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1446850 -493276
+            1446850 -478666
+          )
+          (type protect)
+        )
+      )
+      (net K9
+        (wire
+          (path "cobre frontal" 2500
+            1454848 -561946
+            1454848 -582389
+            1445206 -592031
+            1445206 -659445
+            1446970 -661209
+            1446970 -683785
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1454850 -559946
+            1454850 -561944
+            1454848 -561946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1454850 -500581
+            1454848 -500583
+            1454848 -502036
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1454850 -500581
+            1454850 -493276
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1454850 -559946
+            1454850 -556096
+            1458250 -552696
+            1469360 -552696
+            1473710 -548336
+            1473710 -515646
+            1468860 -510786
+            1457750 -510786
+            1454850 -507886
+            1454850 -500581
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1454850 -493276
+            1454848 -493274
+            1454848 -480666
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1454850 -493276
+            1454850 -478666
+          )
+          (type protect)
+        )
+      )
+      (net KB
+        (wire
+          (path "Cobre traseira" 2500
+            1438890 -820403
+            1430713 -812226
+            1430713 -595810
+            1429621 -594718
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1438848 -561946
+            1438848 -569199
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1438848 -569199
+            1429621 -578426
+            1429621 -594718
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1438890 -820403
+            1451970 -807323
+            1451970 -797035
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1438890 -820403
+        )
+        (via "Via[0-1]_600:400_um" 1429621 -594718
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1438848 -561946
+            1438150 -561248
+            1438150 -559946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1438150 -497693
+            1438848 -498391
+            1438848 -502036
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1438150 -497693
+            1438150 -491351
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1438150 -559946
+            1433230 -559946
+            1423490 -550200
+            1423490 -512996
+            1432450 -504036
+            1438150 -504036
+            1438150 -497693
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1438150 -491351
+            1438848 -490653
+            1438848 -480666
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1438150 -491351
+            1438150 -478666
+          )
+          (type protect)
+        )
+      )
+      (net K8
+        (wire
+          (path "Cobre traseira" 2500
+            1460337 -712213
+            1459104 -710980
+            1459104 -660691
+            1465264 -654531
+            1465264 -573012
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1465264 -573012
+            1462848 -570596
+            1462848 -561946
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1465264 -573012
+        )
+        (via "Via[0-1]_600:400_um" 1460337 -712213
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1451970 -683785
+            1451970 -703846
+            1460337 -712213
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1463550 -559946
+            1463550 -561244
+            1462848 -561946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1463550 -497693
+            1462848 -498395
+            1462848 -502036
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1463550 -497693
+            1463550 -491351
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1463550 -559946
+            1469250 -559946
+            1478220 -550986
+            1478220 -513782
+            1468470 -504036
+            1463550 -504036
+            1463550 -497693
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1463550 -491351
+            1462848 -490649
+            1462848 -480666
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1463550 -491351
+            1463550 -478666
+          )
+          (type protect)
+        )
+      )
+      (net KD
+        (wire
+          (path "cobre frontal" 2500
+            1581470 -563796
+            1581470 -565147
+            1540190 -606427
+            1509168 -606427
+            1491970 -623625
+            1491970 -683785
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1581470 -563796
+            1581470 -559946
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1581470 -481286
+            1581470 -479476
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1581470 -502460
+            1581470 -481286
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1581668 -481286
+            1581470 -481286
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1581470 -502460
+            1581468 -502458
+            1581468 -502036
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1581470 -559946
+            1581470 -556096
+            1578080 -552696
+            1566970 -552696
+            1562610 -548336
+            1562610 -515646
+            1567470 -510786
+            1578580 -510786
+            1581470 -507886
+            1581470 -502460
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1581470 -559946
+            1581468 -559948
+            1581468 -561946
+          )
+        )
+      )
+      (net KC
+        (wire
+          (path "cobre frontal" 2500
+            1522314 -655351
+            1506970 -670695
+            1506970 -683785
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1522314 -655351
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1605013 -549546
+            1605013 -572652
+            1522314 -655351
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1605013 -549546
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1606795 -549881
+            1605348 -549881
+            1605013 -549546
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1606795 -549881
+            1609610 -547066
+            1609610 -516916
+            1603480 -510786
+            1592370 -510786
+            1589470 -507886
+            1589470 -502460
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1589470 -559946
+            1589470 -556096
+            1592870 -552696
+            1603980 -552696
+            1606795 -549881
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1589470 -481286
+            1589470 -479476
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1589470 -502460
+            1589470 -481286
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1589668 -481286
+            1589470 -481286
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1589468 -561946
+            1589470 -561944
+            1589470 -559946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1589470 -502460
+            1589468 -502458
+            1589468 -502036
+          )
+        )
+      )
+      (net KE
+        (wire
+          (path "cobre frontal" 2500
+            1567860 -559946
+            1572770 -559946
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1572770 -500535
+            1572770 -504036
+            1567860 -504036
+            1558110 -513782
+            1558110 -550200
+            1567860 -559946
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1486970 -683785
+            1486970 -622232
+            1549256 -559946
+            1567860 -559946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1572770 -481286
+            1572770 -500535
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1572770 -479476
+            1572770 -481286
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1573668 -481286
+            1572770 -481286
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1573468 -561946
+            1573468 -560644
+            1572770 -559946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1572770 -500535
+            1573468 -501233
+            1573468 -502036
+          )
+        )
+      )
+      (net NOTE
+        (wire
+          (path "cobre frontal" 2500
+            1597468 -561946
+            1597468 -589042
+            1520463 -666047
+            1520463 -688403
+            1455957 -752909
+            1455957 -752910
+            1417845 -752910
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1598170 -559946
+            1603870 -559946
+            1614110 -549716
+            1614110 -515052
+            1603090 -504036
+            1598170 -504036
+            1598170 -497896
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1598170 -497896
+            1597468 -498598
+            1597468 -502036
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1598170 -497896
+            1598170 -491756
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1597468 -561946
+            1598170 -561244
+            1598170 -559946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1598170 -491756
+            1597668 -491254
+            1597668 -481286
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1598170 -491756
+            1598170 -479476
+          )
+          (type protect)
+        )
+      )
+      (net LED2
+        (wire
+          (path "cobre frontal" 2500
+            1518527 -819904
+            1518527 -864985
+            1549400 -895858
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1518527 -819904
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1498107 -770392
+            1498107 -799484
+            1518527 -819904
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1498107 -770392
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1444819 -770160
+            1497875 -770160
+            1498107 -770392
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1444819 -770160
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1463824 -810558
+            1444819 -791553
+            1444819 -770160
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1463824 -810558
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1461970 -797035
+            1461970 -808704
+            1463824 -810558
+          )
+        )
+      )
+      (net LED3
+        (wire
+          (path "cobre frontal" 2500
+            1466970 -797035
+            1466970 -788895
+            1469464 -786401
+            1514862 -786401
+            1525084 -796623
+            1525084 -844872
+            1576070 -895858
+          )
+        )
+      )
+      (net +12V
+        (wire
+          (path "cobre frontal" 2500
+            1415609 -956267
+            1415609 -958174
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1601843 -946526
+            1425350 -946526
+            1415609 -956267
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1415609 -956267
+            1353084 -893742
+            1308036 -893742
+            1291418 -910360
+            1291418 -913924
+            1275451 -929891
+            1253352 -929891
+            1228780 -954463
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1228780 -954463
+            1228780 -975273
+            1231650 -978143
+            1264301 -978143
+            1266952 -975492
+            1266952 -954316
+            1273807 -947461
+            1307845 -947461
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1184402 -965058
+            1184402 -961276
+            1193630 -952048
+            1226365 -952048
+            1228780 -954463
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1139571 -1067880
+            1139571 -1009889
+            1184402 -965058
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1415609 -958174
+            1415609 -959649
+            1422400 -966440
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1365618 -947466
+            1370493 -947466
+            1381201 -958174
+            1415609 -958174
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1602251 -915924
+            1601843 -916332
+            1601843 -946526
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1845564 -898436
+            1845564 -910189
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1845564 -910189
+            1850706 -910189
+            1858614 -918097
+            1858614 -957275
+            1840544 -975345
+            1693053 -975345
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1817037 -699516
+            1845564 -728043
+            1845564 -898436
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            973074 -350803
+            1139571 -517300
+            1139571 -1072227
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1653051 -946935
+            1652930 -946935
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1705356 -965820
+            1676690 -965820
+            1657805 -946935
+            1653051 -946935
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1653051 -946935
+            1653051 -915923
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1308100 -925049
+            1326134 -925049
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1308100 -925049
+            1308100 -947206
+            1307845 -947461
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1139571 -1067880
+            1143700 -1067880
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1138630 -1067880
+            1139571 -1067880
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1601843 -946526
+            1606718 -946526
+            1617761 -957569
+            1642296 -957569
+            1652930 -946935
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            905217 -445008
+            887019 -445008
+            815996 -516031
+            815996 -520187
+            805069 -531114
+            775462 -531114
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            973074 -350803
+            905217 -418660
+            905217 -445008
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1693053 -975345
+            1695831 -975345
+            1705356 -965820
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1693053 -975345
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1625120 -1045210
+            1625120 -1043278
+            1693053 -975345
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1138630 -1067880
+            1139571 -1068821
+            1139571 -1072227
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1133560 -1067880
+            1138630 -1067880
+          )
+          (type protect)
+        )
+      )
+      (net COUT
+        (wire
+          (path "cobre frontal" 2500
+            1569720 -1045210
+            1571822 -1045210
+            1595224 -1068612
+            1595224 -1078276
+            1588058 -1085442
+            1235886 -1085442
+            1222671 -1072227
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1569720 -1045210
+            1611343 -1003587
+            1611343 -965276
+          )
+        )
+      )
+      (net CIN
+        (wire
+          (path "cobre frontal" 2500
+            1597420 -1045210
+            1600016 -1047806
+            1600016 -1080728
+            1590537 -1090207
+            1141332 -1090207
+            1125721 -1074596
+            1125721 -1043827
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1662430 -965685
+            1597420 -1030695
+            1597420 -1045210
+          )
+        )
+      )
+      (net +5V
+        (wire
+          (path "Cobre traseira" 2500
+            1845564 -948436
+            1772183 -875055
+            1772183 -613364
+            1561758 -402939
+            1550920 -402939
+            1527740 -379759
+            1527740 -349263
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1201843 -594554
+            1196256 -600141
+            1115126 -600141
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1207273 -562102
+            1198989 -570386
+            1198989 -590261
+            1201843 -593115
+            1201843 -594554
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1201843 -594554
+            1206809 -599520
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1115126 -612394
+            1115126 -600141
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            802386 -544322
+            858205 -600141
+            1115126 -600141
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            820674 -350803
+            837577 -350803
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1527740 -349263
+            1512377 -333900
+            854480 -333900
+            837577 -350803
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            802386 -544322
+            815561 -531147
+            828266 -531147
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            820674 -350803
+            820674 -523555
+            828266 -531147
+          )
+        )
+        (via "Via[0-1]_600:400_um" 828266 -531147
+        )
+      )
+      (net INIB
+        (wire
+          (path "cobre frontal" 2500
+            1391583 -585747
+            1391326 -585490
+            1391326 -572517
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1391583 -585747
+            1391583 -596965
+            1399946 -605328
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1391326 -572517
+            1347690 -528881
+            1347690 -377663
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1391326 -572517
+        )
+      )
+      (net "Net-(C4-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1013703 -511302
+            1057419 -511302
+            1059460 -513343
+          )
+        )
+      )
+      (net COUT1
+        (wire
+          (path "cobre frontal" 2500
+            1202350 -1072230
+            1259314 -1015266
+            1326068 -1015266
+            1375118 -966216
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1202350 -1072230
+            1202670 -1072230
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1202030 -1072230
+            1202350 -1072230
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1202030 -1072230
+            1194974 -1072230
+            1194971 -1072227
+          )
+        )
+      )
+      (net CIN1
+        (wire
+          (path "cobre frontal" 2500
+            1167271 -1072227
+            1169373 -1072227
+            1194971 -1046629
+            1194971 -1041715
+            1229340 -1007346
+            1276210 -1007346
+            1317345 -966211
+          )
+        )
+      )
+      (net PRINT_IMP
+        (wire
+          (path "cobre frontal" 2500
+            1120140 -906545
+            1098964 -906545
+            1091342 -914167
+            1091342 -934256
+            1122517 -965431
+            1128014 -965431
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1128014 -965431
+            1111871 -981574
+            1111871 -1072227
+          )
+        )
+      )
+      (net PGED2
+        (wire
+          (path "cobre frontal" 2500
+            1537562 -683088
+            1531095 -689555
+            1531095 -702910
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1537562 -683088
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1627351 -615856
+            1604794 -615856
+            1537562 -683088
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1627351 -615856
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1791637 -699516
+            1805283 -685870
+            1805283 -668860
+            1812727 -661416
+            1821245 -661416
+            1828929 -653732
+            1828929 -618320
+            1817000 -606391
+            1636816 -606391
+            1627351 -615856
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1791637 -699516
+            1779721 -711432
+            1779721 -845444
+            1792506 -858229
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1792506 -858229
+            1776647 -858229
+            1767381 -867495
+            1767381 -881039
+            1759204 -889216
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1792506 -858229
+        )
+      )
+      (net PGEC2
+        (wire
+          (path "Cobre traseira" 2500
+            1736713 -643051
+            1736713 -730177
+            1748460 -741924
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1736713 -643051
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1629202 -662487
+            1648638 -643051
+            1736713 -643051
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1629202 -662487
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1517433 -703821
+            1545922 -703821
+            1587256 -662487
+            1629202 -662487
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1517433 -703821
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1531095 -707910
+            1521522 -707910
+            1517433 -703821
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1786233 -898218
+            1748460 -860445
+            1748460 -741924
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1791637 -724916
+            1764717 -724916
+            1748460 -741173
+            1748460 -741924
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1786233 -898218
+            1777231 -889216
+            1776984 -889216
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1786233 -898218
+        )
+        (via "Via[0-1]_600:400_um" 1748460 -741924
+        )
+      )
+      (net "PIN-INIB"
+        (wire
+          (path "cobre frontal" 2500
+            1404961 -656995
+            1409488 -652468
+            1409488 -644130
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1404961 -656995
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1402269 -763706
+            1405485 -760490
+            1405485 -657519
+            1404961 -656995
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1402269 -763706
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1417845 -767910
+            1406473 -767910
+            1402269 -763706
+          )
+        )
+      )
+      (net "PIN-PRINT"
+        (wire
+          (path "cobre frontal" 2500
+            1446970 -797035
+            1446970 -788192
+            1444596 -785818
+            1435098 -785818
+            1428477 -792439
+            1428477 -808213
+            1405103 -831587
+            1315878 -831587
+            1315358 -831067
+            1256790 -831067
+            1192425 -895432
+            1167029 -895432
+            1137666 -924795
+          )
+        )
+      )
+      (net "Net-(Q3-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1391238 -644130
+            1390446 -643338
+            1390446 -624078
+          )
+        )
+      )
+      (net "Net-(Q4-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1384618 -947466
+            1335398 -898246
+            1316653 -898246
+            1308100 -906799
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1308100 -906799
+            1260602 -954297
+            1260602 -965058
+          )
+        )
+      )
+      (net "Net-(Q6-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1794256 -965820
+            1794256 -961628
+            1779563 -946935
+            1671930 -946935
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1671301 -915923
+            1671301 -946306
+            1671930 -946935
+          )
+        )
+      )
+      (net "Net-(Q7-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1620843 -942855
+            1620843 -916266
+            1620501 -915924
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1620843 -946526
+            1620843 -942855
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1620843 -942855
+            1635918 -942855
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1693053 -954445
+            1694794 -952704
+            1772975 -952704
+            1781556 -961285
+            1781556 -965820
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1693053 -954445
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1635918 -942855
+            1647508 -954445
+            1693053 -954445
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1635918 -942855
+        )
+      )
+      (net "PIN-SCL"
+        (wire
+          (path "cobre frontal" 2500
+            1291551 -771612
+            1316952 -746211
+            1316952 -723392
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1291551 -771612
+            1291551 -779659
+            1281778 -789432
+            1235804 -789432
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1235804 -789432
+            1222614 -789432
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1222106 -721614
+            1217932 -721614
+            1204257 -735289
+            1204257 -800540
+            1212109 -808392
+            1233371 -808392
+            1235804 -805959
+            1235804 -789432
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1270961 -723748
+            1267076 -723748
+            1260390 -717062
+            1226658 -717062
+            1222106 -721614
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1316952 -723392
+            1323313 -717031
+            1383399 -717031
+            1389278 -722910
+            1417845 -722910
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1284548 -771612
+            1291551 -771612
+          )
+        )
+      )
+      (net "PIN-SDA"
+        (wire
+          (path "cobre frontal" 2500
+            1281175 -710985
+            1281175 -726907
+            1273768 -734314
+            1222106 -734314
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1270961 -704748
+            1274938 -704748
+            1281175 -710985
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1316717 -707390
+            1308680 -699353
+            1292807 -699353
+            1281175 -710985
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1417845 -717910
+            1402331 -717910
+            1392341 -707920
+            1317247 -707920
+            1316717 -707390
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1212252 -783082
+            1209112 -786222
+            1209112 -792649
+            1218595 -802132
+            1222614 -802132
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1284548 -776612
+            1278078 -783082
+            1212252 -783082
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1212252 -783082
+            1209341 -780171
+            1209341 -747079
+            1222106 -734314
+          )
+        )
+      )
+      (net "Net-(R16-Pad2)"
+        (wire
+          (path "cobre frontal" 2500
+            1650331 -756666
+            1638139 -744474
+            1624696 -744474
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1624696 -744474
+            1604509 -744474
+            1591809 -757174
+            1575196 -757174
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1717084 -743966
+            1708331 -743966
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1659084 -756666
+            1667837 -756666
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1667837 -756666
+            1667837 -745916
+            1677254 -736499
+            1700864 -736499
+            1708331 -743966
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1654708 -756666
+            1659084 -756666
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1654708 -756666
+            1650331 -756666
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1717084 -743966
+            1725837 -743966
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1657115 -666496
+            1667609 -676990
+            1680783 -676990
+            1725837 -722044
+            1725837 -743966
+          )
+        )
+      )
+      (net "PIN-CIN"
+        (wire
+          (path "cobre frontal" 2500
+            1781556 -916320
+            1781556 -912254
+            1768730 -899428
+            1756336 -899428
+            1751191 -894283
+            1751191 -878979
+            1759204 -870966
+          )
+        )
+      )
+      (net "PIN-COUT"
+        (wire
+          (path "cobre frontal" 2500
+            1776984 -870966
+            1794255 -888237
+            1794255 -916320
+            1794256 -916320
+          )
+        )
+      )
+      (net "PIN-CIN1"
+        (wire
+          (path "cobre frontal" 2500
+            1260602 -915558
+            1260602 -894569
+            1242822 -876789
+          )
+        )
+      )
+      (net "PIN-COUT1"
+        (wire
+          (path "cobre frontal" 2500
+            1273302 -915558
+            1273302 -889743
+            1260348 -876789
+          )
+        )
+      )
+      (net "PIN-PWRMODE"
+        (wire
+          (path "cobre frontal" 2500
+            1359135 -677418
+            1359135 -672846
+            1358881 -672592
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1359135 -689102
+            1359135 -677418
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1417845 -712910
+            1425981 -712910
+            1428896 -709995
+            1428896 -700407
+            1405907 -677418
+            1359135 -677418
+          )
+        )
+      )
+      (net "PIN-S4"
+        (wire
+          (path "cobre frontal" 2500
+            1501970 -854287
+            1501970 -874607
+            1485900 -890677
+            1485900 -916940
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1501970 -854287
+            1501970 -797035
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1501970 -796544
+            1501970 -797035
+          )
+          (type protect)
+        )
+      )
+      (net "PIN-S3"
+        (wire
+          (path "cobre frontal" 2500
+            1496970 -852923
+            1496970 -873238
+            1473200 -897008
+            1473200 -916940
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1496970 -797035
+            1496970 -852923
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1496970 -796544
+            1496970 -797035
+          )
+          (type protect)
+        )
+      )
+      (net "PIN-S2"
+        (wire
+          (path "cobre frontal" 2500
+            1460500 -916940
+            1460500 -901431
+            1491970 -869961
+            1491970 -851559
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1491970 -851559
+            1491970 -797035
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1491970 -797035
+            1491970 -796544
+          )
+          (type protect)
+        )
+      )
+      (net "PIN-S1"
+        (wire
+          (path "cobre frontal" 2500
+            1486970 -850195
+            1486970 -861673
+            1447800 -900843
+            1447800 -916940
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1486970 -797035
+            1486970 -850195
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1486970 -796544
+            1486970 -797035
+          )
+          (type protect)
+        )
+      )
+      (net "PIN-S0"
+        (wire
+          (path "cobre frontal" 2500
+            1481970 -848480
+            1481970 -852496
+            1435100 -899366
+            1435100 -916940
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1481970 -797035
+            1481970 -848480
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1481970 -796544
+            1481970 -797035
+          )
+          (type protect)
+        )
+      )
+      (net "PIN-S9"
+        (wire
+          (path "cobre frontal" 2500
+            1506970 -855651
+            1506970 -879615
+            1498600 -887985
+            1498600 -916940
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1506970 -797035
+            1506970 -855651
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1506970 -796544
+            1506970 -797035
+          )
+          (type protect)
+        )
+      )
+      (net "PIN-S8"
+        (wire
+          (path "cobre frontal" 2500
+            1511970 -857016
+            1511970 -916270
+            1511300 -916940
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1511970 -857016
+            1511970 -797035
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1511970 -797035
+            1511970 -796544
+          )
+          (type protect)
+        )
+      )
+      (net "PIN-S11"
+        (wire
+          (path "cobre frontal" 2500
+            1436970 -797035
+            1436970 -806637
+            1407009 -836598
+            1314520 -836598
+            1313492 -835570
+            1308311 -835570
+            1276217 -867664
+            1238828 -867664
+            1209802 -896690
+            1209802 -915558
+          )
+        )
+      )
+      (net "PIN-S10"
+        (wire
+          (path "cobre frontal" 2500
+            1310901 -841823
+            1408153 -841823
+            1441970 -808006
+            1441970 -797035
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1310901 -841823
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1245695 -893587
+            1297459 -841823
+            1310901 -841823
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1245695 -893587
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1197102 -915558
+            1197102 -919625
+            1206045 -928568
+            1213809 -928568
+            1216062 -926315
+            1216062 -905441
+            1227915 -893588
+            1245695 -893588
+            1245695 -893587
+          )
+        )
+      )
+      (net "Net-(U1-Pad40)"
+        (wire
+          (path "cobre frontal" 2500
+            1417845 -737910
+            1397230 -737910
+            1390160 -740839
+            1387230 -743766
+            1380160 -746695
+            1362080 -746695
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1418340 -737910
+            1417845 -737910
+          )
+          (type protect)
+        )
+      )
+      (net "Net-(U1-Pad39)"
+        (wire
+          (path "cobre frontal" 2500
+            1417845 -732910
+            1418340 -732910
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1362080 -722695
+            1378550 -722695
+            1385620 -725624
+            1389980 -729981
+            1397050 -732910
+            1417845 -732910
+          )
+          (type protect)
+        )
+      )
+      (net "Net-(U1-Pad34)"
+        (wire
+          (path "cobre frontal" 2500
+            1257398 -499701
+            1272585 -499701
+            1274346 -497940
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1257398 -499701
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1339860 -701667
+            1257398 -619205
+            1257398 -499701
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1339860 -701667
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1417845 -707910
+            1401070 -707910
+            1394827 -701667
+            1339860 -701667
+          )
+        )
+      )
+      (net "Net-(U1-Pad33)"
+        (wire
+          (path "cobre frontal" 2500
+            1399085 -683762
+            1417845 -702522
+            1417845 -702910
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1399085 -683762
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1289552 -494027
+            1289552 -574229
+            1399085 -683762
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1289552 -494027
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1274346 -485240
+            1280765 -485240
+            1289552 -494027
+          )
+        )
+      )
+      (net TXA
+        (wire
+          (path "cobre frontal" 2500
+            1346929 -575753
+            1255031 -575753
+            1233088 -553810
+            1193819 -553810
+            1174203 -573426
+            1090834 -573426
+            1084460 -567052
+            1084460 -562093
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1424460 -655568
+            1441970 -673078
+            1441970 -683785
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1424460 -655568
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1346929 -575753
+            1346929 -589976
+            1412521 -655568
+            1424460 -655568
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1346929 -575753
+        )
+      )
+      (net RXA
+        (wire
+          (path "cobre frontal" 2500
+            1101335 -550218
+            1106419 -550218
+            1117280 -539357
+            1131701 -539357
+            1139211 -531847
+            1139211 -523773
+            1142880 -520104
+            1220779 -520104
+            1243065 -542390
+            1297312 -542390
+            1310245 -555323
+            1341436 -555323
+            1355312 -541447
+            1396165 -541447
+            1418207 -563489
+            1418207 -665022
+            1436970 -683785
+          )
+        )
+      )
+      (net "Net-(U1-Pad8)"
+        (wire
+          (path "Cobre traseira" 2500
+            1608823 -763461
+            1608823 -762135
+            1576036 -729348
+            1555230 -729348
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1608823 -763461
+            1615435 -763461
+            1621848 -769874
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1531095 -742910
+            1541668 -742910
+            1555230 -729348
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1555230 -729348
+        )
+        (via "Via[0-1]_600:400_um" 1608823 -763461
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1621848 -769874
+            1619000 -769874
+            1617730 -771144
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1624696 -769874
+            1621848 -769874
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1627190 -769874
+            1632436 -775120
+            1702577 -775120
+            1708331 -769366
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1717084 -769366
+            1708331 -769366
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1627190 -769874
+            1624696 -769874
+          )
+          (type protect)
+        )
+      )
+      (net "Net-(U1-Pad6)"
+        (wire
+          (path "cobre frontal" 2500
+            1575196 -731774
+            1569063 -731774
+            1548384 -752453
+            1542289 -752453
+            1541832 -752910
+            1531095 -752910
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1650331 -731266
+            1644577 -725512
+            1581458 -725512
+            1575196 -731774
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1659084 -731266
+            1650331 -731266
+          )
+        )
+      )
+      (net "Net-(U1-Pad5)"
+        (wire
+          (path "Cobre traseira" 2500
+            1582249 -789746
+            1551209 -758706
+            1544879 -758706
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1544879 -758706
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1531095 -757910
+            1544083 -757910
+            1544879 -758706
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1582249 -789746
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1593087 -787794
+            1591135 -789746
+            1582249 -789746
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1593087 -787794
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1599243 -761399
+            1594843 -765799
+            1594843 -786038
+            1593087 -787794
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1599243 -761399
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1624696 -757174
+            1603468 -757174
+            1599243 -761399
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1708331 -756666
+            1708293 -756666
+            1701389 -763570
+            1631092 -763570
+            1624696 -757174
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1717084 -756666
+            1708331 -756666
+          )
+        )
+      )
+      (net "PIN-S7"
+        (wire
+          (path "cobre frontal" 2500
+            1531095 -767910
+            1522655 -767910
+            1520076 -770489
+            1520076 -780241
+            1544904 -805069
+            1544904 -823723
+            1628818 -907637
+            1679431 -907637
+            1701518 -929724
+            1734741 -929724
+            1743456 -921009
+            1743456 -916320
+          )
+        )
+      )
+      (net "PIN-S6"
+        (wire
+          (path "cobre frontal" 2500
+            1730756 -916320
+            1730756 -912256
+            1660152 -841652
+            1624193 -841652
+            1555451 -772910
+            1531095 -772910
+          )
+        )
+      )
+      (net "PIN-S5"
+        (wire
+          (path "cobre frontal" 2500
+            1718056 -916320
+            1718056 -912435
+            1704781 -899160
+            1675332 -899160
+            1554082 -777910
+            1548730 -777910
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1548730 -777910
+            1531095 -777910
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1531095 -777910
+            1530600 -777910
+          )
+          (type protect)
+        )
+      )
+      (net K0
+        (wire
+          (path "cobre frontal" 2500
+            1531095 -727910
+            1539711 -727910
+            1552974 -714647
+            1552974 -660718
+            1577939 -635753
+            1596940 -635753
+            1672747 -559946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1672747 -559946
+            1673730 -559946
+            1684530 -549136
+            1684530 -513576
+            1675500 -504544
+            1669518 -504544
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1668030 -559946
+            1672747 -559946
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1668030 -559946
+            1668030 -561244
+            1667328 -561946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1668030 -480343
+            1668030 -492143
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1668030 -479936
+            1668030 -480343
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1667328 -481936
+            1667328 -481045
+            1668030 -480343
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1668030 -492143
+            1667518 -492655
+            1667518 -502544
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1668030 -492143
+            1668030 -504351
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1669518 -504544
+            1667518 -502544
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1669518 -504544
+            1668220 -504544
+          )
+          (type protect)
+        )
+      )
+      (net "Net-(C31-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1323850 -536040
+            1323846 -536040
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1323850 -536040
+            1354350 -536040
+            1358285 -532103
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1358285 -532103
+            1362221 -528167
+            1362221 -528166
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1358285 -532103
+            1362220 -528166
+          )
+          (type protect)
+        )
+      )
+      (net K_0
+        (wire
+          (path "cobre frontal" 2500
+            1680090 -377663
+            1680090 -388916
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1668030 -459088
+            1668030 -400976
+            1680090 -388916
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1668030 -462512
+            1668030 -459088
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1668030 -462512
+            1667328 -463214
+            1667328 -463936
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1668030 -465936
+            1668030 -462512
+          )
+          (type protect)
+        )
+      )
+      (net K_1
+        (wire
+          (path "cobre frontal" 2500
+            1659328 -463936
+            1659328 -384601
+            1652390 -377663
+          )
+        )
+      )
+      (net NOTE_
+        (wire
+          (path "cobre frontal" 2500
+            1597668 -463286
+            1597668 -456033
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1666240 -349263
+            1664865 -349263
+            1638540 -375588
+            1638540 -415161
+            1597668 -456033
+          )
+        )
+      )
+      (net K_C
+        (wire
+          (path "cobre frontal" 2500
+            1589668 -463286
+            1589668 -420319
+            1609247 -400740
+            1609247 -376185
+            1636169 -349263
+            1638540 -349263
+          )
+        )
+      )
+      (net K_D
+        (wire
+          (path "Cobre traseira" 2500
+            1582029 -411989
+            1555440 -385400
+            1555440 -349263
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1581668 -456033
+            1581668 -412350
+            1582029 -411989
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1581668 -463286
+            1581668 -456033
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1582029 -411989
+        )
+      )
+      (net K_5
+        (wire
+          (path "cobre frontal" 2500
+            1522168 -462666
+            1522168 -469919
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1528439 -390782
+            1528471 -390782
+            1541590 -377663
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1528439 -390782
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1561841 -429213
+            1528439 -395811
+            1528439 -390782
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1561841 -429213
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1522168 -469919
+            1534723 -469919
+            1561841 -442801
+            1561841 -429213
+          )
+        )
+      )
+      (net K_6
+        (wire
+          (path "Cobre traseira" 2500
+            1521868 -446175
+            1521868 -385641
+            1513890 -377663
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1521868 -446175
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1514168 -462666
+            1514168 -453875
+            1521868 -446175
+          )
+        )
+      )
+      (net K_7
+        (wire
+          (path "cobre frontal" 2500
+            1506168 -462666
+            1506168 -455413
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1506500 -446175
+            1486190 -425865
+            1486190 -377663
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1506500 -446175
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1506168 -455413
+            1506500 -455081
+            1506500 -446175
+          )
+        )
+      )
+      (net K_8
+        (wire
+          (path "cobre frontal" 2500
+            1462848 -462666
+            1462848 -455413
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1455464 -410274
+            1458490 -407248
+            1458490 -377663
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1455464 -410274
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1462848 -455413
+            1465730 -452531
+            1465730 -417127
+            1458877 -410274
+            1455464 -410274
+          )
+        )
+      )
+      (net K_9
+        (wire
+          (path "Cobre traseira" 2500
+            1459476 -419970
+            1463151 -416295
+            1463151 -388916
+            1463152 -388916
+            1469743 -382325
+            1469743 -373001
+            1463152 -366410
+            1442043 -366410
+            1430790 -377663
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1459476 -419970
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1454848 -462666
+            1454848 -424598
+            1459476 -419970
+          )
+        )
+      )
+      (net K_A
+        (wire
+          (path "cobre frontal" 2500
+            1446848 -462666
+            1446848 -469919
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1425484 -459813
+            1403090 -437419
+            1403090 -377663
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1425484 -459813
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1446848 -469919
+            1434342 -469919
+            1425484 -461061
+            1425484 -459813
+          )
+        )
+      )
+      (net K_B
+        (wire
+          (path "cobre frontal" 2500
+            1438848 -455413
+            1427179 -443744
+            1393416 -443744
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1438848 -462666
+            1438848 -455413
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1393416 -443744
+            1375390 -425718
+            1375390 -377663
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1393416 -443744
+        )
+      )
+      (net K_2
+        (wire
+          (path "cobre frontal" 2500
+            1651328 -456683
+            1637016 -456683
+            1633611 -460088
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1624690 -377663
+            1624690 -451167
+            1633611 -460088
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1651328 -463936
+            1651328 -456683
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1633611 -460088
+        )
+      )
+      (net K_3
+        (wire
+          (path "cobre frontal" 2500
+            1596990 -377663
+            1573794 -400859
+            1573794 -435842
+            1567887 -441749
+            1567887 -469212
+            1569864 -471189
+            1643328 -471189
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1643328 -463936
+            1643328 -471189
+          )
+        )
+      )
+      (net K_E
+        (wire
+          (path "cobre frontal" 2500
+            1574140 -444339
+            1573668 -444811
+            1573668 -463286
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1574140 -444339
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1416940 -349263
+            1428193 -360516
+            1485463 -360516
+            1500040 -375093
+            1500040 -382001
+            1515614 -397575
+            1515614 -448837
+            1519279 -452502
+            1565977 -452502
+            1574140 -444339
+          )
+        )
+      )
+      (net K_4
+        (wire
+          (path "cobre frontal" 2500
+            1569290 -377663
+            1569290 -412921
+            1530168 -452043
+            1530168 -455413
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1530168 -462666
+            1530168 -455413
+          )
+        )
+      )
+      (net "Net-(C24-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1428616 -850024
+            1441450 -837190
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1414780 -851165
+            1427475 -851165
+            1428616 -850024
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1432032 -853440
+            1428616 -850024
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1432032 -853440
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1531337 -835793
+            1449679 -835793
+            1432032 -853440
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1531337 -835793
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1536465 -820166
+            1536465 -830665
+            1531337 -835793
+          )
+        )
+      )
+      (net +2V5
+        (wire
+          (path "cobre frontal" 2500
+            1728612 -615712
+            1732949 -611375
+            1805096 -611375
+            1817037 -623316
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1728612 -615712
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1608330 -841002
+            1728612 -720720
+            1728612 -615712
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1608330 -841002
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1554715 -820166
+            1575551 -841002
+            1608330 -841002
+          )
+        )
+      )
+      (net "Net-(C5-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            996058 -536780
+            1031644 -536780
+            1043206 -525218
+            1052585 -525218
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            996058 -536780
+            996058 -545166
+            995558 -545666
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            996058 -528394
+            996058 -536780
+          )
+        )
+      )
+      (net "Net-(LED1-Pad2)"
+        (wire
+          (path "cobre frontal" 2500
+            828294 -433070
+            828669 -433445
+            828669 -453390
+          )
+        )
+      )
+      (net +5VP
+        (wire
+          (path "cobre frontal" 2500
+            1127349 -633842
+            1121303 -633842
+            1115126 -640019
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1149680 -633842
+            1127349 -633842
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1127349 -633842
+            1127349 -630015
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1041905 -536571
+            1041905 -535650
+            1047337 -530218
+            1052585 -530218
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1041905 -536571
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1127349 -630015
+            1127349 -577060
+            1086860 -536571
+            1041905 -536571
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1127349 -630015
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1115126 -652272
+            1115126 -640019
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1149680 -633842
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1277488 -417174
+            1149680 -544982
+            1149680 -633842
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            955029 -528066
+            955261 -527834
+            955261 -511048
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1077468 -480400
+            1020697 -480400
+            1012698 -488399
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1077468 -490927
+            1077468 -480400
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1277488 -417174
+            1198976 -417174
+            1135750 -480400
+            1077468 -480400
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1277488 -417174
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1817037 -674116
+            1804337 -661416
+            1787518 -661416
+            1779873 -653771
+            1779873 -523148
+            1638540 -381815
+            1638540 -375126
+            1624381 -360967
+            1578425 -360967
+            1569290 -351832
+            1569290 -346647
+            1560159 -337516
+            1357146 -337516
+            1277488 -417174
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            955261 -511048
+            977910 -488399
+            1012698 -488399
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            955272 -544830
+            955029 -544587
+            955029 -528066
+          )
+        )
+      )
+      (net "Net-(C7-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1129551 -528652
+            1130057 -528146
+            1130057 -511556
+          )
+        )
+      )
+      (net "Net-(C14-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1061615 -909066
+            1061615 -896813
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1274037 -688258
+            1281448 -680847
+            1345842 -680847
+            1349038 -677651
+            1349038 -668151
+            1342869 -661982
+            1339370 -661982
+            1325573 -648185
+            1322194 -648185
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1274037 -688258
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1190340 -887508
+            1274037 -803811
+            1274037 -688258
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1190340 -887508
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1061615 -896813
+            1070920 -887508
+            1190340 -887508
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1057402 -953516
+            1061615 -949303
+            1061615 -909066
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1296139 -647446
+            1321455 -647446
+            1322194 -648185
+          )
+        )
+      )
+      (net "Net-(Q2-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1137666 -906545
+            1129551 -914660
+            1129551 -938718
+            1137514 -946681
+          )
+        )
+      )
+      (net GND
+        (wire
+          (path "cobre frontal" 2500
+            1845564 -923436
+            1845564 -935189
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1220244 -1099279
+            1208821 -1087856
+            1208821 -1043827
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1220244 -1099279
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1845564 -935189
+            1836749 -935189
+            1816845 -955093
+            1816845 -966967
+            1786066 -997746
+            1764361 -997746
+            1662828 -1099279
+            1220244 -1099279
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1845564 -923436
+            1804337 -882209
+            1804337 -686816
+            1791637 -674116
+          )
+        )
+      )
+      (net RXP
+        (wire
+          (path "cobre frontal" 2500
+            1587036 -780065
+            1594896 -780065
+            1602345 -787514
+            1805239 -787514
+            1817037 -775716
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1587036 -780065
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1513704 -731950
+            1538921 -731950
+            1587036 -780065
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1513704 -731950
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1482908 -734801
+            1485759 -731950
+            1513704 -731950
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1482908 -734801
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1304547 -503991
+            1379820 -579264
+            1423322 -579264
+            1444518 -600460
+            1444518 -712479
+            1466840 -734801
+            1482908 -734801
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1304547 -503991
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1274346 -510640
+            1297898 -510640
+            1304547 -503991
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1244600 -501631
+            1253609 -510640
+            1274346 -510640
+          )
+        )
+      )
+      (net TXP
+        (wire
+          (path "cobre frontal" 2500
+            1765930 -732546
+            1771000 -737616
+            1804337 -737616
+            1817037 -750316
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1765930 -732546
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1559252 -409293
+            1765930 -615971
+            1765930 -732546
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1559252 -409293
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1226566 -501631
+            1235691 -492506
+            1248516 -492506
+            1262132 -478890
+            1285014 -478890
+            1360340 -403564
+            1553523 -403564
+            1559252 -409293
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1274346 -523340
+            1248275 -523340
+            1226566 -501631
+          )
+        )
+      )
+      (net "Net-(C29-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1323846 -510640
+            1323850 -510640
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1379471 -483716
+            1379470 -483716
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1379470 -483716
+            1368680 -494511
+            1357800 -494511
+            1346170 -506137
+            1328350 -506137
+            1323850 -510640
+          )
+          (type protect)
+        )
+      )
+      (net "Net-(Q5-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1326535 -946836
+            1334641 -938730
+            1334641 -915306
+            1326134 -906799
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1326535 -946836
+            1326850 -946836
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1326220 -946836
+            1326535 -946836
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1273302 -965058
+            1304020 -965058
+            1308320 -960758
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1326220 -946836
+            1326845 -947461
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1308320 -960758
+            1322250 -946836
+            1326220 -946836
+          )
+          (type protect)
+        )
+      )
+      (net "Net-(C6-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1013206 -563880
+            1057673 -563880
+            1059460 -562093
+          )
+        )
+      )
+      (net "Net-(LED3-Pad2)"
+        (wire
+          (path "cobre frontal" 2500
+            1576070 -913358
+            1576070 -937393
+          )
+          (type protect)
+        )
+      )
+      (net VBAT
+        (wire
+          (path "cobre frontal" 2500
+            1817037 -724916
+            1829260 -737139
+            1829260 -780397
+            1809063 -800594
+            1593264 -800594
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1593264 -800594
+            1567111 -826747
+            1421370 -826747
+            1276628 -682005
+            1275510 -682005
+            1193568 -600063
+            1193568 -593684
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1193568 -593684
+            876132 -593684
+            826770 -544322
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1193568 -593684
+        )
+        (via "Via[0-1]_600:400_um" 1593264 -800594
+        )
+      )
+      (net +5VD
+        (wire
+          (path "cobre frontal" 2500
+            1365455 -599027
+            1360780 -603702
+            1330661 -603702
+            1322589 -595630
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1408786 -597658
+            1366824 -597658
+            1365455 -599027
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1365455 -599027
+        )
+        (via "Via[0-1]_600:400_um" 1408786 -597658
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1409833 -585747
+            1408786 -586794
+            1408786 -597658
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1023874 -660925
+            1023874 -672178
+          )
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1098105 -916787
+            1098105 -746409
+            1023874 -672178
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1098105 -916787
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1120140 -924795
+            1106113 -924795
+            1098105 -916787
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1281968 -590854
+            1279275 -588162
+            1275389 -588162
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1275389 -607162
+            1279475 -607162
+            1285429 -601208
+            1285429 -594316
+            1281968 -590854
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1322589 -595630
+            1308486 -581527
+            1291295 -581527
+            1281968 -590854
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1155933 -628529
+            1155126 -627722
+            1155126 -612394
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1275389 -628529
+            1155933 -628529
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1155126 -640019
+            1155933 -639212
+            1155933 -628529
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1155126 -652272
+            1155126 -640019
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1277389 -637946
+            1277389 -630529
+            1275389 -628529
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1275389 -628529
+            1275389 -607162
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1124987 -694664
+            1126943 -696620
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1023874 -660925
+            1091248 -660925
+            1124987 -694664
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1155126 -664525
+            1124987 -694664
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1155126 -652272
+            1155126 -664525
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            802386 -517906
+            769013 -517906
+            764708 -522211
+            764708 -540122
+            831357 -606771
+            958467 -606771
+            1012621 -660925
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1023874 -660925
+            1012621 -660925
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            802386 -517906
+            802386 -461423
+            810419 -453390
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1277389 -656946
+            1324985 -656946
+            1340631 -672592
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1277389 -637946
+            1277389 -656946
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1126943 -696620
+            1122551 -696620
+            1116903 -702268
+            1116903 -709466
+            1123057 -715620
+            1126943 -715620
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1277389 -637946
+            1313380 -637946
+            1322191 -629135
+          )
+        )
+      )
+      (net "Net-(C29-Pad2)"
+        (wire
+          (path "cobre frontal" 2500
+            1323846 -497940
+            1323850 -497940
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1362221 -483716
+            1362220 -483716
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1323850 -497940
+            1348000 -497940
+            1362220 -483716
+          )
+          (type protect)
+        )
+      )
+      (net "Net-(C30-Pad2)"
+        (wire
+          (path "cobre frontal" 2500
+            1323850 -523340
+            1323846 -523340
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1323850 -523340
+            1335340 -523340
+            1341940 -516736
+            1368040 -516736
+            1374038 -510738
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1374038 -510738
+            1374039 -510738
+            1379471 -505306
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1374038 -510738
+            1379470 -505306
+          )
+          (type protect)
+        )
+      )
+      (net "Net-(C28-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1323850 -485240
+            1323846 -485240
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1323850 -485240
+            1339740 -485240
+            1357073 -467904
+          )
+          (type protect)
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1357073 -467904
+            1362851 -462126
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1357073 -467904
+            1362850 -462126
+          )
+          (type protect)
+        )
+      )
+      (net "Net-(U7-Pad14)"
+        (wire
+          (path "cobre frontal" 2500
+            1069460 -513343
+            1069460 -508283
+            1075004 -502739
+            1079442 -502739
+            1086968 -495213
+            1086968 -490927
+          )
+        )
+      )
+      (net "Net-(U7-Pad15)"
+        (wire
+          (path "cobre frontal" 2500
+            1064460 -513343
+            1064460 -494435
+            1067968 -490927
+          )
+        )
+      )
+      (net "Net-(LED2-Pad2)"
+        (wire
+          (path "cobre frontal" 2500
+            1549400 -913358
+            1549400 -937393
+          )
+          (type protect)
+        )
+      )
+      (net "Net-(CON2-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1111704 -429825
+            1050022 -429825
+            1012698 -467149
+          )
+        )
+      )
+      (net "Net-(CON2-Pad2)"
+        (wire
+          (path "cobre frontal" 2500
+            1067968 -468177
+            1067968 -463785
+            1077781 -453972
+            1112557 -453972
+            1136704 -429825
+          )
+        )
+      )
+      (net "Net-(CON2-Pad3)"
+        (wire
+          (path "cobre frontal" 2500
+            1086968 -468177
+            1115132 -468177
+            1148034 -435275
+            1148034 -421155
+            1136704 -409825
+          )
+        )
+      )
+      (net "Net-(CON2-Pad5)"
+        (wire
+          (path "cobre frontal" 2500
+            1190340 -470738
+            1192784 -473182
+            1192784 -482897
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1190340 -470738
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1184204 -381225
+            1184204 -464602
+            1190340 -470738
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1064204 -381225
+            1184204 -381225
+          )
+        )
+      )
+      (net "Net-(CON3-Pad16)"
+        (wire
+          (path "cobre frontal" 2500
+            1244600 -483381
+            1261791 -466190
+            1286486 -466190
+            1354153 -398523
+            1537259 -398523
+            1556129 -379653
+            1556129 -374427
+            1564400 -366156
+            1593947 -366156
+            1610840 -349263
+          )
+        )
+      )
+      (net "Net-(CON3-Pad17)"
+        (wire
+          (path "cobre frontal" 2500
+            1226566 -483381
+            1317301 -392646
+            1514822 -392646
+            1527740 -379728
+            1527740 -374785
+            1541999 -360526
+            1571877 -360526
+            1583140 -349263
+          )
+        )
+      )
+      (net "Net-(CON3-Pad24)"
+        (wire
+          (path "cobre frontal" 2500
+            1361540 -349263
+            1354315 -349263
+            1299036 -404542
+            1166921 -404542
+            1160316 -397937
+            1094830 -397937
+            1081075 -411692
+            981283 -411692
+            947967 -445008
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1389240 -349263
+            1361540 -349263
+          )
+        )
+      )
+      (net "Net-(CON6-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            1472770 -1073610
+            1472770 -1062357
+          )
+        )
+        (wire
+          (path "cobre frontal" 2500
+            1472770 -1062357
+            1435100 -1024687
+            1435100 -966440
+          )
+        )
+      )
+      (net "Net-(CON6-Pad2)"
+        (wire
+          (path "cobre frontal" 2500
+            1451450 -983090
+            1447800 -979440
+            1447800 -966440
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1451450 -983090
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1500470 -1073610
+            1498507 -1073610
+            1451450 -1026553
+            1451450 -983090
+          )
+        )
+      )
+      (net "Net-(CON6-Pad3)"
+        (wire
+          (path "cobre frontal" 2500
+            1460500 -966440
+            1460500 -1041897
+            1480959 -1062356
+            1516916 -1062356
+            1528170 -1073610
+          )
+        )
+      )
+      (net "Net-(CON6-Pad4)"
+        (wire
+          (path "cobre frontal" 2500
+            1479539 -983090
+            1473200 -976751
+            1473200 -966440
+          )
+        )
+        (via "Via[0-1]_600:400_um" 1479539 -983090
+        )
+        (wire
+          (path "Cobre traseira" 2500
+            1555870 -1073610
+            1553768 -1073610
+            1528170 -1048012
+            1528170 -1031721
+            1479539 -983090
+          )
+        )
+      )
+      (net "Net-(CON6-Pad5)"
+        (wire
+          (path "cobre frontal" 2500
+            1583570 -1073610
+            1566734 -1056774
+            1482182 -1056774
+            1475347 -1049939
+            1475347 -1038069
+            1485900 -1027516
+            1485900 -966440
+          )
+        )
+      )
+      (net "Net-(CON6-Pad6)"
+        (wire
+          (path "cobre frontal" 2500
+            1611270 -1073610
+            1613372 -1073610
+            1638970 -1048012
+            1638970 -1042851
+            1699839 -981982
+            1705936 -981982
+            1718056 -969862
+            1718056 -965820
+          )
+        )
+      )
+      (net "Net-(CON6-Pad7)"
+        (wire
+          (path "cobre frontal" 2500
+            1638970 -1073610
+            1640672 -1073610
+            1730756 -983526
+            1730756 -965820
+          )
+        )
+      )
+      (net "Net-(CON6-Pad8)"
+        (wire
+          (path "cobre frontal" 2500
+            1666670 -1073610
+            1743456 -996824
+            1743456 -965820
+          )
+        )
+      )
+      (net "Net-(CON6-Pad9)"
+        (wire
+          (path "cobre frontal" 2500
+            1486620 -1045210
+            1492250 -1039580
+            1492250 -956077
+            1494978 -953349
+            1502514 -953349
+            1511300 -962135
+            1511300 -966440
+          )
+        )
+      )
+      (net "Net-(CON6-Pad10)"
+        (wire
+          (path "cobre frontal" 2500
+            1514320 -1045210
+            1498600 -1029490
+            1498600 -966440
+          )
+        )
+      )
+      (net "Net-(CON7-Pad7)"
+        (wire
+          (path "cobre frontal" 2500
+            1197102 -965058
+            1197102 -1000146
+            1153421 -1043827
+          )
+        )
+      )
+      (net "Net-(CON7-Pad8)"
+        (wire
+          (path "cobre frontal" 2500
+            1209802 -965058
+            1209802 -1015146
+            1181121 -1043827
+          )
+        )
+      )
+      (net "Net-(CON8-Pad1)"
+        (wire
+          (path "cobre frontal" 2500
+            859028 -1004174
+            963994 -1004174
+            1014652 -953516
+          )
+        )
+      )
+    )
+  )
+)
