@@ -8951,7 +8951,7 @@
     (property "Reference" "R3" (id 0) (at 125.73 183.134 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "3.3k/10k" (id 1) (at 125.73 185.166 0)
+    (property "Value" "10k" (id 1) (at 125.73 185.166 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" (id 2) (at 122.682 184.404 90)
@@ -9267,7 +9267,7 @@
     (property "Reference" "R2" (id 0) (at 135.382 175.006 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "3.3k/10k" (id 1) (at 141.986 177.038 0)
+    (property "Value" "10k" (id 1) (at 136.3726 177.1396 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" (id 2) (at 133.096 176.276 90)
@@ -12095,10 +12095,10 @@
       (reference "R1") (unit 1) (value "470R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
     (path "/00000000-0000-0000-0000-0000611231df"
-      (reference "R2") (unit 1) (value "3.3k/10k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+      (reference "R2") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
     (path "/00000000-0000-0000-0000-000060fe9fc1"
-      (reference "R3") (unit 1) (value "3.3k/10k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+      (reference "R3") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
     (path "/c2ea4285-6d34-4496-a195-d4e69c0542e7"
       (reference "R4") (unit 1) (value "22k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
