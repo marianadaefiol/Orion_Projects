@@ -1,0 +1,4743 @@
+#include "glue.hh"
+#include <p24FJ64GA006.h>
+#include <Generic.h>
+#include <string.h>
+
+// Configuration bits
+
+// Code protect is on
+_CONFIG1( GCP_ON & JTAGEN_OFF & FWDTEN_OFF )
+
+// The clocksource is the primary oscillator in HS mode
+_CONFIG2( FNOSC_PRI & POSCMOD_HS & OSCIOFNC_ON )
+
+#define PUTS( x ) { while( U2STA & ( 1<<9 ) ); U2TXREG = (x); }
+//~ #define PUTS(x) {while(U1STA & (1 << 9)); U1TXREG = (x);}
+
+//#define EXPIRATION_LIMIT 40  /** 20180612 Maximum number of days allowed between two validations*/
+
+#define FLASH_BLOCK_SIZE 4096
+#define NUM_OF_BLOCKS    12
+
+
+uint16_t encBuffer[32];
+
+void print( char const * message )
+{
+  while( *message )
+  {
+    if ( *message == '\n' )
+      PUTS( '\r' );
+
+    PUTS( *message++ );
+  }
+}
+
+void print01( unsigned int val )
+{
+  if ( val )
+    PUTS( '1' )
+  else
+    PUTS( '0' )
+}
+
+void printVal( unsigned int val )
+{
+  for( int x = 16; x--; )
+    print01( ( val >> x ) & 1 );
+}
+
+inline void addToCrc( Crc16::Class & crc, uint16_t word )
+{
+  crc.add( (uint8_t *) &word + 1, 1 );
+  crc.add( &word, 1 );
+}
+
+uint32_t result;
+uint32_t idx, jdx;
+
+#if 0
+uint32_t generateLocalKey( uint32_t machineId, uint64_t in, uint64_t out )
+{
+  //~ uint16_t encBuffer[ 16 ];
+  memset(encBuffer, 0, sizeof(encBuffer));
+
+  uint32_t * myKey;
+  myKey[0] = 0;
+  myKey[1] = 0;
+  myKey[2] = 0;
+  myKey[3] = 0;
+
+  encBuffer[ 0 ] = 0xAA55;
+  memcpy( encBuffer + 1, &in, 8 );
+  memcpy( encBuffer + 5, &out, 8 );
+  encBuffer[ 9 ] = 0;
+  encBuffer[ 10 ] = (uint16_t) machineId;
+  encBuffer[ 11 ] = 0;
+  encBuffer[ 12 ] = 0;
+  encBuffer[ 13 ] = 0;
+  encBuffer[ 14 ] = 0;
+  encBuffer[ 15 ] = 0x1337;
+
+  Xxtea::encrypt( (uint32_t *) encBuffer, 8, myKey );
+
+  result = 0;
+
+  {
+    Crc16::Class crc;
+
+    for( unsigned x = 0; x < 8; ++x )
+      addToCrc( crc, encBuffer[ x ] );
+
+    result = crc.finalize();
+
+    Crc16::Class crc2;
+
+    for( unsigned x = 8; x < 16; ++x )
+      addToCrc( crc2, encBuffer[ x ] );
+
+    result |= ( ( (uint32_t)crc2.finalize() ) << 16 );
+  }
+
+  result %= 100000000;
+
+  memset(encBuffer, 0, sizeof(encBuffer));
+
+  return result;
+}
+#endif
+
+/** 20180530 Flash Program Memory control variables */
+uint32_t flashOffset;
+uint16_t flashLeft;
+uint8_t flashBlock;
+int dumpFlash(uint32_t offset, void *data, uint16_t size);
+
+/** 20190507 Specify eraseFlash function starting address. The address
+ *  0x6000 is located at the start of the 20th page. The eraseFlash
+ *  function must be located in the last page, so it will start erasing
+ *  from page 19 to page 0, and eventually will erase itself in page 20
+ *  where it is located.
+ */
+__attribute__((address(0x6000))) int eraseFlash(void);
+
+uint64_t _PERSISTENT systemStorageSeq;
+uint64_t _PERSISTENT gameStorageSeq;
+
+// The remaining counts which are due to be put to mech counters. They are
+// decreased inside the 1ms interrupt.
+uint64_t _PERSISTENT mechInLeft;
+uint64_t _PERSISTENT mechOutLeft;
+
+using Util::utostr;
+
+unsigned counter = 0;
+
+unsigned eventMessageDelay = 0;
+
+int billAcceptorEnabled = 0;
+int lastBillValue = 0;
+int billAcceptorDelay = 0;
+int billAcceptorLastCounterValue;
+
+unsigned lostConnectionDelay = 15000;
+
+// The remaining 1ms-long ticks for the mechanical counters. Positive value
+// means that the counter is being driven high and should be left that way
+// for the specified amount of milliseconds, negative value means that the
+// counter is being driven low and this should be done for the specified amount
+// of milliseconds, taking an absolute value of it.
+// This code assumes the counting speed of 10 counts per second (CPS).
+int mechInTicks = 0;
+int mechOutTicks = 0;
+
+// Number of ms left to redisplay the value shown on the display
+//volatile unsigned displayRefreshDelay = 1000;
+
+// Number of ms left to retry next security-sensitive operation, like
+// attempting entering a password.
+unsigned securityDelay = 2000;
+
+// Number of ms left until some security-sensitive information is to be
+// erased. Currently upon reaching zero the validation number for the
+// assisted clock setting is erased.
+/** 20180605 Upon reaching zero the validation number for the assisted
+ * rent setting is also erased.
+ */
+uint32_t securityEraseTimeout = 0;
+
+uint32_t sequence = 0;
+uint32_t seqPrnged = 0;
+
+// Sequence and validation numbers for the assisted clock setting procedure.
+// The values of zero means that the operation was not started.
+uint32_t clockSequenceNumber = 0;
+uint32_t clockValidationNumber = 0;
+
+/** 20180605 Sequence and validation numbers for the assisted rent setting 
+ * procedure. The values of zero means that the operation was not started.
+ */
+uint32_t rentSequenceNumber = 0;
+uint32_t rentValidationNumber = 0;
+
+/** 20180806 Sequence and validation numbers for the menu admin accessing
+ * procedure. The values of zero means that the operation was not started.
+ */
+uint32_t menuAdminSequenceNumber = 0;
+uint32_t menuAdminValidationNumber = 0;
+uint8_t  menuAdminAccessLevel = 0;
+
+/** 20210910 Sequence and validation numbers for the RW partition opening
+ * procedure. The values of zero means that the operation was not started.
+ */
+uint32_t partitionSequenceNumber = 0;
+uint32_t partitionValidationNumber = 0;
+
+uint64_t eui64 = 0x0004A31234567890ULL;
+
+/** 20220602 Store date and hour for validation purposes */
+uint16_t rentYear, rentMonth, rentDay, rentWeekDay;
+uint16_t rentHours, rentMinutes, rentSeconds;
+uint16_t expirationLimit;
+uint16_t utc;
+
+/** 20190606 Flash Configuration Word                                 */
+uint16_t configWord = 0;
+
+uint8_t pinInibMode = Protocol::SetPinInibMode::InibBillValidator;
+uint32_t pulseCount = 0;
+uint32_t pulseLength = 0;
+uint32_t pulseLengthLeft = 0;
+uint16_t pulseDelay = 0;
+
+extern "C" void __attribute__((__interrupt__,no_auto_psv)) _T2Interrupt( void )
+{
+  // Clear the interrupt, we're handling it.
+  IFS0bits.T2IF = 0;
+
+  Buttons::schedule1ms();
+  Lamps::schedule1ms();
+  Leds::schedule1ms();
+
+  /** 20190606 Check Flash Configuration Word 1 periodically.         */
+  if((counter % 60000) == 0)
+  {
+    /** 20190606 Dump address 0xABFE contents from flash memory       */
+    dumpFlash((0x000035C2 ^ 0x00009E3C), &configWord, 1);
+
+    /** 20190606 If the returned configuration word doesn't match 0x1F7F
+     *  the flash memory might have been compromised. Erase all.
+     */
+    if(configWord != (0x4618 ^ 0x5967))
+      eraseFlash();
+
+    /** 20190606 Reset Configuration Word Buffer                      */
+    configWord = 0;
+  }
+
+  ++counter;
+
+  if ( eventMessageDelay )
+    --eventMessageDelay;
+
+  if ( !billAcceptorDelay )
+  {
+    if ( BillAcceptor::pulseCounter )
+    {
+      // When we detect incoming pulses, we inhibit the bill acceptor
+      // and wait until there are no pulses for some time. After that,
+      // we take the number and store it as a resulting bill.
+      if(pinInibMode == Protocol::SetPinInibMode::InibBillValidator)
+        BillAcceptor::inhibit();
+
+      billAcceptorDelay = 1000;
+
+      billAcceptorLastCounterValue = BillAcceptor::pulseCounter;
+    }
+  }
+  else
+  {
+    if ( billAcceptorLastCounterValue != BillAcceptor::pulseCounter )
+    {
+      billAcceptorDelay = 1000;
+      billAcceptorLastCounterValue = BillAcceptor::pulseCounter;
+    }
+    else
+    {
+      if ( !--billAcceptorDelay )
+      {
+        // The pulse counter didn't change in a second, we can
+        // say that we succeeded in consuming a bill.
+        lastBillValue = BillAcceptor::pulseCounter;
+        BillAcceptor::pulseCounter = 0;
+      }
+    }
+  }
+
+  if ( lostConnectionDelay )
+    --lostConnectionDelay;
+
+  // Counters here
+
+  // In
+
+  if ( mechInTicks > 0 )
+  {
+    if ( !--mechInTicks )
+    {
+      mechInTicks = -50;
+      LATBbits.LATB0 = 0;
+    }
+  }
+  else
+  if ( mechInTicks < 0 )
+  {
+    if ( !++mechInTicks )
+    {
+      IntLock::Class _;
+
+      // Proteção adicionada para evitar rollback do contador
+      if(mechInLeft > 0)
+        --mechInLeft;
+    }
+  }
+
+  if ( mechInLeft && !mechInTicks )
+  {
+    // We can do another count right now.
+
+    LATBbits.LATB0 = 1;
+    mechInTicks = 50;
+  }
+
+  // Out
+
+  if ( mechOutTicks > 0 )
+  {
+    if ( !--mechOutTicks )
+    {
+      mechOutTicks = -50;
+      LATBbits.LATB1 = 0;
+    }
+  }
+  else
+  if ( mechOutTicks < 0 )
+  {
+    if ( !++mechOutTicks )
+    {
+      IntLock::Class _;
+
+      // Proteção adicionada para evitar rollback do contador
+      if(mechOutLeft > 0)
+        --mechOutLeft;
+    }
+  }
+
+  if ( mechOutLeft && !mechOutTicks )
+  {
+    // We can do another count right now.
+
+    LATBbits.LATB1 = 1;
+    mechOutTicks = 50;
+  }
+
+  //if ( displayRefreshDelay )
+  //  --displayRefreshDelay;
+
+  if ( securityDelay )
+    --securityDelay;
+
+  if ( securityEraseTimeout )
+  {
+    if ( !--securityEraseTimeout )
+    {
+      clockSequenceNumber = 0;
+      clockValidationNumber = 0;
+      
+      /** 20180605 Generate a new validation for rent setting */
+      rentSequenceNumber = 0;
+      rentValidationNumber = 0;
+
+      /** 20190806 Generate a new validation for Menu Admin accessing */
+      menuAdminAccessLevel = 0;
+      menuAdminSequenceNumber = 0;
+      menuAdminValidationNumber = 0;
+
+      /** 20210910 Generate a new validation for partition opening */
+      partitionSequenceNumber = 0;
+      partitionValidationNumber = 0;
+    }
+  }
+
+  if(pinInibMode == Protocol::SetPinInibMode::SendPrinterPulse)
+  {
+    if(pulseCount > 0)
+    {
+      if(pulseLengthLeft == 0)
+      {
+        pulseLengthLeft = pulseLength;
+        LATDbits.LATD0 = LATDbits.LATD0 ^ 1;
+        pulseCount--;
+        if(pulseCount == 0)
+        {
+          LATDbits.LATD0 = 0;
+          pulseDelay = 2000;
+        }
+      }
+      else
+        pulseLengthLeft--;
+    }
+    if(pulseDelay > 0)
+      pulseDelay--;
+  }
+}
+
+// Locks the internal timer
+class TimerLock
+{
+public:
+
+  TimerLock()
+  {
+    IEC0bits.T2IE = 0;
+  }
+
+  ~TimerLock()
+  {
+    IEC0bits.T2IE = 1;
+  }
+};
+
+// Data stored in the system Fram
+struct SystemState
+{
+  uint64_t in, out; // Game money in/out, in cents. Used for mechanical
+                    // counters and as always-available statistics
+
+  uint8_t isGameFramBlank; // 1 if the game fram is supposed to be blank,
+                           // 0 if the game fram is supposed to contain valid data
+
+  uint8_t isTimeLocked; // 1 if the board is time-locked, 0 otherwise
+
+  // A date after which a game is to stay locked, only effective if
+  // isTimeLocked is 1.
+  uint16_t year, month, day, hours, minutes, seconds;
+
+  // The last time set. Used to calculate time correction values
+  uint16_t yearSet, monthSet, daySet, hoursSet, minutesSet, secondsSet;
+
+  // Time correction values. Measured as the number of seconds passed since
+  // time was set the last time, and the number of seconds which are actually
+  // passed since then, measured using an external reference clock. If some of
+  // these values or both are zero, the values were not calculated and should
+  // not be used.
+  uint32_t rtcSecondsPassed, refSecondsPassed;
+
+  // Specifies the number of minutes which should be added to the RTC readings
+  // to get the current local time.
+  int16_t timeZone;
+
+  uint8_t isTainted; // 1 if the game was tainted and should not function
+                     // until the taint flag is removed
+
+  uint32_t assistedSetTimeSeq; // The next number to be used as a sequence
+                               // in the assisted time setting procedure
+  /** 20180506 Generate a new Rent Validation every 10 minutes        */
+  uint32_t assistedSetRentSeq;
+  /** 20190806 Generate a new Menu Admin Validation every 60 minutes  */
+  uint32_t assistedMenuAdminSeq;
+
+  /** 20210910 RW partition sequence number                           */
+  uint32_t partitionSeq;
+
+  uint8_t parameters[Protocol::SystemParameters::MaxParameters];
+} systemState;
+
+// Current lock bits
+uint32_t lockBits;
+bool lobbyAccess;
+
+Storage::Class * systemStorageRef = 0;
+
+// Saves the system state back to FRAM. Trashes the Comm::responseBody!
+// Returns 1 if the operation was successful, 0 otherwise
+int saveSystemState( int ensureReadable = 1 )
+{
+  if ( !systemStorageRef )
+    return 0;
+
+  if ( lockBits & Protocol::LockBits::SystemStorageDamaged )
+  {
+    // We won't save anything because the system storage appears to be
+    // damaged and as such, the data we have in our local copy was initially
+    // blank.
+    return 0;
+  }
+
+  if ( systemStorageRef->startUpdate( sizeof( systemState ),
+                                      ensureReadable, Comm::responseBody )
+       != Storage::NoError )
+  {
+    // The updating failed, set an error
+    lockBits |= Protocol::LockBits::SystemStorageDamaged;
+    return 0;
+  }
+
+  // Since addData() destroys the contents of the data that is being written,
+  // we make a copy and write it.
+  memcpy( Comm::responseBody, &systemState, sizeof( systemState ) );
+
+  if ( systemStorageRef->addData( Comm::responseBody, sizeof( systemState ) ) != Storage::NoError ||
+       systemStorageRef->finalizeUpdate( Comm::responseBody ) != Storage::NoError )
+  {
+    // The updating failed, set an error
+    lockBits |= Protocol::LockBits::SystemStorageDamaged;
+
+    return 0;
+  }
+
+  /** 20190606 Dump address 0xABFE contents from flash memory         */
+  dumpFlash((0x0000952A ^ 0x00003ED4), &configWord, 1);
+
+  /** 20190606 If the returned configuration word doesn't match 0x1F7F
+   *  the flash memory might have been compromised. Erase all.
+   */
+  if(configWord != (0x549A ^ 0x4BE5))
+    eraseFlash();
+
+  /** 20190606 Reset Configuration Word Buffer                        */
+  configWord = 0;
+
+  return 1;
+}
+
+// Resets system state to default values
+void resetSystemState()
+{
+  memset( &systemState, 0, sizeof( systemState ) );
+
+  systemState.assistedSetTimeSeq = 1;
+}
+
+// Checks the rent and raises the lock bit if it is expired, or clears it
+// otherwise. The Rtc must be running.
+void checkRent()
+{
+  if ( systemState.isTimeLocked )
+  {
+    unsigned year, month, day, weekDay, hours, minutes, seconds;
+
+    Rtc::get( year, month, day, weekDay, hours, minutes, seconds );
+
+    bool expired = false;
+
+    if ( year > systemState.year )
+      expired = true;
+    else
+    if ( year == systemState.year )
+    {
+      if ( month > systemState.month )
+        expired = true;
+      else
+      if ( month == systemState.month )
+      {
+        if ( day > systemState.day )
+          expired = true;
+        else
+        if ( day == systemState.day )
+        {
+          if ( hours > systemState.hours )
+            expired = true;
+          else
+          if ( hours == systemState.hours )
+          {
+            if ( minutes > systemState.minutes )
+              expired = true;
+            else
+            if ( minutes == systemState.minutes )
+            {
+              expired = seconds > systemState.seconds;
+            }
+          }
+        }
+      }
+    }
+
+    if ( expired )
+    {
+      lockBits |= Protocol::LockBits::RentExpired;
+      Leds::setError2(lockBits);
+      return;
+    }
+  }
+
+  lockBits &= ~Protocol::LockBits::RentExpired;
+  Leds::setError2(lockBits); 
+}
+
+
+/** 20180611 This function returns the number of the day of the Year 
+ *  after n days. Return 0 if fails;
+ */
+const uint8_t daysOfMonths[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+uint16_t dayOfYear(uint16_t year_, uint16_t month_, uint16_t day_) 
+{
+  uint16_t year = year_;
+  uint8_t month = month_;
+  uint8_t day = day_;
+  
+  uint16_t leapYear = 0;
+  if(year % 4 == 0)
+    leapYear = 1;
+  
+  uint16_t dayNumber = 0;  /** 20180611 Calculate current day number */
+  idx = 1;                 /** 20180611 Just an auxiliary index */
+  
+  /** 20180611 Sanity check */
+  if((leapYear == 0) && (month == 2) && (day == 29))
+    return(0);
+  
+  if((month == 0) || (month > 12))
+    return(0);
+  
+  if(day == 0)
+    return(0);
+
+  if((leapYear == 1) && (month == 2))
+  {
+    if(day > (daysOfMonths[month - 1] + 1))
+      return(0);
+  }
+  else if(day > daysOfMonths[month - 1])
+    return(0);
+  
+  /** 20180611 Calculate the number of the current day */
+  while(idx < month)
+  {
+    dayNumber += daysOfMonths[idx - 1];
+    idx++;
+  }
+  dayNumber += day;
+
+  if((leapYear == 1) && (month > 2))    
+    dayNumber += 1;    /** 20180611 Add February 29th if it is a Leap Year */
+
+  /** 20180611 Return the number of the day after n days */
+  return(dayNumber);
+}
+
+void checkRtcRentGap(void)
+{
+  unsigned year, month, day, weekDay, hours, minutes, seconds;
+  Rtc::get(year, month, day, weekDay, hours, minutes, seconds);
+    
+  uint16_t rtcDate = dayOfYear(year, month, day);
+  uint16_t expirationDate = dayOfYear(systemState.year, systemState.month, systemState.day);
+    
+  if(systemState.year == (year + 1))
+  {
+    if((year % 4) == 0)
+      expirationDate += 366;
+    else 
+      expirationDate += 365;
+  }
+  else if(systemState.year == (year + 2))
+  {
+    expirationDate += 365;
+    
+    if(((year % 4) == 0) || (((year + 1) % 4) == 0))
+      expirationDate += 366;
+    else 
+      expirationDate += 365;
+  }
+    
+ /** 20180613 Do not allow a gap bigger than expirationLimit days
+  *  between today and expiration date 
+  */
+  if(expirationDate > (rtcDate + expirationLimit))
+    lockBits |= Protocol::LockBits::RentExpired;
+    
+ /** 20210121 Expiration year must be the same or, at maximum, two more 
+  *  than current year
+  */
+  //~ if((year != systemState.year) && ((year + 1) != systemState.year) && ((year + 2) != systemState.year))
+    //~ lockBits |= Protocol::LockBits::RentExpired;
+  
+  /** 20210114 Do not allow expiration year to be less than 2021 */
+  if(systemState.year < 2021)
+    lockBits |= Protocol::LockBits::RentExpired;
+}
+
+int getHardwareId(CII2C::Class *i2cci, uint8_t hardIdTemp[])
+{
+  i2cci->write1I2C1(0xA0, 0xF8);
+  i2cci->readNI2C1(0xA0, hardIdTemp, 8);
+
+  unsigned char hardID[5];
+  const unsigned char oui[10][3] ={{0x00, 0x04, 0xA3},
+                                   {0x00, 0x1E, 0xC0},
+                                   {0xD8, 0x80, 0x39},
+                                   {0x54, 0x10, 0xEC},
+                                   {0xFC, 0xC2, 0x3D},
+                                   {0x80, 0x1F, 0x12},
+                                   {0x04, 0x91, 0x62},
+                                   {0x68, 0x27, 0x19},
+                                   {0xE8, 0xEB, 0x1B},
+                                   {0x80, 0x34, 0x28}};
+
+  for(idx = 0; idx < 10; idx++)
+  {
+    for(jdx = 0; jdx < 3; jdx++)
+    {
+      if(hardIdTemp[jdx] == oui[idx][jdx])
+      {
+        hardID[jdx] = hardIdTemp[jdx];
+      }
+      else if (hardIdTemp[jdx + 2] == oui[idx][jdx])
+      {
+        hardID[jdx + 2] = hardIdTemp[jdx + 2];
+      }
+      else
+      {
+        continue;
+      }
+    }
+  }
+
+  if(hardIdTemp[0] == hardID[0] && hardIdTemp[1] == hardID[1] && hardIdTemp[2] == hardID[2])
+  {
+    return 1;
+  }
+  else if(hardIdTemp[2] == hardID[2] && hardIdTemp[3] == hardID[3] && hardIdTemp[4] == hardID[4])
+  {
+    hardIdTemp[0] == 0x00;
+    hardIdTemp[1] == 0x00;
+    return 1;
+  }
+  else
+  {
+    lockBits |= Protocol::LockBits::HardwareIdICAbsent;
+    Leds::setError2(lockBits);
+    return 0;
+  }
+}
+
+unsigned processPrivilegedCommand( unsigned char * request,
+                                   unsigned requestSize,
+                                   unsigned char * response );
+
+
+// 20210914 Variáveis de uso temporário
+uint8_t hardId_[8];
+
+Keys::GameId gameId_;
+Keys::MachineId machineId_;
+
+#if 0
+void emulateSb();
+#endif
+
+int main()
+{
+  AD1PCFG = 0xFFFF; // Make all A/D pins act as normal port I/O
+
+  // Init counters' pins early, so that counters don't make false counts
+  // due to init delay
+  TRISBbits.TRISB0 = 0;
+  TRISBbits.TRISB1 = 0;
+  LATBbits.LATB0 = 0;
+  LATBbits.LATB1 = 0;
+
+  // Make some delay to give some time for the peripherals to settle.
+  for(idx = 0xFFFF; idx--;)
+    for(jdx = 0xF; jdx--;);
+
+  lockBits = 0;
+  lobbyAccess = false;
+
+  Rtc::init();
+  Suspend::init();
+  Rand::init();
+  Lamps::init();
+  Fram::init();
+  Leds::init();
+  
+  
+  CII2C::Class cii2c(400000);
+
+  { // para que a variavel seja destruida.
+    memset(hardId_, 0, sizeof(hardId_));
+    getHardwareId(&cii2c, hardId_);
+    memset(hardId_, 0, sizeof(hardId_));
+  }
+
+  if ( !Fram::isPresent() || !Fram::setBlockProtection( Fram::All ) )
+    lockBits |= Protocol::LockBits::FramIsAbsent;
+    Leds::setError2(lockBits); 
+
+  Buttons::init();
+  BillAcceptor::init();
+  //Display::init();
+
+  if(pinInibMode == Protocol::SetPinInibMode::InibBillValidator)
+    BillAcceptor::inhibit();
+
+  if ( Suspend::isInitialPowerUp() )
+  {
+    systemStorageSeq = 0;
+    gameStorageSeq = 0;
+
+    mechInLeft = 0;
+    mechOutLeft = 0;
+  }
+
+  #if 0
+  print( "BEGN" );
+
+  for( unsigned x = 0; x < Fram::Size; ++x )
+  {
+    unsigned char c;
+    Fram::read( x, &c, 1 );
+    PUTS( c );
+  }
+  print( "ENDD" );
+
+  for( ;; );
+
+  #endif
+
+  Storage::Class systemStorage( &systemStorageSeq, 256, 0 );
+
+  systemStorageRef = &systemStorage;
+
+  // Try restoring the system state
+  {
+    unsigned systemStorageSize;
+
+    // Set the defaults
+
+    resetSystemState();
+
+    if ( systemStorage.checkAndRepair( Comm::responseBody ) != Storage::NoError ||
+         systemStorage.startReading( systemStorageSize, Comm::responseBody ) !=
+           Storage::NoError || systemStorageSize > sizeof( systemState ) ||
+         systemStorage.readData( &systemState, systemStorageSize ) !=
+           Storage::NoError )
+    {
+      // Failure
+
+      resetSystemState();
+
+      lockBits |= Protocol::LockBits::SystemStorageDamaged;
+      Leds::setError2(lockBits); 
+
+    }
+  }
+
+  Storage::Class gameStorage( &gameStorageSeq, (Fram::getFramType() == 0x01 ? 16000 : 65000),
+                              systemStorage.getMaxPhysicalSize() ); 
+
+  if ( !systemState.isGameFramBlank &&
+       gameStorage.checkAndRepair( Comm::responseBody ) != Storage::NoError )
+  {
+    lockBits |= Protocol::LockBits::GameStorageDamaged;
+    Leds::setError2(lockBits);
+  }
+
+  // Check the rent
+  switch(Keys::getGameId()) {
+    case(24):  /** 20201214 Limite de dias extendido */
+      // Stand-Alone Display: 0x55AA XOR 735 dias = 0x5775
+      expirationLimit = 0x5775;
+      break;
+    case(22):
+      // Island: 0x55AA XOR 95 dias = 0x55F5
+      expirationLimit = 0x55F5;
+      break;
+    default:
+      // Stand-Alone Games: 0x55AA XOR 185 dias = 0x5513
+      expirationLimit = 0x5513;
+      break;
+  }  
+  if ( !Rtc::isRunning() )
+  {
+    lockBits |= Protocol::LockBits::RtcNotRunning;
+    Leds::setError2(lockBits); 
+  }
+  else
+  {
+    /** 20180625 Force error RentExpired if board does not have an 
+     *  expiration date set;
+     */
+    if(systemState.isTimeLocked == 0)
+    { 
+      lockBits |= Protocol::LockBits::RentExpired;
+      Leds::setError2(lockBits); 
+    } 
+    else
+      checkRent();
+  }
+
+  // Check the taint bit
+  if ( systemState.isTainted ) 
+  {
+    lockBits |= Protocol::LockBits::Tainted;
+    Leds::setError2(lockBits); 
+  } 
+
+#if 0
+  unsigned sz;
+
+  if ( gameStorage.startReading( sz, Comm::responseBody )
+       == Storage::NoError )
+  {
+    char buf[ 15 ];
+    buf[ 14 ] = 0;
+    gameStorage.readData( buf, sz );
+
+    print( "Data is " );
+    print( buf );
+    print( "\n" );
+  }
+#endif
+
+  // Configure internal 1ms timer used for polling buttons and scheduling
+  // other jobs.
+
+  T2CONbits.TON = 0; // Turn it off first, just in case
+  T2CONbits.T32 = 0; // 16-bit mode
+  T2CONbits.TCKPS = 0; // 1:1 ratio
+  PR2 = 10000; // 10Mhz/1000 to get the 1ms interval
+  TMR2 = 0; // The initial timer counter value
+
+  IPC1bits.T2IP = 1; // Priority is 1, the lowest possible
+
+  IFS0bits.T2IF = 0; // Clear the interrupt flag
+  IEC0bits.T2IE = 1; // Enable the interrupt
+                     // 
+  T2CONbits.TON = 1; // Turn the timer on
+
+  Suspend::resetInitialPowerUpFlag();
+
+  // Check if the RTC clock is running with more or less sane speed
+
+  if ( Rtc::isRunning() )
+  {
+    {
+      TimerLock _;
+     // displayRefreshDelay = 1000; // We reuse the display refresh delay
+
+      static int const program[ 2 ] __attribute((space(auto_psv))) = { 2000, 0 };
+
+      // We turn on all lamps, too, to provide lamp diagnostics at the same time
+      for(idx = Lamps::Count; idx--;)
+        Lamps::set(idx, program);
+    }
+
+    Rtc::startSpeedMeasure();
+
+    //while( displayRefreshDelay );
+
+    unsigned rtcTicksDone = Rtc::stopSpeedMeasure();
+
+    // Since the initial one second is passed, the display is to be refreshed
+    // and we leave the value as zero
+
+    // Turn the lamps back off
+    {
+      TimerLock _;
+
+      Lamps::reset();
+    }
+
+    // (20170526) Increase RTC crystal frequency error tolerance (from +-10 -> +-20)! 
+    // Might cause bugs in the future - need testing
+    if ( rtcTicksDone < 16384-20 || rtcTicksDone > 16384+20 )	
+      lockBits |= Protocol::LockBits::RtcSpeedWrong;
+    Leds::setError2(lockBits); 
+  }
+
+#if 0
+  // If we're serving an sb emulation, check if we need to enter it now
+  if ( Keys::getGameId() == 4 && ( PORTDbits.RD3 ) )
+    emulateSb();
+#endif
+
+  // Enable the communications with the board now
+  Comm::init();
+
+  //uint32_t currentDisplayValue = Display::BlankValue;
+
+  // We call Rand::rand() every now and then to make random values depend
+  // on time.
+  uint16_t iterationsUntilRand = 0;
+  
+  /** 20180612 At start up, check if expiration date does not exceed
+   *  current date in expirationLimit days. Set LockBits if gap is too
+   *  big;
+   */
+  if(!lockBits)
+    checkRtcRentGap( );
+  
+  // Main loop -- processes all requests from the PC and does all the
+  // jobs scheduled by various interrupt handlers
+  for( ; ; )
+  {
+    // Check if we have to send an event message
+
+    if ( ( Buttons::hasEvents() || lastBillValue ) && !eventMessageDelay )
+    {
+      Comm::sendEventMessage();
+      eventMessageDelay = 400;
+    }
+
+    if ( !iterationsUntilRand-- )
+      iterationsUntilRand = Rand::rand();
+
+    // Check if we want to inhibit bill acceptor, turn off the lights
+    // and display because the board was not communicated with for too long
+
+    if ( !lostConnectionDelay )
+    {
+      TimerLock _;
+
+      if(pinInibMode == Protocol::SetPinInibMode::InibBillValidator)
+        BillAcceptor::inhibit();
+
+      Lamps::reset();
+
+      //currentDisplayValue = Display::BlankValue;
+      //displayRefreshDelay = 0;
+
+      lostConnectionDelay = 15000; // Reset the connection watchdog
+    }
+/*
+    if ( !displayRefreshDelay )
+    {
+      // Try refreshing the display, if possible now
+      if ( Display::canBeSetNow() )
+      {
+        Display::set( currentDisplayValue );
+
+        TimerLock _;
+
+        displayRefreshDelay = 1000;
+      }
+    }
+*/
+    uint16_t requestSize = Comm::isRequestReceived();
+
+    if ( requestSize )
+    {
+      lostConnectionDelay = 15000; // Reset the connection watchdog
+
+      // There is some request. Check it.
+
+      switch( Comm::requestBody[ 0 ] )
+      {
+        case Protocol::Command::GetDumpParams:
+        {
+          Protocol::GetDumpParams::Request * req =
+            ( Protocol::GetDumpParams::Request * ) Comm::requestBody;
+
+          Protocol::GetDumpParams::Response * resp = 
+            ( Protocol::GetDumpParams::Response * ) Comm::responseBody;
+            
+          if ( requestSize != sizeof( *req ) )
+          {
+            // Incorrect packet size
+
+            memset( resp, 0, sizeof( *resp ) );
+          }
+          else
+          {
+            resp->success = 1;
+            resp->blockCount = NUM_OF_BLOCKS; // tamanho total para MCU PIC16FJ64
+            resp->blockLength = FLASH_BLOCK_SIZE; // tamanho de cada bloco
+            resp->dataBeginAddr = Keys::getKeysStartAddr();
+            resp->dataLength = Keys::getKeysSize();
+            
+            resp->salt = Rand::rand() ^ 0xf197ade0;
+            resp->magic = Protocol::PrivilegedCommand::Magic;
+            resp->length = 8;
+            
+            Xxtea::encrypt(&(resp->salt), 4, Keys::getBoardKey( ));
+          }
+          
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::GetHardIdCrypt:
+        {
+          Protocol::GetHardIdCrypt::Request * req =
+            ( Protocol::GetHardIdCrypt::Request * ) Comm::requestBody;
+
+          Protocol::GetHardIdCrypt::Response * resp = 
+            ( Protocol::GetHardIdCrypt::Response * ) Comm::responseBody;
+            
+          if ( requestSize != sizeof( *req ) )
+          {
+            // Incorrect packet size
+            resp->success = 0;
+            memset( resp, 0, sizeof( *resp ) );
+          }
+          else
+          {
+            resp->success = getHardwareId(&cii2c, resp->hardId);
+            
+            resp->salt = Rand::rand() ^ 0xf197ade0;
+            resp->magic = Protocol::PrivilegedCommand::Magic;
+            resp->length = 8;
+            
+            Xxtea::encrypt(&(resp->salt), 4, Keys::getBoardKey( ));
+          }
+          
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::GetInfo:
+        {
+          Protocol::GetInfo::Request * req =
+            ( Protocol::GetInfo::Request * ) Comm::requestBody;
+
+          Protocol::GetInfo::Response * resp = 
+            ( Protocol::GetInfo::Response * ) Comm::responseBody;
+
+          if ( requestSize != sizeof( *req ) )
+          {
+            // Incorrect packet size
+
+            memset( resp, 0, sizeof( *resp ) );
+          }
+          else
+          {			
+            resp->success = 1;           
+            resp->minorVer = Version::getMinor();
+            resp->extraVer = Version::getExtra();
+            resp->gameId = Keys::getGameId();
+            resp->serialNumber = Keys::getMachineId();
+            resp->lockBits = lockBits;
+            
+            for(idx = 0; idx < 6; idx++)
+              resp->majorVer[idx] = Version::getMajor()[idx];//a;
+          }
+          
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::ReadClearEvents:
+        {
+          Protocol::ReadClearEvents::Request * req =
+            ( Protocol::ReadClearEvents::Request * ) Comm::requestBody;
+
+          Protocol::ReadClearEvents::Response * resp = 
+            ( Protocol::ReadClearEvents::Response * ) Comm::responseBody;
+
+          if ( requestSize != sizeof( *req ) )
+          {
+            // Incorrect packet size
+
+            resp->success = 0;
+          }
+          else
+          {
+            resp->success = 1;
+
+            resp->buttonsPressedNow = 0;
+
+            TimerLock _;
+
+            unsigned mask = ( 1 << ( Buttons::Count - 1 ) );
+
+            for(idx = Buttons::Count; idx--; mask >>= 1)
+            {
+              /** 20220602 If lockBits is set with error 78 or 86, allow
+               *  only buttons 2, 6 (3 button layout), 7, 9 and 11 to operate */
+              if(((systemState.isTimeLocked == 0) || lockBits) && 
+                ((idx == 0) || (idx == 1) || (idx == 3) || (idx == 4) ||
+                 (idx == 5) || /*(idx == 6) ||*/ (idx == 8) || (idx == 10)))
+                resp->buttonsReleaseCount[idx] = 0;
+              else
+              {
+                resp->buttonsReleaseCount[idx] = Buttons::state[idx].releaseCount;
+                
+                if(Buttons::state[idx].pressedNow)
+                  resp->buttonsPressedNow |= mask;
+              }
+
+              Buttons::state[idx].releaseCount = 0;
+            }
+
+            Buttons::resetEventFlag();
+
+            resp->insertedBillValue = ( unsigned ) lastBillValue;
+
+            if ( lastBillValue )
+            {
+              lastBillValue = 0;
+              if((billAcceptorEnabled) && (pinInibMode == Protocol::SetPinInibMode::InibBillValidator))
+                BillAcceptor::uninhibit();
+            }
+
+            eventMessageDelay = 0;
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::SetTime:
+        {
+          Protocol::SetTime::Request * req =
+            ( Protocol::SetTime::Request * ) Comm::requestBody;
+
+          Protocol::SetTime::Response * resp = 
+            ( Protocol::SetTime::Response * ) Comm::responseBody;
+
+          if ( requestSize != sizeof( *req ) ||
+               ( lockBits & Protocol::LockBits::SystemStorageDamaged ) ||
+               systemState.isTimeLocked )
+          {
+            // Incorrect packet size, the system storage was damaged and
+            // it's impossible to know if the system is time-locked or not, or
+            // the system is indeed time-locked
+
+            resp->success = 0;
+          }
+          else if((lockBits & Protocol::LockBits::RtcNotRunning) /*|| (systemState.isTimeLocked == 0) || lockBits*/) 
+          {
+            /** 20180622 Do not allow this command to run if something is 
+             *  not right with the board.
+             */
+            resp->success = 0;
+          }
+          /** 20180612 Add condition to make sure there is a valid date */
+          else if(req->year < 2021 || req->year > 2099)
+          {
+            resp->success = 0;
+          }
+          else 
+          {
+            // Proceed setting the time
+
+            Rtc::set( req->year, req->month, req->day, req->weekDay,
+                      req->hours, req->minutes, req->seconds,
+                      req->calibrationValue );
+
+            systemState.yearSet = req->year;
+            systemState.monthSet = req->month;
+            systemState.daySet = req->day;
+            systemState.hoursSet = req->hours;
+            systemState.minutesSet = req->minutes;
+            systemState.secondsSet = req->seconds;
+
+            if ( ( resp->success = saveSystemState() ) )
+              lockBits &= ~Protocol::LockBits::RtcNotRunning;
+            else
+              Rtc::stop();
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::SetTimeZone:
+        {
+          Protocol::SetTimeZone::Request * req =
+            ( Protocol::SetTimeZone::Request * ) Comm::requestBody;
+
+          Protocol::SetTimeZone::Response * resp = 
+            ( Protocol::SetTimeZone::Response * ) Comm::responseBody;
+
+          if ( requestSize != sizeof( *req ) || req->timeZone < -12*60 ||
+               req->timeZone > 14*60 ||
+               ( lockBits & Protocol::LockBits::SystemStorageDamaged ) )
+          {
+            // Incorrect packet size, invalid timezone, or the system storage
+            // is damaged and there is not much point in setting new timezone.
+
+            resp->success = 0;
+          }
+          else if((lockBits & Protocol::LockBits::RtcNotRunning) /*|| (systemState.isTimeLocked == 0) || lockBits*/) 
+          {
+            /** 20180622 Do not allow this command to run if something is 
+             *  not right with the board.
+             */
+            resp->success = 0;
+          }
+          else
+          {
+            // Proceed setting the timezone
+
+            systemState.timeZone = req->timeZone;
+
+            resp->success = saveSystemState();
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::GetTime:
+        {
+          Protocol::GetTime::Request * req =
+            ( Protocol::GetTime::Request * ) Comm::requestBody;
+
+          Protocol::GetTime::Response * resp = 
+            ( Protocol::GetTime::Response * ) Comm::responseBody;
+
+          memset( resp, 0, sizeof( *resp ) );
+
+          if ( requestSize != sizeof( *req ) )
+          {
+            // Incorrect packet size
+
+            resp->success = 0;
+          }
+          else
+          {
+            // Proceed getting the time
+
+            if ( Rtc::isRunning() || lobbyAccess )
+            {
+              unsigned year, month, day, weekDay, hours, minutes, seconds;
+
+              Rtc::get( year, month, day, weekDay, hours, minutes, seconds );
+
+              resp->year = year;
+              resp->month = month;
+              resp->day = day;
+              resp->weekDay = weekDay;
+              resp->hours = hours;
+              resp->minutes = minutes;
+              resp->seconds = seconds;
+
+              resp->yearSet = systemState.yearSet;
+              resp->monthSet = systemState.monthSet;
+              resp->daySet = systemState.daySet;
+              resp->hoursSet = systemState.hoursSet;
+              resp->minutesSet = systemState.minutesSet;
+              resp->secondsSet = systemState.secondsSet;
+              resp->rtcSecondsPassed = systemState.rtcSecondsPassed;
+              resp->refSecondsPassed = systemState.refSecondsPassed;
+
+              resp->timeZone = systemState.timeZone;
+
+              resp->rtcIsRunning = 1;
+            }
+            else
+            {
+              resp->rtcIsRunning = 0;
+            }
+
+            resp->success = 1;
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::SetLampsPrograms:
+        {
+          Protocol::SetLampsPrograms::Request * req =
+            ( Protocol::SetLampsPrograms::Request * ) Comm::requestBody;
+
+          Protocol::SetLampsPrograms::Response * resp = 
+            ( Protocol::SetLampsPrograms::Response * ) Comm::responseBody;
+
+          if ( req->totalPrograms *
+               sizeof( Protocol::SetLampsPrograms::Program ) + sizeof( *req )
+               != requestSize )
+          {
+            // Incorrect packet size
+
+            resp->success = 0;
+          }
+          else if((lockBits & Protocol::LockBits::RtcNotRunning) || (systemState.isTimeLocked == 0) || lockBits) 
+          {
+            /** 20180622 Do not allow this command to run if something is 
+             *  not right with the board;
+             *  20180629 This command must return '1' so Lobby does not
+             *  dies - note that it does not run any commands;
+             */
+            resp->success = 1;
+          }
+          else
+          {
+            // Proceed setting programs
+
+            resp->success = 1;
+
+            Protocol::SetLampsPrograms::Program * prg = 
+              ( Protocol::SetLampsPrograms::Program * )( req + 1 );
+
+            {
+              TimerLock _;
+
+              for(idx = req->totalPrograms; idx--; ++prg)
+              {
+                if ( prg->lampIndex >= Protocol::SetLampsPrograms::MaxPrograms )
+                {
+                  // Incorrect input
+                  resp->success = 0;
+                  break;
+                }
+  
+                Lamps::set( prg->lampIndex, prg->program );
+              }
+  
+              if ( req->resetPhase )
+                Lamps::resetPhase();
+            }
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::FramReadBegin:
+        {
+          Protocol::FramReadBegin::Request * req =
+            ( Protocol::FramReadBegin::Request * ) Comm::requestBody;
+
+          Protocol::FramReadBegin::Response * resp = 
+            (Protocol::FramReadBegin::Response *) Comm::responseBody;
+          
+          if(requestSize == sizeof(*req))
+          {
+            if((!lockBits || ((lockBits & (Protocol::LockBits::RentExpired | Protocol::LockBits::RtcNotRunning)) && lobbyAccess)) && systemState.isTimeLocked == 1 )
+            {
+
+              // Check if the game fram is marked blank
+
+              if ( systemState.isGameFramBlank )
+              {
+                resp->errorCode = Protocol::FramReadBegin::FramIsBlank;
+                resp->totalSize = 0;
+              }
+              else
+              {
+                // Proceed starting the read
+
+                uint16_t totalSize;
+
+                Storage::Error err = gameStorage.startReading( totalSize, resp );
+
+                if(err == Storage::NoError)
+                {
+                  resp->errorCode = Protocol::FramReadBegin::FramIsOk;
+                  resp->totalSize = totalSize;
+                }
+                else
+                {
+                  resp->errorCode = Protocol::FramReadBegin::FramIsUnavailable;
+                  resp->totalSize = 0;
+                }
+              } 
+            }
+            else if(lockBits)
+            {
+              // Incorrect packet size, or have some lock bits set
+              resp->errorCode = Protocol::FramReadBegin::FramIsUnavailable;
+              resp->totalSize = 0;
+            }
+	        }
+          else
+          {
+            // Incorrect packet size, or have some lock bits set
+            resp->errorCode = Protocol::FramReadBegin::FramIsUnavailable;
+            resp->totalSize = 0; 
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::FramReadContinue:
+        {
+          Protocol::FramReadContinue::Request * req =
+            ( Protocol::FramReadContinue::Request * ) Comm::requestBody;
+
+          Protocol::FramReadContinue::Response * resp = 
+            ( Protocol::FramReadContinue::Response * ) Comm::responseBody;
+
+          resp->align = 0;
+          //lockBits & Hli::LockBits::RtcNotRunning
+         
+          //if ( requestSize != sizeof( *req ) || 
+          //   ( lockBits && lockBits != Protocol::LockBits::RtcNotRunning && lockBits != Protocol::LockBits::RentExpired && !lobbyAccess ) )         
+          if(requestSize == sizeof(*req))
+          {
+            if((!lockBits || ((lockBits & (Protocol::LockBits::RentExpired | Protocol::LockBits::RtcNotRunning)) && lobbyAccess)) && systemState.isTimeLocked == 1 )
+            {
+              // Proceed reading
+
+              Storage::Error err = gameStorage.readData( resp + 1,
+                                                         req->blockSize );
+
+              if ( err == Storage::NoError )
+              {
+                resp->success = 1;
+              }
+              else
+              {
+                resp->success = 0;
+              }
+                       
+            }
+            else if( lockBits )
+            {
+               // Incorrect packet size, or have some lock bits set
+
+              resp->success = 0;
+            }
+	        }
+          else
+          {
+			      // Incorrect packet size, or have some lock bits set
+            resp->success = 0;  
+		      }
+
+          if ( resp->success )
+            Comm::sendReply( sizeof( *resp ) + req->blockSize );
+          else
+            Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::FramWriteBegin:
+        {
+          Protocol::FramWriteBegin::Request * req =
+            ( Protocol::FramWriteBegin::Request * ) Comm::requestBody;
+
+          Protocol::FramWriteBegin::Response * resp = 
+            ( Protocol::FramWriteBegin::Response * ) Comm::responseBody;
+
+          if ( requestSize != sizeof( *req ) || lockBits )
+          {
+            // Incorrect packet size, or have some lock bits set
+            resp->success = 0;
+          }
+          else if((lockBits & Protocol::LockBits::RtcNotRunning) || (systemState.isTimeLocked == 0) /*|| lockBits*/) 
+          {
+            /** 20180622 Do not allow this command to run if something is 
+             *  not right with the board.
+             */
+            resp->success = 0;
+          }
+          else
+          {
+            // Proceed initiating write
+
+            Storage::Error err = gameStorage.startUpdate( req->totalSize,
+                                                          systemState.isGameFramBlank ? 0 : 1,
+                                                          Comm::responseBody );
+
+            if ( err == Storage::NoError )
+            {
+              resp->success = 1;
+            }
+            else
+            {
+              resp->success = 0;
+            }
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::FramWriteContinue:
+        {
+          Protocol::FramWriteContinue::Request * req =
+            ( Protocol::FramWriteContinue::Request * ) Comm::requestBody;
+
+          Protocol::FramWriteContinue::Response * resp = 
+            ( Protocol::FramWriteContinue::Response * ) Comm::responseBody;
+
+          if ( requestSize <= sizeof( *req ) || lockBits )
+          {
+            // Incorrect packet size, or have some lock bits set
+            resp->success = 0;
+          }
+          else if((lockBits & Protocol::LockBits::RtcNotRunning) || (systemState.isTimeLocked == 0) /*|| lockBits*/) 
+          {
+            /** 20180622 Do not allow this command to run if something is 
+             *  not right with the board.
+             */
+            resp->success = 0;
+          }
+          else
+          {
+            // Proceed continuing write
+
+            Storage::Error err = gameStorage.addData( req + 1,
+                                                      requestSize - sizeof( *req ) );
+
+            if ( err == Storage::NoError )
+            {
+              resp->success = 1;
+            }
+            else
+            {
+              resp->success = 0;
+            }
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::FramWriteFinalize:
+        {
+          Protocol::FramWriteFinalize::Request * req =
+            ( Protocol::FramWriteFinalize::Request * ) Comm::requestBody;
+
+          Protocol::FramWriteFinalize::Response * resp = 
+            ( Protocol::FramWriteFinalize::Response * ) Comm::responseBody;
+
+          if ( requestSize != sizeof( *req ) || req->machineId !=
+               Keys::getMachineId() || lockBits )
+          {
+            // Incorrect packet size, the packet was for a different
+            // machine, or some lock bits are set
+
+            resp->success = 0;
+          }
+          else if((lockBits & Protocol::LockBits::RtcNotRunning) || (systemState.isTimeLocked == 0) /*|| lockBits*/) 
+          {
+            /** 20180622 Do not allow this command to run if something is 
+             *  not right with the board.
+             */
+            resp->success = 0;
+          }
+          else
+          {
+            // Proceed finalizing write
+
+            Storage::Error err = gameStorage.finalizeUpdate( req );
+
+            if ( err == Storage::NoError )
+            {
+              // Succeeded. If the fram was blank, mark that it's no longer
+              // a case.
+              if ( systemState.isGameFramBlank )
+              {
+                systemState.isGameFramBlank = 0;
+
+                resp->success = saveSystemState();
+              }
+              else
+                resp->success = 1;
+            }
+            else
+            {
+              resp->success = 0;
+            }
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::SetBillAcceptorInhibitState:
+        {
+          Protocol::SetBillAcceptorInhibitState::Request * req =
+            ( Protocol::SetBillAcceptorInhibitState::Request * ) Comm::requestBody;
+
+          Protocol::SetBillAcceptorInhibitState::Response * resp = 
+            ( Protocol::SetBillAcceptorInhibitState::Response * ) Comm::responseBody;
+
+          if ( requestSize != sizeof( *req ) || lockBits )
+          {
+            // Incorrect packet size, or some lock bits are set
+
+            resp->success = 0;
+          }
+          else if((lockBits & Protocol::LockBits::RtcNotRunning) || (systemState.isTimeLocked == 0) /*|| lockBits*/) 
+          {
+            /** 20180622 Do not allow this command to run if something is 
+             *  not right with the board.
+             */
+            resp->success = 0;
+          }
+          else
+          {
+            // Proceed setting the inhibit state
+
+            TimerLock _;
+
+            billAcceptorEnabled = req->inhibit ? 0 : 1;
+
+            if ( billAcceptorEnabled )
+            {
+              // We only physically uninhibit the bill acceptor if we don't
+              // have some value still not fetched by the user and if it
+              // isn't in the process of accepting the bill.
+              if((!lastBillValue && !billAcceptorDelay) && (pinInibMode == Protocol::SetPinInibMode::InibBillValidator))
+                BillAcceptor::uninhibit();
+            }
+            else
+            {
+              // If we are instructed to inhibit bill acceptor, we always
+              // do it right away, since this won't disrupt anything.
+              if(pinInibMode == Protocol::SetPinInibMode::InibBillValidator)
+                BillAcceptor::inhibit();              
+            }
+
+            resp->success = 1;
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::GetDataKey:
+        {
+          Protocol::GetDataKey::Request * req =
+            ( Protocol::GetDataKey::Request * ) Comm::requestBody;
+
+          Protocol::GetDataKey::Response * resp = 
+            ( Protocol::GetDataKey::Response * ) Comm::responseBody;
+
+          if ( requestSize != sizeof( *req ) )
+          {
+            // Incorrect packet size
+
+            resp->success = 0;
+          }
+          else
+          if ( req->taint )
+          {
+            // Taint flag is set, the board is to be tainted
+
+            lockBits |= Protocol::LockBits::Tainted;
+
+            if ( !systemState.isTainted )
+            {
+              systemState.isTainted = 1;
+              saveSystemState();
+            }
+
+            resp->success = 0;
+          }
+          else if(lockBits)
+          {
+            // Some lock bits are set
+            resp->success = 0;
+          }
+          else if((lockBits & Protocol::LockBits::RtcNotRunning) || (systemState.isTimeLocked == 0) /*|| lockBits*/) 
+          {
+            /** 20180622 Do not allow this command to run if something is 
+             *  not right with the board.
+             */
+            resp->success = 0;
+          }
+          else
+          {
+            resp->success = 1;
+            memcpy( resp->key, Keys::getDataKey(), sizeof( resp->key ) );
+          }
+
+          if ( ! resp->success )
+            memset( resp->key, 0, sizeof( resp->key ) );
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::GetRandomValue:
+        {
+          Protocol::GetRandomValue::Request * req =
+            ( Protocol::GetRandomValue::Request * ) Comm::requestBody;
+
+          Protocol::GetRandomValue::Response * resp = 
+            ( Protocol::GetRandomValue::Response * ) Comm::responseBody;
+
+          if ( requestSize != sizeof( *req ) || lockBits )
+          {
+            // Incorrect packet size, or some lock bits are set. We disallow
+            // generating random values when the board is locked to make it
+            // harder messing with the board.
+
+            resp->success = 0;
+            resp->value = 0;
+          }
+          /** 20180702 This command must not be blocked. The game 
+           *  requests this command, and if it is blocked because of a 
+           *  Rent Expired condition, the game dies and never enters the 
+           *  hliLockedBranch error Screen;
+           */
+          //~ else if((lockBits & Protocol::LockBits::RtcNotRunning) || (systemState.isTimeLocked == 0) /*|| lockBits*/) 
+          //~ {
+            //~ resp->success = 0;
+            //~ resp->value = 0;
+          //~ }
+          else
+          {
+            resp->success = 1;
+            resp->value = Rand::rand() ^ 0xf197ade0; // Don't return it 1:1
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::SetInOut:
+        {
+          Protocol::SetInOut::Request * req =
+            ( Protocol::SetInOut::Request * ) Comm::requestBody;
+
+          Protocol::SetInOut::Response * resp = 
+            ( Protocol::SetInOut::Response * ) Comm::responseBody;
+
+          if ( requestSize != sizeof( *req ) ||
+               req->machineId != Keys::getMachineId() || lockBits )
+          {
+            // Incorrect packet size, or some lock bits are set.
+
+            resp->success = 0;
+          }
+          else if((lockBits & Protocol::LockBits::RtcNotRunning) || (systemState.isTimeLocked == 0) /*|| lockBits*/) 
+          {
+            /** 20180622 Do not allow this command to run if something is 
+             *  not right with the board.
+             */
+            resp->success = 0;
+          }
+          else
+          {
+            uint8_t saveState = 0;
+
+            if ( systemState.in < req->in )
+            {
+              {
+                TimerLock _;
+
+                mechInLeft += req->in - systemState.in;
+              }
+
+              systemState.in = req->in;
+              saveState = 1;
+            }
+
+            if ( systemState.out < req->out )
+            {
+              {
+                TimerLock _;
+
+                mechOutLeft += req->out - systemState.out;
+              }
+
+              systemState.out = req->out;
+              saveState = 1;
+            }
+
+            if ( saveState )
+              resp->success = saveSystemState();
+            else
+              resp->success = 1;
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::GetTimeLockState:
+        {
+          Protocol::GetTimeLockState::Request * req =
+            ( Protocol::GetTimeLockState::Request * ) Comm::requestBody;
+
+          Protocol::GetTimeLockState::Response * resp = 
+            ( Protocol::GetTimeLockState::Response * ) Comm::responseBody;
+
+          memset( resp, 0, sizeof( *resp ) );
+
+          if ( requestSize != sizeof( *req ) ||
+               ( lockBits & Protocol::LockBits::SystemStorageDamaged ) )
+          {
+            // Incorrect packet size, or system storage is damaged.
+
+            resp->success = 0;
+          }
+          else
+          {
+            resp->success = 1;
+
+            if ( ( resp->isTimeLocked = systemState.isTimeLocked ) )
+            {
+              resp->year = systemState.year;
+              resp->month = systemState.month;
+              resp->day = systemState.day;
+              resp->hours = systemState.hours;
+              resp->minutes = systemState.minutes;
+              resp->seconds = systemState.seconds;
+            }
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+/*
+        case Protocol::Command::SetDisplayValue:
+        {
+          Protocol::SetDisplayValue::Request * req =
+            ( Protocol::SetDisplayValue::Request * ) Comm::requestBody;
+
+          Protocol::SetDisplayValue::Response * resp = 
+            ( Protocol::SetDisplayValue::Response * ) Comm::responseBody;
+
+          memset( resp, 0, sizeof( *resp ) );
+
+          if ( requestSize != sizeof( *req ) || lockBits )
+          {
+            // Incorrect packet size, or some lock bits are set.
+
+            resp->success = 0;
+          }
+          else if((lockBits & Protocol::LockBits::RtcNotRunning) || (systemState.isTimeLocked == 0) || lockBits) 
+          {
+            20180622 Do not allow this command to run if something is 
+              not right with the board.
+             
+            resp->success = 0;
+          }
+          else
+          {
+            resp->success = 1;
+
+            currentDisplayValue = req->value;
+
+            TimerLock _;
+
+            displayRefreshDelay = 0;
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+*/
+        case Protocol::Command::GetJumperState:
+        {
+          Protocol::GetJumperState::Request * req =
+            ( Protocol::GetJumperState::Request * ) Comm::requestBody;
+
+          Protocol::GetJumperState::Response * resp = 
+            ( Protocol::GetJumperState::Response * ) Comm::responseBody;
+
+          if ( requestSize != sizeof( *req ) )
+          {
+            // Incorrect packet size
+
+            resp->success = 0;
+            resp->isClosed = 0;
+          }
+          else if((lockBits & Protocol::LockBits::RtcNotRunning) || (systemState.isTimeLocked == 0) || lockBits)
+          {
+            /** 20180622 Do not allow this command to run if something is 
+             *  not right with the board.
+             */
+            resp->success = 0;
+            resp->isClosed = 0;
+          }
+          else
+          {
+            resp->success = 1;
+            resp->isClosed = PORTDbits.RD3 ? 0 : 1;
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::SetTimeAssistedBegin:
+        {
+          Protocol::SetTimeAssistedBegin::Request * req =
+            ( Protocol::SetTimeAssistedBegin::Request * ) Comm::requestBody;
+
+          Protocol::SetTimeAssistedBegin::Response * resp = 
+            ( Protocol::SetTimeAssistedBegin::Response * ) Comm::responseBody;
+
+          memset( resp, 0, sizeof( *resp ) );
+
+          if ( requestSize != sizeof( *req ) ||
+               ( lockBits && (lockBits & ~(Protocol::LockBits::RentExpired | Protocol::LockBits::RtcNotRunning)) )
+               || systemState.assistedSetTimeSeq == 0xffffFFFF )
+          {
+            // Incorrect packet size, or have other problems beside rtc not
+            // running, or the sequence counter maxed out
+
+            resp->success = 0;
+          }
+          else
+          {
+            TimerLock _;
+
+            if ( securityDelay )
+              resp->success = 2;
+            else
+            {
+              securityDelay = 2000;
+
+              // Take the current sequence number from the system state,
+              // and increase one we have there
+
+              sequence = ++systemState.assistedSetTimeSeq;
+
+              if(saveSystemState( ))
+              {
+                // Now generate the validation number based on the sequence number
+                //~ uint16_t encBuffer[12];
+                memset(encBuffer, 0, sizeof(encBuffer));
+                memset(hardId_, 0, sizeof(hardId_));
+
+                /** 20180831 Security Update: buffer EEPROM EUI-64 */
+                getHardwareId(&cii2c, hardId_);
+
+                // Some number dependent on sequence derived from an MWC PRNG
+                // function
+                seqPrnged = 18000 * (sequence & 65535) + (sequence >> 16);
+
+                memcpy(encBuffer, &seqPrnged, 4);
+                memcpy(encBuffer + 2, &sequence, 4);
+                
+                /** 20180830 Security Update: Add MachineId and GameId to hash */
+                machineId_ = Keys::getMachineId( );
+                gameId_ =  Keys::getGameId( );
+                
+                memcpy(encBuffer + 4, &gameId_, 2);    /** 20180830 Add gameID to hash */
+                memcpy(encBuffer + 5, &machineId_, 4); /** 20180830 Add boardID to hash */
+                memcpy(encBuffer + 7, hardId_, 8);  /** 20180830 Add EEPROM EUI-64 to hash */
+                encBuffer[11] = 0x93E8;                /** 20180830 Add constant to hash */
+
+                Xxtea::encrypt((uint32_t *) encBuffer, 6, Keys::getBoardKey( ));
+
+                Crc::init( ); Crc::add(encBuffer, 6); Crc::finalize( );
+                result = Crc::get();
+
+                Crc::init( ); Crc::add(encBuffer + 6, 6); Crc::finalize( );
+                result |= (((uint32_t)Crc::get()) << 16);
+                result %= 100000000;
+
+                memset(encBuffer, 0, sizeof(encBuffer));
+                memset(hardId_, 0, sizeof(hardId_));
+                machineId_ = 0;
+                gameId_ = 0;
+
+                securityEraseTimeout = 600000; // 10 minutes
+
+                clockValidationNumber = result;
+                clockSequenceNumber = sequence;
+
+                resp->validationNumber = clockValidationNumber;
+                resp->sequenceNumber = clockSequenceNumber;
+
+                resp->success = 1;
+              }
+              else
+                resp->success = 0;
+            }
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::SetTimeAssistedFinish:
+        {
+          Protocol::SetTimeAssistedFinish::Request * req =
+            ( Protocol::SetTimeAssistedFinish::Request * ) Comm::requestBody;
+
+          Protocol::SetTimeAssistedFinish::Response * resp = 
+            ( Protocol::SetTimeAssistedFinish::Response * ) Comm::responseBody;
+
+          if ( requestSize != sizeof( *req ) ||
+               ( lockBits && (lockBits & ~(Protocol::LockBits::RentExpired | Protocol::LockBits::RtcNotRunning)) ) )
+          {
+            // Incorrect packet size, or have other problems beside rtc not
+            // running
+
+            resp->success = 0;
+          }
+          /** 20180612 Add condition to make sure there is a valid date */
+          else if(req->year < 2021 || req->year > 2099)
+          {
+            resp->success = 3;
+            securityDelay = 2000;
+          }
+          else
+          {
+            TimerLock _;
+
+            if ( securityDelay )
+              resp->success = 2;
+            else if ( !clockSequenceNumber )
+              resp->success = 0; // Either not started or spent too much time
+            else
+            {
+              // Now check the password by encrypting the input, calculating
+              // two crcs, combining them together and taking the remainder
+              memset(encBuffer, 0, sizeof(encBuffer));
+              memset(hardId_, 0, sizeof(hardId_));
+
+              /** 20180831 Security Update: buffer EEPROM EUI-64 */
+              getHardwareId(&cii2c, hardId_);
+
+              memcpy( encBuffer, &clockValidationNumber, 4 );
+              memcpy( encBuffer + 2, &clockSequenceNumber, 4 );
+
+              encBuffer[ 4 ] = req->year;
+              encBuffer[ 5 ] = req->month;
+              encBuffer[ 6 ] = req->day;
+              encBuffer[ 7 ] = req->weekDay;
+              encBuffer[ 8 ] = req->hours;
+              encBuffer[ 9 ] = req->minutes;
+              encBuffer[ 10 ] = req->seconds;
+              encBuffer[ 11 ] = 0x59C7;
+
+              /** 20180830 Security Update: Add MachineId and GameId to hash */
+              machineId_ = Keys::getMachineId( );
+              gameId_ =  Keys::getGameId( );
+              
+              memcpy(encBuffer + 12, &gameId_, 2);    /** 20180830 Add gameID to hash */
+              //memcpy(encBuffer + 13, hardIdTemp, 8);  /** 20180830 Add EEPROM EUI-64 to hash */
+              memcpy(encBuffer + 13, hardId_, 8);  /** 20180830 Add EEPROM EUI-64 to hash */
+              memcpy(encBuffer + 17, &machineId_, 4); /** 20180830 Add boardID to hash */
+              encBuffer[19] = 0x673D;                 /** 20180830 Add constant to hash */
+
+              Xxtea::encrypt((uint32_t *) encBuffer, 10, Keys::getBoardKey( ));
+              Crc::init( ); Crc::add(encBuffer, 10); Crc::finalize( );
+              result = Crc::get();
+
+              Crc::init( ); Crc::add(encBuffer + 10, 10); Crc::finalize( );
+              result |= (((uint32_t)Crc::get()) << 16);
+              result %= 100000000;
+
+              /** 20190807 Security Update: clear buffers */
+              memset(encBuffer, 0, sizeof(encBuffer));
+              memset(hardId_, 0, sizeof(hardId_));
+              machineId_ = 0;
+              gameId_ = 0;
+
+              if ( result == req->password )
+              {
+                clockSequenceNumber = 0;
+                clockValidationNumber = 0;
+
+                securityEraseTimeout = 0;
+
+                IEC0bits.T2IE = 1; // Unlock the TimerLock's timer manually
+                                   // here, since setting time can sometimes
+                                   // take up to 1ms.
+
+                // Proceed setting the clock
+
+                Rtc::set( req->year, req->month, req->day, req->weekDay,
+                          req->hours, req->minutes, req->seconds, 0 );
+
+                systemState.yearSet = req->year;
+                systemState.monthSet = req->month;
+                systemState.daySet = req->day;
+                systemState.hoursSet = req->hours;
+                systemState.minutesSet = req->minutes;
+                systemState.secondsSet = 99; // To indicate time was approximate
+
+                if ( ( resp->success = saveSystemState() ) )
+                {
+                  lockBits &= ~Protocol::LockBits::RtcNotRunning;
+                  Leds::setError2(lockBits); 
+                  checkRent();
+                }
+                else
+                  Rtc::stop();
+              }
+              else
+              {
+                // Incorrect password specified
+                resp->success = 3;
+                securityDelay = 2000;
+              }
+            }
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::SetRentAssistedBegin:
+        {
+          Protocol::SetRentAssistedBegin::Request * req =
+            (Protocol::SetRentAssistedBegin::Request *) Comm::requestBody;
+
+          Protocol::SetRentAssistedBegin::Response * resp = 
+            (Protocol::SetRentAssistedBegin::Response *) Comm::responseBody;
+
+          memset(resp, 0, sizeof(*resp));
+
+          if(requestSize != sizeof(*req) ||
+            (lockBits & ~(Protocol::LockBits::RentExpired | Protocol::LockBits::RtcNotRunning)) ||
+            (systemState.assistedSetRentSeq == 0xffffFFFF))
+          {
+            /** 20180612 Incorrect packet size, or maximum sequence number
+             * reached, or have other problems beside rent expired
+             */
+            resp->success = 0;
+          }
+          else
+          {
+            TimerLock _;
+
+            if(securityDelay)
+              resp->success = 2;
+            else
+            {
+              securityDelay = 2000;
+
+              /** 20180605 Take the current sequence number from the system
+               *  state and increase one we have there 
+               */
+              sequence = ++systemState.assistedSetRentSeq;
+              
+              if(saveSystemState( ))
+              {
+                // Calculate in/out based validation number
+                memset(encBuffer, 0, sizeof(encBuffer));
+                memset(hardId_, 0, sizeof(hardId_));
+                
+                getHardwareId(&cii2c, hardId_);
+  
+                /** 20180613 Get current date and hour to generate validation code */
+                Rtc::get(rentYear, rentMonth, rentDay, rentWeekDay, rentHours, rentMinutes, rentSeconds);
+                
+                /** 20180606 Add sequence number derived from an MWC PRNG 
+                 *  function to validation 
+                 */
+                seqPrnged = 18000 * (sequence & 65535) + (sequence >> 16);
+
+                memcpy(encBuffer, &systemState.in, 8);
+                encBuffer[4] = 0xED64;
+                memcpy(encBuffer + 5, &systemState.out, 8);
+                encBuffer[9] = 0x9DAB;
+                
+                machineId_ = Keys::getMachineId( );
+                gameId_ =  Keys::getGameId( );
+                
+                memcpy(encBuffer + 10, &machineId_, 4); /** 20180607 Add boardID to hash */
+                memcpy(encBuffer + 12, &gameId_, 2);    /** 20180607 Add gameID to hash */
+                
+                memcpy(encBuffer + 13, hardId_, 8);     /** 20180607 Add EEPROM EUI-64 to hash */
+
+                memcpy(encBuffer + 17, &seqPrnged, 4);
+                memcpy(encBuffer + 19, &sequence, 4);
+                encBuffer[21] = 0x391D;
+                
+                encBuffer[22] = rentYear;
+                encBuffer[23] = rentMonth;
+                encBuffer[24] = rentDay;
+                encBuffer[25] = rentHours;
+
+                Xxtea::encrypt((uint32_t *) encBuffer, 13, Keys::getBoardKey( ));
+                Crc::init( ); Crc::add(encBuffer, 13); Crc::finalize( );
+                result = Crc::get();
+
+                Crc::init( ); Crc::add(encBuffer + 13, 13); Crc::finalize( );
+                result |= (((uint32_t)Crc::get()) << 16);
+                result %= 100000000;
+
+                memset(encBuffer, 0, sizeof(encBuffer));
+                memset(hardId_, 0, sizeof(hardId_));
+                machineId_ = 0;
+                gameId_ = 0;
+
+                securityEraseTimeout = 3600000;    /** 20180612 60 minutes */
+                
+                rentValidationNumber = result;
+                rentSequenceNumber = sequence;
+
+                resp->in = systemState.in;
+                resp->out = systemState.out;
+                resp->sequenceNumber = rentSequenceNumber;
+                
+                resp->year = rentYear;
+                resp->month = rentMonth;
+                resp->day = rentDay;
+                resp->hours = rentHours;
+                resp->minutes = rentMinutes;
+                resp->seconds = rentSeconds;
+                resp->validationNumber = result;
+
+                resp->success = 1;
+              }
+              else
+                resp->success = 0;
+            }
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::SetRentAssistedFinish:
+        {
+          Protocol::SetRentAssistedFinish::Request * req =
+            (Protocol::SetRentAssistedFinish::Request *) Comm::requestBody;
+
+          Protocol::SetRentAssistedFinish::Response * resp = 
+            (Protocol::SetRentAssistedFinish::Response *) Comm::responseBody;
+
+          if(requestSize != sizeof(*req) ||
+            (lockBits && lockBits != Protocol::LockBits::RentExpired))
+          {
+            // Incorrect packet size, or have other problems beside rent
+            // expired
+
+            resp->success = 0;
+          }
+          else if((lockBits & Protocol::LockBits::RtcNotRunning) /*|| (systemState.isTimeLocked == 0) || lockBits*/) 
+          {
+            /** 20180622 Do not allow this command to run if something is 
+             *  not right with the board. Rent can NOT be set before clock!
+             */
+            resp->success = 0;
+          }
+          else
+          {
+            TimerLock _;
+
+            if(securityDelay)
+              resp->success = 2;
+            else if(!rentSequenceNumber)
+              resp->success = 0;
+            else
+            {
+              // Now check the password by encrypting the input, calculating
+              // two crcs, combining them together and taking the remainder
+              memset(encBuffer, 0, sizeof(encBuffer));
+              memset(hardId_, 0, sizeof(hardId_));
+
+              getHardwareId(&cii2c, hardId_);
+
+
+              encBuffer[ 0] = 0x7592;
+              memcpy(encBuffer + 1, &systemState.in, 8);
+              memcpy(encBuffer + 5, &systemState.out, 8);
+              encBuffer[ 9] = req->year;
+              encBuffer[10] = req->month;
+              encBuffer[11] = req->day;
+              encBuffer[12] = req->hours;
+              encBuffer[13] = req->minutes;
+              encBuffer[14] = req->seconds;
+              encBuffer[15] = 0x270C;
+
+              /** 20180607 Add the following fields to make each validation
+               *  number unique
+               */
+              machineId_ = Keys::getMachineId( );
+              gameId_ =  Keys::getGameId( );
+                
+              memcpy(encBuffer + 16, &machineId_, 4); /** 20180607 Add boardID to hash */
+              memcpy(encBuffer + 18, &gameId_, 2);    /** 20180607 Add gameID to hash */
+              memcpy(encBuffer + 19, &hardId_, 8); /** 20180607 Add EEPROM EUI-64 to hash */
+
+              /** 20180606 Add sequence number to generate a new validation
+               *  number every 60 minutes
+               */
+              memcpy(encBuffer + 23, &rentValidationNumber, 4);
+              memcpy(encBuffer + 25, &rentSequenceNumber, 4);
+              encBuffer[27] = 0xC615;
+              
+              encBuffer[28] = rentYear;
+              encBuffer[29] = rentMonth;
+              encBuffer[30] = rentDay;
+              encBuffer[31] = rentHours;
+
+              Xxtea::encrypt((uint32_t *) encBuffer, 16, Keys::getBoardKey( ));
+              Crc::init( ); Crc::add(encBuffer, 16); Crc::finalize( );
+              result = Crc::get();
+
+              Crc::init( ); Crc::add(encBuffer + 16, 16); Crc::finalize( );
+              result |= (((uint32_t)Crc::get()) << 16);
+              result %= 100000000;
+
+              memset(encBuffer, 0, sizeof(encBuffer));
+              memset(hardId_, 0, sizeof(hardId_));
+              machineId_ = 0;
+              gameId_ = 0;
+
+              /** 20180611 Block Validation Request if new expiration
+               *  date is bigger than 40 days 
+               */
+              Rtc::get(rentYear, rentMonth, rentDay, rentWeekDay, rentHours, rentMinutes, rentSeconds);
+                
+              uint16_t currentDate = dayOfYear(rentYear, rentMonth, rentDay);
+              uint16_t receivedExpirationDate = dayOfYear(req->year, req->month, req->day);
+              if(req->year == (rentYear + 1))
+              {
+                if(rentYear % 4 == 0)
+                  receivedExpirationDate += 366;
+                else 
+                  receivedExpirationDate += 365;
+              }
+              else if(req->year == (rentYear + 2))
+              {
+                receivedExpirationDate += 365;
+                
+                if((rentYear % 4 == 0) || ((rentYear + 1) % 4 == 0)) 
+                  receivedExpirationDate += 366;
+                else 
+                  receivedExpirationDate += 365;
+              }
+
+              /** 20180705 If there is a big drift in RTC (too slow or
+               *  too fast), stop RTC to force an RtcNotRunning 
+               *  validation request;
+               *  Check if received expiration date is bigger than the 
+               *  limit allowed, or if it is 3 days less than the
+               *  standard limit expected;
+               */
+              if((result == req->password) && 
+                (receivedExpirationDate > (currentDate + (expirationLimit ^ 0x55AA))) ||
+                 (req->password == 99999999))
+              {
+                Rtc::stop();
+                lockBits |= Protocol::LockBits::RtcNotRunning;
+                
+                /** 20180717 The expiration date is bigger than the limit */ 
+                resp->success = 4;
+                securityDelay = 2000;
+              }
+              else if((result == req->password) && 
+                 (receivedExpirationDate <= (currentDate + (expirationLimit ^ 0x55AA))) &&
+                 (receivedExpirationDate > currentDate) &&
+                 //~ ((req->year == rentYear) || (req->year == rentYear + 1)) &&
+                 ((req->year == rentYear) || (req->year == rentYear + 1) || (req->year == rentYear + 2)) &&
+                 (req->year >= 2021))
+              {
+                //~ if((systemState.isTimeLocked = (req->year != 2099) ? 1 : 0))
+                {
+                  systemState.isTimeLocked = 1;
+                  systemState.year = req->year;
+                  systemState.month = req->month;
+                  systemState.day = req->day;
+                  systemState.hours = req->hours;
+                  systemState.minutes = req->minutes;
+                  systemState.seconds = req->seconds;
+                }
+
+                if((resp->success = saveSystemState( )))
+                {
+                  checkRent( );
+
+                  /** 20190806 Reset control variables                */
+                  rentSequenceNumber = 0;
+                  rentValidationNumber = 0;
+
+                  securityEraseTimeout = 0;
+
+                  rentYear    = 0;
+                  rentMonth   = 0;
+                  rentDay     = 0;
+                  rentWeekDay = 0;
+                  rentHours   = 0;
+                  rentMinutes = 0;
+                  rentSeconds = 0;
+                }
+              }
+              else
+              {
+                // Incorrect password specified
+                resp->success = 3;
+                securityDelay = 2000;
+              }
+            }
+          }
+
+          Comm::sendReply(sizeof(*resp));
+        }
+        break;
+
+        case Protocol::Command::GetInOut:
+        {
+          Protocol::GetInOut::Request * req =
+            ( Protocol::GetInOut::Request * ) Comm::requestBody;
+
+          Protocol::GetInOut::Response * resp = 
+            ( Protocol::GetInOut::Response * ) Comm::responseBody;
+
+          if ( requestSize != sizeof( *req ) ||
+               ( lockBits & Protocol::LockBits::SystemStorageDamaged ) )
+          {
+            // Incorrect packet size, or system storage is damaged
+
+            resp->success = 0;
+            resp->in = 0;
+            resp->out = 0;
+          }
+          else
+          {
+            resp->success = 1;
+            resp->in = systemState.in;
+            resp->out = systemState.out;
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::GetInOutPulsesLeft:
+        {
+          Protocol::GetInOutPulsesLeft::Request * req =
+            ( Protocol::GetInOutPulsesLeft::Request * ) Comm::requestBody;
+
+          Protocol::GetInOutPulsesLeft::Response * resp =
+            ( Protocol::GetInOutPulsesLeft::Response * ) Comm::responseBody;
+
+          if ( requestSize != sizeof( *req ) )
+          {
+            // Incorrect packet size, or system storage is damaged
+            resp->success = 0;
+            resp->in = 0;
+            resp->out = 0;
+          }
+          else
+          {
+            resp->success = 1;
+            resp->in  = mechInLeft;
+            resp->out = mechOutLeft;
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::PrivilegedCommand:
+        {
+          Protocol::PrivilegedCommand::Request * req =
+            ( Protocol::PrivilegedCommand::Request * ) Comm::requestBody;
+
+          Protocol::PrivilegedCommand::Response * resp = 
+            ( Protocol::PrivilegedCommand::Response * ) Comm::responseBody;
+
+          if ( requestSize < ( sizeof( *req ) + 4 ) || ( ( requestSize - 2 ) & 3 ) )
+          {
+            // Incorrect packet size
+
+            resp->keyOk = 0;
+          }
+          else
+          {
+            // Decrypt the data using the board's key
+
+            Xxtea::decrypt( &req->salt, ( requestSize - 2 ) / 4,
+                            Keys::getBoardKey() );
+
+            // Check the crc
+
+            Crc::init();
+            Crc::add( (uint16_t const *) &req->salt,
+                      ( requestSize - 2 - 4 ) / 2 );
+
+            Crc::finalize();
+
+            uint16_t const * crcs =
+              (uint16_t const * )( Comm::requestBody + requestSize - 4 );
+
+            if ( crcs[ 0 ] != Crc::get() || crcs[ 0 ] != crcs[ 1 ] ||
+                 ( ( req->length + 3 ) & ~3 ) != requestSize - sizeof( *req ) - 4
+                 || req->magic != Protocol::PrivilegedCommand::Magic )
+            {
+              // Either crcs didn't match, or the data size was strange,
+              // or the magic was incorrect
+              resp->keyOk = 0;
+            }
+            else
+            {
+              // Now process the request itself
+
+              unsigned sz = processPrivilegedCommand( (unsigned char *)( req + 1 ),
+                                          req->length,
+                                          (unsigned char *)( resp + 1 ) ) + 1;
+              
+              resp->keyOk = 1;
+              
+              Comm::sendReply( sz );
+
+              break;
+            }
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::LobbyAccess:
+        {
+          Protocol::LobbyAccess::Request * req =
+            (Protocol::LobbyAccess::Request *) Comm::requestBody;
+
+          Protocol::LobbyAccess::Response * resp = 
+            (Protocol::LobbyAccess::Response *) Comm::responseBody;
+          
+          if(requestSize != sizeof(*req))
+          {
+            // Incorrect packet size
+            memset(resp, 0, sizeof(*resp));
+          }
+          else if(!rentSequenceNumber)
+          {
+            /** 20180719 It is mandatory that the host requests a 
+             *  setRentAssistedBegin command prior to request a
+             *  LobbyAccess in order to set a rentSequenceNumber
+             */
+            memset(resp, 0, sizeof(*resp));
+          }
+          else
+          {			
+            resp->success = 1;                      
+          }
+          
+          uint32_t key_ = req->key;
+          
+          char majorVer[ ] = {'a', 'a', 'a', 'a', 'a', 'a'};
+          AssistedOps::Class ops(&majorVer);
+
+          // Gera um password baseado apenas no ID da maquina e a entrada/saida
+          result = ops.generateMenuConfigPassword(Keys::getGameId(), Keys::getMachineId(), lockBits, rentSequenceNumber);
+                            
+          if(key_ == result)
+          {
+			      lobbyAccess = true; 
+          }
+          
+          Comm::sendReply(sizeof(*resp));
+        }
+        break;
+        
+        case Protocol::Command::FlashReadBegin:
+        {
+          Protocol::FlashReadBegin::Request *req =
+            (Protocol::FlashReadBegin::Request *) Comm::requestBody;
+
+          Protocol::FlashReadBegin::Response *resp = 
+            (Protocol::FlashReadBegin::Response *) Comm::responseBody;
+
+          if(requestSize == sizeof(*req))
+          {
+            if(systemState.isTimeLocked == 0) 
+              resp->errorCode = Protocol::FlashReadBegin::FlashError;
+            else
+            {
+                // Setup variables before reading
+              flashOffset = req->block * FLASH_BLOCK_SIZE/2;   /** 20180530 Calculate offset */
+              flashLeft = FLASH_BLOCK_SIZE;                    /** 20180530 Always read full block size (4096 bytes) */
+              flashBlock = 0;                                  /** 20180530 Indicates the start of a 4096 bytes block */
+
+              resp->errorCode = Protocol::FlashReadBegin::FlashIsOk;
+            }
+	        }
+          else
+          {
+			      // Incorrect packet size, or have some lock bits set
+            resp->errorCode = Protocol::FlashReadBegin::FlashError;
+		      }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::FlashReadContinue:
+        {
+          Protocol::FlashReadContinue::Request *req =
+            (Protocol::FlashReadContinue::Request *) Comm::requestBody;
+
+          Protocol::FlashReadContinue::Response *resp = 
+            (Protocol::FlashReadContinue::Response *) Comm::responseBody;
+            
+          resp->align = flashBlock++;
+
+          /** 20180601 Do not know why, it does not work with 510 bytes 
+           * requests. Also, never allow odd sized reads */
+          if((req->size > 508) || (req->size & 0x01))
+          {
+            resp->success = 0;
+          }
+          else if(requestSize == sizeof(*req))
+          {
+            if(systemState.isTimeLocked == 0) 
+              resp->success = 0;
+            else
+            {
+              int ret = 0;
+              
+              if(flashLeft > 0)    /** 20180530 If there is data to be sent */
+              {
+                ret = dumpFlash(flashOffset, (resp + 1), req->size / 2);
+                flashOffset += (req->size / 2);
+                flashLeft -= (req->size);
+              }
+              
+              if(ret == 1)
+              {
+                resp->success = 1;
+                
+                resp->salt = Rand::rand() ^ 0xf197ade0;
+                resp->magic = Protocol::PrivilegedCommand::Magic;
+                resp->length = req->size;
+            
+                Xxtea::encrypt(&(resp->salt), (2 + (req->size / 4)), Keys::getBoardKey( ));
+              }
+              else
+                resp->success = 0;  
+            }
+	        }
+          else /** 20180530 Incorrect packet size */
+            resp->success = 0;
+
+          if(resp->success)
+            Comm::sendReply(sizeof(*resp) + req->size);
+          else
+            Comm::sendReply(sizeof(*resp));
+        }
+        break;
+
+        case Protocol::Command::FramReadRaw:
+        {
+          Protocol::FramReadRaw::Request * req =
+            (Protocol::FramReadRaw::Request *) Comm::requestBody;
+
+          Protocol::FramReadRaw::Response * resp = 
+            (Protocol::FramReadRaw::Response *) Comm::responseBody;
+
+          if(requestSize == sizeof(*req))
+          {
+            if((lockBits && (lockBits == Protocol::LockBits::RtcNotRunning || lockBits == Protocol::LockBits::RentExpired)) && lobbyAccess)
+            {
+              /** 20180614 Proceed starting the read */
+              Fram::read(req->offset, (resp+1), req->size);
+              resp->success = 1;
+            }
+            else if(lockBits)
+            {
+              resp->success = 0;
+            }
+            else if((lockBits & Protocol::LockBits::RtcNotRunning) || (systemState.isTimeLocked == 0) /*|| lockBits*/) 
+            {
+              resp->success = 0;
+            }
+            else if(!lockBits)
+            {
+              /** 20180614 Proceed starting the read */
+              Fram::read(req->offset, (resp+1), req->size);
+              resp->success = 1;
+            }
+          }
+          else
+          {
+            /** 20180614 Incorrect packet size */
+            resp->success = 0;
+          }
+          
+          //~ Comm::sendReply(sizeof(*resp) + req->size);
+          if(resp->success)
+            Comm::sendReply(sizeof(*resp) + req->size);
+          else
+            Comm::sendReply(sizeof(*resp));
+          
+        }
+        break;
+
+        case Protocol::Command::EraseFlash:
+        {
+          Protocol::EraseFlash::Request * req =
+            (Protocol::EraseFlash::Request *) Comm::requestBody;
+
+          Protocol::EraseFlash::Response * resp = 
+            (Protocol::EraseFlash::Response *) Comm::responseBody;
+
+          if(requestSize == sizeof(*req))
+          {
+            eraseFlash();
+            resp->success = 1;
+          }
+          else
+          {
+            /** 20190429 Incorrect packet size */
+            resp->success = 0;
+          }
+
+          Comm::sendReply(sizeof(*resp));          
+        }
+        break;
+
+        case Protocol::Command::MenuAdminAccessBegin:
+        {
+          Protocol::MenuAdminAccessBegin::Request * req =
+            (Protocol::MenuAdminAccessBegin::Request *) Comm::requestBody;
+
+          Protocol::MenuAdminAccessBegin::Response * resp = 
+            (Protocol::MenuAdminAccessBegin::Response *) Comm::responseBody;
+
+          memset(resp, 0, sizeof(*resp));
+
+          if(requestSize != sizeof(*req) || (lockBits != 0))
+          {
+            /** 20190806 Incorrect packet size, or have other problem */
+            resp->success = 4;
+          }
+          else if((req->accessLevel < 1) || (req->accessLevel > 2))
+          {
+            /** 20190806 Incorrect access level requested             */
+            resp->success = 5;
+          }
+          else
+          {
+            TimerLock _;
+
+            if(securityDelay)
+              resp->success = 2;
+            else
+            {
+              securityDelay = 2000;
+
+              /** 20190806 Take the current sequence number from the 
+               *  system state and increase one we have there 
+               */
+              sequence = ++systemState.assistedMenuAdminSeq;
+              
+              if(saveSystemState( ))
+              {
+                memset(encBuffer, 0, sizeof(encBuffer));
+                memset(hardId_, 0, sizeof(hardId_));
+                
+                getHardwareId(&cii2c, hardId_);
+  
+                /** 20190806 Get current date and hour to generate validation code */
+                Rtc::get(rentYear, rentMonth, rentDay, rentWeekDay, rentHours, rentMinutes, rentSeconds);
+                
+                /** 20190806 Add sequence number derived from an MWC PRNG 
+                 *  function to validation 
+                 */
+                seqPrnged = 18000 * (sequence & 65535) + (sequence >> 16);
+
+                memcpy(encBuffer, &systemState.in, 8);
+                memcpy(encBuffer + 5, &systemState.out, 8);
+                
+                machineId_ = Keys::getMachineId( );
+                gameId_ =  Keys::getGameId( );
+                
+                memcpy(encBuffer + 10, &machineId_, 4); /** 20190806 Add boardID to hash */
+                memcpy(encBuffer + 12, &gameId_, 2);    /** 20190806 Add gameID to hash */
+                
+                memcpy(encBuffer + 13, hardId_, 8);     /** 20190806 Add EEPROM EUI-64 to hash */
+
+                memcpy(encBuffer + 17, &seqPrnged, 4);
+                memcpy(encBuffer + 19, &sequence, 4);
+               
+                encBuffer[22] = rentYear;
+                encBuffer[23] = rentMonth;
+                encBuffer[24] = rentDay;
+                encBuffer[25] = rentHours;
+
+                if(req->accessLevel == 1)
+                {
+                  encBuffer[ 4] = 0xe4a7;
+                  encBuffer[ 9] = 0xb39e;
+                  encBuffer[21] = 0x6c73;
+                }
+                else if(req->accessLevel == 2)
+                {
+                  encBuffer[ 4] = 0x83d1;
+                  encBuffer[ 9] = 0xbe98;
+                  encBuffer[21] = 0xa4e7;
+                }
+
+                Xxtea::encrypt((uint32_t *) encBuffer, 13, Keys::getBoardKey( ));
+                Crc::init( ); Crc::add(encBuffer, 13); Crc::finalize( );
+                result = Crc::get();
+
+                Crc::init( ); Crc::add(encBuffer + 13, 13); Crc::finalize( );
+                result |= (((uint32_t)Crc::get()) << 16);
+                result %= 100000000;
+
+                memset(encBuffer, 0, sizeof(encBuffer));
+                memset(hardId_, 0, sizeof(hardId_));
+                machineId_ = 0;
+                gameId_ = 0;
+
+                securityEraseTimeout = 3600000;    /** 20190806 60 minutes */
+
+                menuAdminAccessLevel      = req->accessLevel;
+                menuAdminValidationNumber = result;
+                menuAdminSequenceNumber   = sequence;
+
+                resp->in = systemState.in;
+                resp->out = systemState.out;
+                resp->sequenceNumber = menuAdminSequenceNumber;
+                resp->validationNumber = result;
+
+                resp->success = 1;
+              }
+              else
+                resp->success = 6;
+            }
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::MenuAdminAccessFinish:
+        {
+          Protocol::MenuAdminAccessFinish::Request * req =
+            (Protocol::MenuAdminAccessFinish::Request *) Comm::requestBody;
+
+          Protocol::MenuAdminAccessFinish::Response * resp = 
+            (Protocol::MenuAdminAccessFinish::Response *) Comm::responseBody;
+
+          if((requestSize != sizeof(*req)) || (lockBits != 0))
+          {
+            // Incorrect packet size, or have other problems beside rent
+            // expired
+            resp->success = 7;
+          }
+          else
+          {
+            TimerLock _;
+
+            if(securityDelay)
+              resp->success = 2;
+            else if(!menuAdminSequenceNumber)
+              resp->success = 8;
+            else
+            {
+              memset(encBuffer, 0, sizeof(encBuffer));
+
+              memcpy(encBuffer + 1, &systemState.in , 8);
+              memcpy(encBuffer + 5, &systemState.out, 8);
+
+              encBuffer[ 9] = 0;
+
+              machineId_ = Keys::getMachineId( );
+              memcpy(encBuffer + 10, &machineId_, 4); /** 20190806 Add boardID to hash */
+
+              encBuffer[12] = (menuAdminSequenceNumber >> 16) & 0xFFFF;
+              encBuffer[13] = menuAdminSequenceNumber & 0xFFFF;
+              encBuffer[14] = 0;
+              
+              if(menuAdminAccessLevel == 1)
+              {
+                encBuffer[ 0] = 0xCB15;
+                encBuffer[15] = 0xDE5B;
+              }
+              else if(menuAdminAccessLevel == 2)
+              {
+                encBuffer[ 0] = 0xBCEA;
+                encBuffer[15] = 0x7D29;
+              }
+
+              uint32_t myKey[4];
+              myKey[0] = 0;
+              myKey[1] = 0;
+              myKey[2] = 0;
+              myKey[3] = 0;
+
+              Xxtea::encrypt((uint32_t *) encBuffer, 8, myKey);
+
+              result = 0;
+              {
+                Crc16::Class crc;
+
+                for(idx = 0; idx < 8; ++idx)
+                  addToCrc(crc, encBuffer[idx]);
+
+                result = crc.finalize( );
+
+                Crc16::Class crc2;
+
+                for(idx = 8; idx < 16; ++idx)
+                  addToCrc(crc2, encBuffer[idx]);
+
+                result |= (((uint32_t)crc2.finalize( )) << 16);
+              }
+              result %= 100000000;
+
+              resp->password = result; // REMOVER!!!
+
+              memset(encBuffer, 0, sizeof(encBuffer));
+              machineId_ = 0;
+
+              if(result == req->password)
+              {
+                resp->success = 1;
+                menuAdminAccessLevel      = 0;
+                menuAdminValidationNumber = 0;
+                menuAdminSequenceNumber   = 0;
+              }
+              else
+              {
+                // Incorrect password specified
+                resp->success = 3;
+                securityDelay = 2000;
+              }
+            }
+          }
+
+          Comm::sendReply(sizeof(*resp));
+        }
+        break;
+
+        /** 20190923 This feature must be enabled ONLY for the US slot
+         *  machines market. 
+         */
+        case Protocol::Command::FormatGame:
+        {
+          Protocol::FormatGame::Request * req =
+            (Protocol::FormatGame::Request *) Comm::requestBody;
+
+          Protocol::FormatGame::Response * resp = 
+            (Protocol::FormatGame::Response *) Comm::responseBody;
+
+          if(requestSize != sizeof(*req) ||
+           (lockBits & Protocol::LockBits::FramIsAbsent))
+          {
+            // Incorrect packet size, or the fram was not detected
+            resp->success = 0;
+          }
+          else
+          {
+            // Proceed formatting
+            rentYear = systemState.year;
+            rentMonth = systemState.month;
+            rentDay = systemState.day;
+            rentHours = systemState.hours;
+            rentMinutes = systemState.minutes;
+            rentSeconds = systemState.seconds;
+            utc = systemState.timeZone;
+
+            memset( &systemState, 0, sizeof( systemState ) );
+
+            systemState.year = rentYear;
+            systemState.month = rentMonth;
+            systemState.day = rentDay;
+            systemState.hours = rentHours;
+            systemState.minutes = rentMinutes;
+            systemState.seconds = rentSeconds;
+
+            systemState.isTimeLocked = 1;
+            systemState.isGameFramBlank = 1;
+            systemState.assistedSetTimeSeq = 1;
+            systemState.timeZone = utc;
+            lockBits &= ~Protocol::LockBits::SystemStorageDamaged;
+
+            mechInLeft = 0;
+            mechOutLeft = 0;
+
+            if ( saveSystemState( 0 ) )
+            {
+              // Saving succeeded
+              lockBits &= ~( Protocol::LockBits::GameStorageDamaged |
+                           Protocol::LockBits::RentExpired |
+                           Protocol::LockBits::Tainted );
+              checkRent( );
+              resp->success = 1;
+            }
+            else
+            {
+              systemState.isGameFramBlank = 0;
+              resp->success = 0;
+            }
+
+          }
+
+          Comm::sendReply(sizeof(*resp));
+        }
+        break;
+
+        case Protocol::Command::SetPinInibMode:
+        {
+          Protocol::SetPinInibMode::Request * req =
+            (Protocol::SetPinInibMode::Request *) Comm::requestBody;
+
+          Protocol::SetPinInibMode::Response * resp =
+            (Protocol::SetPinInibMode::Response *) Comm::responseBody;
+
+          if(requestSize != sizeof(*req))
+            resp->success = 0;
+          else
+          {
+            pinInibMode = req->mode;
+            resp->success = 1;
+
+            if(pinInibMode == Protocol::SetPinInibMode::SendPrinterPulse)
+              LATDbits.LATD0 = 0;
+          }
+
+          Comm::sendReply(sizeof(*resp));
+        }
+        break;
+
+        case Protocol::Command::SendPinInibPulse:
+        {
+          Protocol::SendPinInibPulse::Request * req =
+            (Protocol::SendPinInibPulse::Request *) Comm::requestBody;
+
+          Protocol::SendPinInibPulse::Response * resp =
+            (Protocol::SendPinInibPulse::Response *) Comm::responseBody;
+
+          if(requestSize != sizeof(*req))
+            resp->success = 0;
+          else if(pinInibMode != Protocol::SetPinInibMode::SendPrinterPulse)
+            resp->success = 4;
+          else if(pulseDelay > 0)
+            resp->success = 3;
+          else if(pulseCount > 0)
+            resp->success = 2;
+          else
+          {
+            pulseCount = req->pulseCount*2;
+            pulseLength = req->pulseLength;
+            resp->success = 1;
+          }
+
+          Comm::sendReply(sizeof(*resp));
+        }
+        break;
+
+        case Protocol::Command::GetPulseCount:
+        {
+          Protocol::GetPulseCount::Request * req =
+            (Protocol::GetPulseCount::Request *) Comm::requestBody;
+
+          Protocol::GetPulseCount::Response * resp =
+            (Protocol::GetPulseCount::Response *) Comm::responseBody;
+
+          resp->pulseCount = pulseCount;
+
+          if(requestSize != sizeof(*req))
+            resp->success = 0;
+          else if(pinInibMode != Protocol::SetPinInibMode::SendPrinterPulse)
+            resp->success = 4;
+          else if(pulseDelay > 0)
+            resp->success = 3;
+          else if(pulseCount > 0)
+            resp->success = 2;
+          else
+            resp->success = 1;
+
+          Comm::sendReply(sizeof(*resp));
+        }
+        break;
+
+        case Protocol::Command::OpenPartitionBegin:
+        {
+          Protocol::OpenPartitionBegin::Request * req =
+            (Protocol::OpenPartitionBegin::Request *) Comm::requestBody;
+
+          Protocol::OpenPartitionBegin::Response * resp =
+            (Protocol::OpenPartitionBegin::Response *) Comm::responseBody;
+
+          memset(resp, 0, sizeof(*resp));
+
+          if(requestSize != sizeof(*req) ||
+               (lockBits && (lockBits & ~(Protocol::LockBits::RentExpired | Protocol::LockBits::RtcNotRunning)))
+               || systemState.partitionSeq == 0xffffFFFF)
+          {
+            // Incorrect packet size, or have other problems beside rtc not
+            // running, or the sequence counter maxed out
+
+            resp->success = 0;
+          }
+          else
+          {
+            TimerLock _;
+
+            if(securityDelay)
+              resp->success = 2;
+            else
+            {
+              securityDelay = 2000;
+              sequence = ++systemState.partitionSeq;
+
+              if(saveSystemState())
+              {
+                securityEraseTimeout = 600000; // 10 minutes
+
+                memset(encBuffer, 0, sizeof(encBuffer));
+                memset(hardId_, 0, sizeof(hardId_));
+
+                machineId_ = Keys::getMachineId();
+                gameId_ =  Keys::getGameId();
+                getHardwareId(&cii2c, hardId_);
+                Rtc::get(rentYear, rentMonth, rentDay, rentWeekDay, rentHours, rentMinutes, rentSeconds);
+                seqPrnged = 18000 * (sequence & 65535) + (sequence >> 16);
+
+                memcpy(encBuffer, &seqPrnged, 4);
+                memcpy(encBuffer + 2, &sequence, 4);
+
+                encBuffer[ 4] = rentHours;
+                encBuffer[ 5] = rentDay;
+                encBuffer[ 6] = rentMonth;
+                encBuffer[ 7] = rentYear;
+
+                encBuffer[ 8] = ((req->challenge >> 16) & 0xFFFF);
+                encBuffer[ 9] = (req->challenge & 0xFFFF);
+
+                memcpy(encBuffer + 10, &machineId_, 4);
+                memcpy(encBuffer + 12, hardId_, 8);
+                encBuffer[16] = 0x04F9;
+                memcpy(encBuffer + 17, &gameId_, 2);
+
+                memcpy(encBuffer + 18, &systemState.out, 8);
+                encBuffer[22] = 0x4A52;
+                encBuffer[23] = 0x8DAC;
+                memcpy(encBuffer + 24, &systemState.in, 8);
+
+                Xxtea::encrypt((uint32_t *) encBuffer, 14, Keys::getBoardKey());
+
+                Crc::init(); Crc::add(encBuffer, 14); Crc::finalize();
+                result = Crc::get();
+
+                Crc::init(); Crc::add(encBuffer + 14, 14); Crc::finalize();
+                result |= (((uint32_t)Crc::get()) << 16);
+                result %= 100000000;
+
+                // Clean-up
+                memset(encBuffer, 0, sizeof(encBuffer));
+                memset(hardId_, 0, sizeof(hardId_));
+                machineId_ = 0;
+                gameId_ = 0;
+
+                partitionValidationNumber = result;
+                partitionSequenceNumber = sequence;
+
+                resp->validationNumber = partitionValidationNumber;
+                resp->sequenceNumber = partitionSequenceNumber;
+
+                resp->success = 1;
+              }
+              else
+                resp->success = 3;
+            }
+          }
+
+          Comm::sendReply(sizeof(*resp));
+        }
+        break;
+
+        case Protocol::Command::OpenPartitionFinish:
+        {
+          Protocol::OpenPartitionFinish::Request * req =
+            (Protocol::OpenPartitionFinish::Request *) Comm::requestBody;
+
+          Protocol::OpenPartitionFinish::Response * resp =
+            (Protocol::OpenPartitionFinish::Response *) Comm::responseBody;
+
+          if(requestSize != sizeof(*req)||
+            (lockBits && (lockBits & ~(Protocol::LockBits::RentExpired | Protocol::LockBits::RtcNotRunning)) ) )
+          {
+            // Incorrect packet size, or have other problems beside rtc not
+            // running
+            resp->success = 0;
+          }
+          else
+          {
+            TimerLock _;
+
+            if(securityDelay)
+              resp->success = 2;
+            else if(!partitionSequenceNumber)
+              resp->success = 4; // Either not started or spent too much time
+            else
+            {
+              memset(encBuffer, 0, sizeof(encBuffer));
+              memset(hardId_, 0, sizeof(hardId_));
+
+              Rtc::get(rentYear, rentMonth, rentDay, rentWeekDay, rentHours, rentMinutes, rentSeconds);
+              gameId_ =  Keys::getGameId();
+              getHardwareId(&cii2c, hardId_);
+              machineId_ = Keys::getMachineId();
+
+              encBuffer[ 0] = 0x9832;
+              encBuffer[ 1] = 0xA0FF;
+
+              memcpy(encBuffer + 2, &partitionValidationNumber, 4);
+              memcpy(encBuffer + 4, &partitionSequenceNumber, 4);
+
+              encBuffer[ 6] = rentHours;
+              encBuffer[ 7] = rentMonth;
+              encBuffer[ 8] = rentDay;
+              encBuffer[ 9] = rentYear;
+
+              memcpy(encBuffer + 10, hardId_, 8);
+              memcpy(encBuffer + 14, &machineId_, 4);
+              encBuffer[16] = 0x337A;
+              memcpy(encBuffer + 17, &gameId_, 2);
+
+              Xxtea::encrypt((uint32_t *) encBuffer, 9, Keys::getBoardKey());
+              Crc::init(); Crc::add(encBuffer, 9); Crc::finalize();
+              result = Crc::get();
+
+              Crc::init(); Crc::add(encBuffer + 9, 9); Crc::finalize();
+              result |= (((uint32_t)Crc::get()) << 16);
+              result %= 100000000;
+
+              // clean-up
+              memset(encBuffer, 0, sizeof(encBuffer));
+              memset(hardId_, 0, sizeof(hardId_));
+              gameId_ = 0;
+              machineId_ = 0;
+
+              if(result == req->password)
+              {
+                resp->success = 1;
+                partitionSequenceNumber = 0;
+                partitionValidationNumber = 0;
+
+                securityEraseTimeout = 0;
+
+                resp->partitionPassword[0] = Keys::getPartitionKey()[0];
+                resp->partitionPassword[1] = Keys::getPartitionKey()[1];
+                resp->partitionPassword[2] = Keys::getPartitionKey()[2];
+                resp->partitionPassword[3] = Keys::getPartitionKey()[3];
+              }
+              else
+              {
+                // Incorrect password specified
+                resp->success = 3;
+                securityDelay = 2000;
+              }
+            }
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::GetBoardType:
+        {
+          Protocol::GetBoardType::Request * req =
+            (Protocol::GetBoardType::Request *) Comm::requestBody;
+
+          Protocol::GetBoardType::Response * resp =
+            (Protocol::GetBoardType::Response *) Comm::responseBody;
+
+          if(requestSize != sizeof(*req))
+          {
+            // Incorrect packet size
+            resp->success = 0;
+          }
+          else
+          {
+            TimerLock _;
+
+            resp->success = 1;
+            memcpy(resp->type, Keys::getBoardType(), sizeof(resp->type));
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::GetSystemParameters:
+        {
+          Protocol::GetSystemParameters::Request * req =
+            (Protocol::GetSystemParameters::Request *) Comm::requestBody;
+
+          Protocol::GetSystemParameters::Response * resp =
+            (Protocol::GetSystemParameters::Response *) Comm::responseBody;
+
+          if(requestSize != sizeof(*req))
+          {
+            // Incorrect packet size
+            resp->success = 0;
+          }
+          else
+          {
+            TimerLock _;
+
+            memcpy(resp->parameters, &systemState.parameters[req->index], req->size);
+
+            resp->success = 1;
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::SetSystemParameters:
+        {
+          Protocol::SetSystemParameters::Request * req =
+            (Protocol::SetSystemParameters::Request *) Comm::requestBody;
+
+          Protocol::SetSystemParameters::Response * resp =
+            (Protocol::SetSystemParameters::Response *) Comm::responseBody;
+
+          if(requestSize != sizeof(*req))
+          {
+            // Incorrect packet size
+            resp->success = 0;
+          }
+          else
+          {
+            TimerLock _;
+
+            memcpy(&systemState.parameters[req->index], req->parameters, req->size);
+
+            resp->success = saveSystemState();;
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        // case Protocol::Command::Helloworld:
+        // {
+        //   Protocol::Helloworld::Request * req =
+        //     ( Protocol::Helloworld::Request * ) Comm::requestBody;
+
+        //   Protocol::Helloworld::Response * resp =
+        //     ( Protocol::Helloworld::Response * ) Comm::responseBody;
+
+        //   if ( requestSize != sizeof( *req ) )
+        //   {
+        //     // Incorrect packet size
+        //     memset( resp, 0, sizeof( *resp ) );
+        //   }
+        //   else
+        //   {
+        //     resp->success = 1;
+        //     strcpy(resp->mariana, "Board helloworld\n");
+        //   }
+
+        //   Comm::sendReply( sizeof( *resp ) );
+        // }
+        // break;
+
+        // case Protocol::Command::FRAMID:
+        // {
+        //   Protocol::FRAMID::Request * req =
+        //     ( Protocol::FRAMID::Request * ) Comm::requestBody;
+        //   Protocol::FRAMID::Response * resp =
+        //     ( Protocol::FRAMID::Response * ) Comm::responseBody;
+
+        //   if ( requestSize != sizeof( *req ) )
+        //   {
+        //     memset( resp, 0, sizeof( *resp ) );
+        //   }
+        //   else
+        //   {
+        //     resp->sizesystem = systemStorage.getMaxPhysicalSize();
+        //     resp->sizegame = gameStorage.getMaxPhysicalSize();
+        //     Fram::enviaID(resp->framid2);
+        //   }
+        //   resp->success = 1;
+
+        //   Comm::sendReply( sizeof( *resp ) );
+        // }
+        // break;
+
+        // case Protocol::Command::LigandoLED:
+        // {
+        //   Protocol::LigandoLED::Request * req =
+        //     ( Protocol::LigandoLED::Request * ) Comm::requestBody;
+        //   Protocol::LigandoLED::Response * resp =
+        //     ( Protocol::LigandoLED::Response * ) Comm::responseBody;
+
+        //   if ( requestSize != sizeof( *req ) )
+        //   {
+        //     memset( resp, 0, sizeof( *resp ) );
+        //   }
+        //   else
+        //   {
+        //     Leds::setError2(req->led);
+        //     resp->success = 1;
+        //   }
+
+        //   Comm::sendReply( sizeof( *resp ) );
+        // }
+        // break;
+
+        // case Protocol::Command::SetaErro:
+        // {
+        //   Protocol::SetaErro::Request * req =
+        //     ( Protocol::SetaErro::Request * ) Comm::requestBody;
+        //   Protocol::SetaErro::Response * resp =
+        //     ( Protocol::SetaErro::Response * ) Comm::responseBody;
+
+        //   if ( requestSize != sizeof( *req ) )
+        //   {
+        //     memset( resp, 0, sizeof( *resp ) );
+        //   }
+        //   else
+        //   {
+        //     if (req->erro == 1)
+        //     {
+        //       lockBits |= Protocol::LockBits::FramIsAbsent;
+        //       Leds::setError2(lockBits);
+        //     }
+        //     if (req->erro == 32)
+        //     {
+        //       lockBits |= Protocol::LockBits::Tainted;
+        //       Leds::setError2(lockBits);
+        //     }
+        //     if (req->erro == 64)
+        //     {
+        //       lockBits |= Protocol::LockBits::RtcSpeedWrong;
+        //       Leds::setError2(lockBits);
+        //     }
+        //     if (req->erro == 128)
+        //     {
+        //       lockBits |= Protocol::LockBits::HardwareIdICAbsent;
+        //       Leds::setError2(lockBits);
+        //     }
+        //     lockBits = req->erro;
+        //     Leds::setError2(lockBits);
+
+        //     resp->success = 1;
+        //   }
+
+        //   Comm::sendReply( sizeof( *resp ) );
+        // }
+        // break;
+
+#ifdef __HLIFORCE__ 
+
+        case Protocol::Command::ReadConfigWord:
+        {
+          Protocol::ReadConfigWord::Request * req =
+            (Protocol::ReadConfigWord::Request *) Comm::requestBody;
+
+          Protocol::ReadConfigWord::Response * resp =
+            (Protocol::ReadConfigWord::Response *) Comm::responseBody;
+
+          if(requestSize == sizeof(*req))
+          {
+            dumpFlash(0x00007D94 ^ 0x0000D66A, &configWord, 1);
+
+            resp->configWord = configWord;
+            resp->success = 1;
+          }
+          else
+          {
+            /** 20190606 Incorrect packet size                        */
+            resp->success = 0;
+          }
+
+          configWord = 0;
+
+          Comm::sendReply(sizeof(*resp));
+        }
+        break;
+
+        case Protocol::Command::ForceTime:
+        {
+          Protocol::ForceTime::Request * req =
+            ( Protocol::ForceTime::Request * ) Comm::requestBody;
+
+          Protocol::ForceTime::Response * resp = 
+            ( Protocol::ForceTime::Response * ) Comm::responseBody;
+
+          if(requestSize != sizeof(*req))
+          {
+            resp->success = 0;
+          }
+          else 
+          {
+            // Proceed setting the time
+
+            Rtc::set( req->year, req->month, req->day, req->weekDay,
+                      req->hours, req->minutes, req->seconds,
+                      req->calibrationValue );
+
+            systemState.yearSet = req->year;
+            systemState.monthSet = req->month;
+            systemState.daySet = req->day;
+            systemState.hoursSet = req->hours;
+            systemState.minutesSet = req->minutes;
+            systemState.secondsSet = req->seconds;
+
+            if ( ( resp->success = saveSystemState() ) )
+            {
+              lockBits &= ~Protocol::LockBits::RtcNotRunning;
+              Leds::setError2(lockBits); 
+            } 
+            else
+              Rtc::stop();
+          }
+
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+
+        case Protocol::Command::ForceRent:
+        {
+          Protocol::ForceRent::Request * req =
+            ( Protocol::ForceRent::Request * ) Comm::requestBody;
+
+          Protocol::ForceRent::Response * resp = 
+            ( Protocol::ForceRent::Response * ) Comm::responseBody;
+
+          if(requestSize != sizeof(*req))
+          {
+            resp->success = 0;
+          }
+          else 
+          {
+            // Proceed setting the rent
+            systemState.isTimeLocked = 1;
+            systemState.year = req->year;
+            systemState.month = req->month;
+            systemState.day = req->day;
+            systemState.hours = req->hours;
+            systemState.minutes = req->minutes;
+
+            if((resp->success = saveSystemState( )))
+              checkRent( );
+          }
+          Comm::sendReply( sizeof( *resp ) );
+        }
+        break;
+#endif //__HLIFORCE__
+
+        default:
+          /** 20180530 Send an empty reply */
+          Comm::sendReply( 0 );
+          break;
+      }
+    }
+  }
+}
+
+unsigned processPrivilegedCommand( unsigned char * request,
+                                   unsigned requestSize,
+                                   unsigned char * response )
+{
+  switch( *request )
+  {
+    case Protocol::Command::PrivSetTime:
+    {
+      Protocol::SetTime::Request * req =
+        ( Protocol::SetTime::Request * ) request;
+  
+      Protocol::SetTime::Response * resp = 
+        ( Protocol::SetTime::Response * ) response;
+  
+      if ( requestSize != sizeof( *req ) ||
+           ( lockBits & Protocol::LockBits::SystemStorageDamaged ) )
+      {
+        // Incorrect packet size, or system storage is damaged, which
+        // would mean we couldn't save the systemState
+  
+        resp->success = 0;
+      }
+      /** 20180612 Add condition to make sure there is a valid date */
+      else if(req->year < 2021 || req->year > 2099)
+      {
+        resp->success = 0;
+      }
+      else
+      {
+        // Proceed setting the time
+  
+        Rtc::set( req->year, req->month, req->day, req->weekDay,
+                  req->hours, req->minutes, req->seconds,
+                  req->calibrationValue );
+
+        systemState.yearSet = req->year;
+        systemState.monthSet = req->month;
+        systemState.daySet = req->day;
+        systemState.hoursSet = req->hours;
+        systemState.minutesSet = req->minutes;
+        systemState.secondsSet = req->seconds;
+
+        if ( ( resp->success = saveSystemState() ) )
+        {
+          lockBits &= ~Protocol::LockBits::RtcNotRunning;
+
+          checkRent();
+        }
+        else
+          Rtc::stop();
+      }
+  
+      return sizeof( *resp );
+    }
+    break;
+
+    case Protocol::Command::PrivFormat:
+    {
+      Protocol::PrivFormat::Request * req =
+        ( Protocol::PrivFormat::Request * ) request;
+
+      Protocol::PrivFormat::Response * resp = 
+        ( Protocol::PrivFormat::Response * ) response;
+
+      if ( requestSize != sizeof( *req ) ||
+           ( lockBits & Protocol::LockBits::FramIsAbsent ) )
+      {
+        // Incorrect packet size, or the fram was not detected
+
+        resp->success = 0;
+      }
+      else
+      {
+        // Proceed formatting
+
+        TimerLock _; // For the counters
+
+        Rtc::stop();
+
+        memset( &systemState, 0, sizeof( systemState ) );
+
+        systemState.isGameFramBlank = 1;
+        systemState.assistedSetTimeSeq = 1;
+
+        lockBits &= ~Protocol::LockBits::SystemStorageDamaged;
+
+        mechInLeft = 0;
+        mechOutLeft = 0;
+
+        if ( saveSystemState( 0 ) )
+        {
+          // Saving succeeded
+          lockBits &= ~( Protocol::LockBits::GameStorageDamaged |
+                         Protocol::LockBits::RentExpired |
+                         Protocol::LockBits::Tainted );
+
+          lockBits |= Protocol::LockBits::RtcNotRunning;
+
+          resp->success = 1;
+        }
+        else
+        {
+          systemState.isGameFramBlank = 0;
+          resp->success = 0;
+        }
+
+      }
+
+      return sizeof( *resp );
+    }
+    break;
+
+    case Protocol::Command::PrivSetTimeLockState:
+    {
+      Protocol::PrivSetTimeLockState::Request * req =
+        ( Protocol::PrivSetTimeLockState::Request * ) request;
+
+      Protocol::PrivSetTimeLockState::Response * resp = 
+        ( Protocol::PrivSetTimeLockState::Response * ) response;
+
+      if ( requestSize != sizeof( *req ) ||
+           ( lockBits & Protocol::LockBits::SystemStorageDamaged ) )
+      {
+        // Incorrect packet size, or system storage is damaged, which
+        // would mean we couldn't save the lock state
+
+        resp->success = 0;
+      }
+      else
+      {
+        // Proceed setting the lock state
+        if((systemState.isTimeLocked = req->isTimeLocked) && 
+           (req->year >= 2021) )
+        {
+          systemState.year = req->year;
+          systemState.month = req->month;
+          systemState.day = req->day;
+          systemState.hours = req->hours;
+          systemState.minutes = req->minutes;
+          systemState.seconds = req->seconds;
+        }
+
+        if ( ( resp->success = saveSystemState() ) )
+          checkRent();
+      }
+      return sizeof( *resp );
+    }
+    break;
+
+    case Protocol::Command::PrivRemoveTaintFlag:
+    {
+      Protocol::PrivRemoveTaintFlag::Request * req =
+        ( Protocol::PrivRemoveTaintFlag::Request * ) request;
+
+      Protocol::PrivRemoveTaintFlag::Response * resp = 
+        ( Protocol::PrivRemoveTaintFlag::Response * ) response;
+
+      if ( requestSize != sizeof( *req ) ||
+           ( lockBits & Protocol::LockBits::SystemStorageDamaged ) )
+      {
+        // Incorrect packet size, or system storage is damaged
+
+        resp->success = 0;
+      }
+      else
+      {
+        // Remove the flag
+
+        systemState.isTainted = 0;
+        resp->success = saveSystemState();
+        lockBits &= ~Protocol::LockBits::Tainted;
+        Leds::setError2(lockBits);
+      }
+      return sizeof( *resp );
+    }
+    break;
+
+    default:
+      return 0;
+  }
+}
+
+int billAcceptorTainted = 0; // Set to 1 in case of invalid reading. Used
+                             // in sb mode only.
+
+// Extended commands used by the lobby operation
+enum SbExtended
+{
+  SbGetDataKey = 0,
+  SbReadButton,
+  SbSetTimeAssistedBegin,
+  SbSetTimeAssistedFinish,
+  SbSetRentAssistedBegin,
+  SbSetRentAssistedFinish,
+  SbSetLamps
+};
+
+// Converts number of pulses to the sb bill value
+unsigned char getSbBillValue()
+{
+  if ( !billAcceptorTainted )
+    switch( lastBillValue )
+    {
+      case 0:
+        break;
+      case 5:
+        return 224;
+      case 10:
+        return 208;
+      case 20:
+        return 176;
+      case 50:
+        return 112;
+      case 100:
+        return 192;
+      default:
+        billAcceptorTainted = 1;
+        if(pinInibMode == Protocol::SetPinInibMode::InibBillValidator)
+          BillAcceptor::inhibit();
+        break;
+    }
+
+  return 0xF0;
+}
+
+static int const alwaysLitProgram[ 2 ] __attribute((space(auto_psv))) = { 2000, 0 };
+static int const alwaysDimProgram[ 2 ] __attribute((space(auto_psv))) = { -2000, 0 };
+
+#if 0
+/// Sb emulation
+void emulateSb()
+{
+  // Disable both rx and tx interrupts. With the link speed of 19200, we can
+  // safely poll them.
+  IEC1bits.U2RXIE = 0;
+  IEC1bits.U2TXIE = 0;
+  //~ IEC0bits.U1RXIE = 1;
+  //~ IEC0bits.U1TXIE = 0;
+
+  // Configure UART2
+  TRISFbits.TRISF4 = 1; // Rx is In
+  TRISFbits.TRISF5 = 0; // Tx is Out
+  //~ TRISFbits.TRISF2 = 1; // Rx is In
+  //~ TRISFbits.TRISF3 = 0; // Tx is Out
+
+  U2BRG  = 32; // 18939 baud at 20Mhz clock.
+  //~ U1BRG  = 32; // 18939 baud at 20Mhz clock.
+
+  U2MODE = (1<<15);  // UARTEN
+  //~ U1MODE = (1<<15);  // UARTEN
+
+  U2STA = 1<<10;   // UTXEN
+  //~ U1STA = 1<<10;   // UTXEN
+
+  unsigned char sendQueue[ 32 ];
+
+  int sendQueueFill = 0; // Number of bytes sendQueue holds
+  int sendQueuePtr = 0; // Next char to be filled in sendQueue
+
+  #define qSend( b )\
+  {\
+    sendQueue[ sendQueuePtr++ ] = ( b );\
+    if ( sendQueuePtr == sizeof( sendQueue ) )\
+      sendQueuePtr = 0;\
+    ++sendQueueFill;\
+  }
+
+  //uint32_t currentDisplayValue = Display::BlankValue;
+
+  // We call Rand::rand() every now and then to make random values depend
+  // on time.
+  uint16_t iterationsUntilRand = 0;
+
+  int protect = 0;
+  int updatingMoneyOut = 0; // Command 0xEF
+ // int updatingDisplay = 0; // Command 0xE4
+  int readingExtendedCmd = 0; // Command 0xF8. Positive for meta, negative for data
+
+  // Those store extended cmd info. Initialized only to suppress warning.
+  unsigned char extendedCmd = 0, extendedCmdLen = 0, extendedCmdSum = 0;
+
+  for( ; ; )
+  {
+    if ( !iterationsUntilRand-- )
+      iterationsUntilRand = Rand::rand();
+
+    // Check if we want to inhibit bill acceptor, turn off the lights
+    // and display because the board was not communicated with for too long
+
+    if ( !lostConnectionDelay )
+    {
+      TimerLock _;
+
+      if(pinInibMode == Protocol::SetPinInibMode::InibBillValidator)
+        BillAcceptor::inhibit();
+      Lamps::reset();
+
+     // currentDisplayValue = Display::BlankValue;
+      //displayRefreshDelay = 0;
+
+      lostConnectionDelay = 15000; // Reset the connection watchdog
+    }
+/*
+    if ( !displayRefreshDelay )
+    {
+      // Try refreshing the display, if possible now
+      if ( Display::canBeSetNow() )
+      {
+        Display::set( currentDisplayValue );
+
+        TimerLock _;
+
+        displayRefreshDelay = 1000;
+      }
+    }
+*/
+    // Send any queued bytes
+    while( sendQueueFill && !( U2STA & ( 1<<9 ) ) )
+    //~ while( sendQueueFill && !( U1STA & ( 1<<9 ) ) )
+    {
+      int offset = sendQueuePtr - sendQueueFill;
+
+      if ( offset < 0 )
+        offset += sizeof( sendQueue );
+
+      U2TXREG = sendQueue[ offset ];
+      //~ U1TXREG = sendQueue[ offset ];
+
+      --sendQueueFill;
+    }
+
+    // Only check for incoming bytes if we can queue an answer
+    if ( sendQueueFill <= (int) sizeof( sendQueue ) - 28 && ( U2STA & 1 ) )
+    //~ if ( sendQueueFill <= (int) sizeof( sendQueue ) - 28 && ( U1STA & 1 ) )
+    {
+      lostConnectionDelay = 15000; // Reset the connection watchdog
+
+      // Incoming byte
+      unsigned char cmd = U2RXREG;
+      //~ unsigned char cmd = U1RXREG;
+
+      if ( protect )
+      {
+        protect = 0;
+        qSend( 0xAF );
+      }
+      else
+      if ( updatingMoneyOut )
+      {
+        // We're saving money out bytes
+        Comm::requestBody[ 8 - updatingMoneyOut ] = cmd;
+
+        if ( !--updatingMoneyOut )
+        {
+          // That was the last byte, do the update
+          uint32_t * copies = (uint32_t *)Comm::requestBody;
+
+          // Copies must match in order for the update to be done
+          if ( copies[ 0 ] == copies[ 1 ] )
+          {
+            systemState.out += copies[ 0 ] / 4;
+
+            {
+              TimerLock _;
+
+              mechOutLeft += copies[ 0 ] / 4;
+            }
+
+            saveSystemState();
+          }
+        }
+      }
+      /*
+      else
+      if ( updatingDisplay )
+      {
+        // We're saving the display value bytes
+        Comm::requestBody[ 8 - updatingDisplay ] = cmd;
+
+        if ( !--updatingDisplay )
+        {
+          // That was the last byte, do the update
+          uint32_t * copies = (uint32_t *)Comm::requestBody;
+
+          // Copies must match in order for the update to be done
+          if ( copies[ 0 ] == copies[ 1 ] )
+          {
+            currentDisplayValue = copies[ 0 ];
+
+            TimerLock _;
+
+            displayRefreshDelay = 0;
+          }
+        }
+      }
+      */
+      else
+      if ( readingExtendedCmd != 0 )
+      {
+        cmd ^= 0xC4;
+        extendedCmdSum += cmd;
+
+        switch( readingExtendedCmd )
+        {
+          case 2:
+            extendedCmd = cmd;
+            --readingExtendedCmd;
+          break;
+          case 1:
+            extendedCmdLen = cmd;
+            readingExtendedCmd = - (int)extendedCmdLen;
+          break;
+          default: // Must be negative
+            Comm::requestBody[ extendedCmdLen - (unsigned)-readingExtendedCmd ]  = cmd;
+            ++readingExtendedCmd;
+        }
+
+        if ( readingExtendedCmd == 0 )
+        {
+          // We've read all data -- process it now
+
+          if ( !extendedCmdSum )
+          {
+            unsigned responseSize = 0;
+
+            // Sum is valid, process the command
+            switch( extendedCmd )
+            {
+              case SbGetDataKey:
+                if ( extendedCmdLen == 2 )
+                {
+                  responseSize = 16;
+
+                  if ( *Comm::requestBody )
+                  {
+                    // Taint requested
+
+                    lockBits |= Protocol::LockBits::Tainted;
+
+                    if ( !systemState.isTainted )
+                    {
+                      systemState.isTainted = 1;
+                      saveSystemState();
+                    }
+
+                    *(uint32_t *)Comm::responseBody = Rand::rand();
+                    *(uint32_t *)( Comm::responseBody + 4 ) = Rand::rand();
+                    *(uint32_t *)( Comm::responseBody + 8 ) = Rand::rand();
+                    *(uint32_t *)( Comm::responseBody + 12 ) = Rand::rand();
+                  }
+                  else
+                  if ( lockBits )
+                  {
+                    // Lockbits are set -- send back an error code
+                    memset( Comm::responseBody, 0, 12 );
+                    *(uint32_t *)( Comm::responseBody + 12 ) = lockBits;
+                  }
+                  else
+                  {
+                    // Ok, no lockBits and no taint -- return the key
+                    memcpy( Comm::responseBody, Keys::getDataKey(), 16 );
+                  }
+                }
+              break;
+
+              case SbReadButton:
+                if ( extendedCmdLen == 1 )
+                {
+                  responseSize = 2;
+
+                  uint16_t result = 0;
+
+                  for(idx = 0; idx < 12; ++idx)
+                    if(Buttons::state[idx].pressedNow)
+                      result |= (1 << idx);
+
+                  *(uint16_t *) Comm::responseBody = result;
+                }
+              break;
+
+              case SbSetTimeAssistedBegin: // Adapted version of the normal SetTimeAssistedBegin
+                if ( extendedCmdLen != 1
+                     || ( lockBits && lockBits != Protocol::LockBits::RtcNotRunning )
+                     || systemState.assistedSetTimeSeq == 0xffffFFFF )
+                {
+                  // Incorrect size, have other problems beside rtc not
+                  // running, or the sequence counter maxed out
+                }
+                else
+                {
+                  TimerLock _;
+
+                  if ( securityDelay )
+                  {
+                    responseSize = 1;
+                    *Comm::responseBody = 0;
+                  }
+                  else
+                  {
+                    securityDelay = 2000;
+
+                    // Take the current sequence number from the system state,
+                    // and increase one we have there
+                    sequence = systemState.assistedSetTimeSeq++;
+
+                    if ( saveSystemState() )
+                    {
+                      // Now generate the validation number based on the sequence number
+
+                      //~ uint16_t encBuffer[ 4 ];
+                      memset(encBuffer, 0, sizeof(encBuffer));
+
+                      // Some number dependent on sequence derived from an MWC PRNG
+                      // function
+                      seqPrnged = 18000 * ( sequence & 65535 ) + ( sequence >> 16 );
+
+                      memcpy( encBuffer, &seqPrnged, 4 );
+                      memcpy( encBuffer + 2, &sequence, 4 );
+
+                      Xxtea::encrypt( (uint32_t *) encBuffer, 2, Keys::getBoardKey() );
+
+                      Crc::init(); Crc::add( encBuffer, 2 ); Crc::finalize();
+                      result = Crc::get();
+
+                      Crc::init(); Crc::add( encBuffer + 2, 2 ); Crc::finalize();
+
+                      memset(encBuffer, 0, sizeof(encBuffer));
+
+                      result |= ( ( (uint32_t)Crc::get() ) << 16 );
+
+                      result %= 100000000;
+
+                      securityEraseTimeout = 600000; // 10 minutes
+
+                      clockValidationNumber = result;
+                      clockSequenceNumber = sequence;
+
+                      responseSize = 12;
+
+                      *(uint32_t *) Comm::responseBody = Keys::getMachineId();
+                      *(uint32_t *)( Comm::responseBody + 4 ) = clockValidationNumber;
+                      *(uint32_t *)( Comm::responseBody + 8 ) = clockSequenceNumber;
+                    }
+                  }
+                }
+              break;
+
+              case SbSetTimeAssistedFinish:  // Adapted version of the normal SetTimeAssistedFinish
+                if ( extendedCmdLen != 19 ||
+                     ( lockBits && lockBits != Protocol::LockBits::RtcNotRunning ) )
+                {
+                  // Incorrect packet size, or have other problems beside rtc not
+                  // running
+                }
+                else
+                {
+                  TimerLock _;
+
+                  if ( securityDelay )
+                  {
+                    responseSize = 1;
+                    *Comm::responseBody = 0;
+                  }
+                  else
+                  if ( !clockSequenceNumber )
+                  {
+                    // Either not started or spent too much time
+                  }
+                  else
+                  {
+                    // Now check the password by encrypting the input, calculating
+                    // two crcs, combining them together and taking the remainder
+
+                    uint16_t encBuffer[ 12 ];
+
+                    memcpy( encBuffer, &clockValidationNumber, 4 );
+                    memcpy( encBuffer + 2, &clockSequenceNumber, 4 );
+                    memcpy( encBuffer + 4, Comm::requestBody + 4, 14 ); // year, month, day, weekDay, hours, mins, secs
+
+                    encBuffer[ 11 ] = 0x17de;
+
+                    Xxtea::encrypt( (uint32_t *) encBuffer, 6, Keys::getBoardKey() );
+
+                    Crc::init(); Crc::add( encBuffer, 6 ); Crc::finalize();
+                    result = Crc::get();
+
+                    Crc::init(); Crc::add( encBuffer + 6, 6 ); Crc::finalize();
+
+                    result |= ( ( (uint32_t)Crc::get() ) << 16 );
+
+                    result %= 100000000;
+
+                    if ( result == *(uint32_t *) Comm::requestBody )
+                    {
+                      clockSequenceNumber = 0;
+                      clockValidationNumber = 0;
+
+                      securityEraseTimeout = 0;
+
+                      IEC0bits.T2IE = 1; // Unlock the TimerLock's timer manually
+                                         // here, since setting time can sometimes
+                                         // take up to 1ms.
+
+                      // Proceed setting the clock
+
+                      uint16_t * values = ( uint16_t *)( Comm::requestBody + 4 );
+
+                      Rtc::set( values[ 0 ], values[ 1 ], values[ 2 ], values[ 3 ],
+                                values[ 4 ], values[ 5 ], values[ 6 ], 0 );
+
+                      systemState.yearSet = values[ 0 ];
+                      systemState.monthSet = values[ 1 ];
+                      systemState.daySet = values[ 2 ];
+                      systemState.hoursSet = values[ 4 ];
+                      systemState.minutesSet = values[ 5 ];
+                      systemState.secondsSet = 99; // To indicate time was approximate
+
+                      if ( saveSystemState() )
+                      {
+                        lockBits &= ~Protocol::LockBits::RtcNotRunning;
+
+                        checkRent();
+
+                        responseSize = 1;
+                        *Comm::responseBody = 0xFF;
+                      }
+                      else
+                        Rtc::stop();
+                    }
+                    else
+                    {
+                      // Incorrect password specified
+                      responseSize = 1;
+                      *Comm::responseBody = 1;
+
+                      securityDelay = 2000;
+                    }
+                  }
+                }
+              break;
+
+
+              case SbSetRentAssistedBegin: // Adapted version of the normal SetRentAssistedBegin
+
+                if ( extendedCmdLen != 1 ||
+                     ( lockBits && lockBits != Protocol::LockBits::RentExpired ) )
+                {
+                  // Incorrect packet size, or have other problems beside rent
+                  // expired
+                }
+                else
+                {
+                  TimerLock _;
+
+                  if ( securityDelay )
+                  {
+                    responseSize = 1;
+                    *Comm::responseBody = 0;
+                  }
+                  else
+                  {
+                    securityDelay = 2000;
+
+                    // Calculate in/out based validation number
+
+                    uint16_t encBuffer[ 10 ];
+
+                    memcpy( encBuffer, &systemState.in, 8 );
+                    encBuffer[ 4 ] = 0xe54a;
+                    memcpy( encBuffer + 5, &systemState.out, 8 );
+                    encBuffer[ 9 ] = 0x98f7;
+
+                    Xxtea::encrypt( (uint32_t *) encBuffer, 5, Keys::getBoardKey() );
+
+                    Crc::init(); Crc::add( encBuffer, 5 ); Crc::finalize();
+                    result = Crc::get();
+
+                    Crc::init(); Crc::add( encBuffer + 5, 5 ); Crc::finalize();
+
+                    result |= ( ( (uint32_t)Crc::get() ) << 16 );
+
+                    result %= 100000000;
+
+                    responseSize = 24;
+
+                    *(uint32_t *) Comm::responseBody = Keys::getMachineId();
+                    memcpy( Comm::responseBody + 4, &systemState.in, 8 );
+                    memcpy( Comm::responseBody + 12, &systemState.out, 8 );
+                    memcpy( Comm::responseBody + 20, &result, 4 );
+                  }
+                }
+              break;
+
+              case SbSetRentAssistedFinish:  // Adapted version of the normal SetRentAssistedFinish
+
+                if ( extendedCmdLen != 17 ||
+                     ( lockBits && lockBits != Protocol::LockBits::RentExpired ) )
+                {
+                  // Incorrect packet size, or have other problems beside rent
+                  // expired
+                }
+                else
+                {
+                  TimerLock _;
+
+                  if ( securityDelay )
+                  {
+                    responseSize = 1;
+                    *Comm::responseBody = 0;
+                  }
+                  else
+                  {
+                    // Now check the password by encrypting the input, calculating
+                    // two crcs, combining them together and taking the remainder
+
+                    uint16_t encBuffer[ 16 ];
+
+                    encBuffer[ 0 ] = 0xf912;
+                    memcpy( encBuffer + 1, &systemState.in, 8 );
+                    memcpy( encBuffer + 5, &systemState.out, 8 );
+
+                    uint16_t * values = ( uint16_t *)( Comm::requestBody + 4 );
+
+                    encBuffer[ 9 ] = values[ 0 ]; // year
+                    encBuffer[ 10 ] = values[ 1 ];// month
+                    encBuffer[ 11 ] = values[ 2 ]; // day
+                    encBuffer[ 12 ] = values[ 3 ];// hours
+                    encBuffer[ 13 ] = values[ 4 ];// minutes
+                    encBuffer[ 14 ] = values[ 5 ];// seconds
+                    encBuffer[ 15 ] = 0xedc8;
+
+                    Xxtea::encrypt( (uint32_t *) encBuffer, 8, Keys::getBoardKey() );
+
+                    Crc::init(); Crc::add( encBuffer, 8 ); Crc::finalize();
+                    result = Crc::get();
+
+                    Crc::init(); Crc::add( encBuffer + 8, 8 ); Crc::finalize();
+
+                    result |= ( ( (uint32_t)Crc::get() ) << 16 );
+
+                    result %= 100000000;
+
+                    if ( result == *(uint32_t *) Comm::requestBody )
+                    {
+                      if ( ( systemState.isTimeLocked = ( values[ 0 ] != 2099 ) ? 1 : 0 ) )
+                      {
+                        systemState.year = values[ 0 ];
+                        systemState.month = values[ 1 ];
+                        systemState.day = values[ 2 ];
+                        systemState.hours = values[ 3 ];
+                        systemState.minutes = values[ 4 ];
+                        systemState.seconds = values[ 5 ];
+                      }
+
+                      if ( ( saveSystemState() ) )
+                      {
+                        checkRent();
+                        responseSize = 1;
+                        *Comm::responseBody = 0xFF; // Success
+                      }
+                    }
+                    else
+                    {
+                      // Incorrect password specified
+                      responseSize = 1;
+                      *Comm::responseBody = 1;
+                      securityDelay = 2000;
+                    }
+                  }
+                }
+
+              break;
+
+              case SbSetLamps:
+                if ( extendedCmdLen == 3 )
+                {
+                  responseSize = 1;
+
+                  uint16_t state = *(uint16_t *) Comm::requestBody;
+
+                  TimerLock _;
+
+                  for(idx = 0; idx < 10; ++idx)
+                  {
+                    if(state & (1 << idx))
+                      Lamps::set(idx, alwaysLitProgram);
+                    else
+                      Lamps::set(idx, alwaysDimProgram);
+                  }
+
+                  *(uint16_t *) Comm::responseBody = 0xFF;
+                }
+              break;
+            }
+
+            // Send back the response
+
+            qSend( 0xF8 );
+            unsigned char sum = extendedCmd;
+            qSend( extendedCmd ^ 0x2B );
+            ++responseSize; // It needs to include (-sum)
+            sum += responseSize;
+            qSend( responseSize ^ 0x2B );
+
+            unsigned char * ptr = Comm::responseBody;
+
+            while( --responseSize )
+            {
+              qSend( *ptr ^ 0x2B );
+              sum += *ptr++;
+            }
+
+            sum = -sum; // Negate so that the full result would be zero
+            qSend( sum ^ 0x2B );
+          }
+        }
+      }
+      else
+      if ( cmd == 0xF8 ) //'x' | 128
+      {
+        // Extended command -- an extension to support lobby operations
+        readingExtendedCmd = 2;
+        extendedCmdSum = 0;
+      }
+      else
+      if ( !lockBits ) // Process sb commands only if there're no lock bits set
+        switch( cmd )
+        {
+          case 'Z':
+            protect = 1;
+          break;
+  
+          case 'D': // Disable smiley
+          case 'E': // Enable smiley
+          {
+            // Proceed setting the inhibit state
+  
+            TimerLock _;
+  
+            billAcceptorEnabled = ( cmd == 'D' ? 0 : 1 );
+  
+            if ( billAcceptorEnabled )
+            {
+              // We only physically uninhibit the bill acceptor if we don't
+              // have some value still not fetched by the user and if it
+              // isn't in the process of accepting the bill.
+              // Additionally, if the bill acceptor is tainted, we never ever
+              // uninhibit it.
+              if((getSbBillValue() == 0xF0 && !billAcceptorDelay && !billAcceptorTainted) && (pinInibMode == Protocol::SetPinInibMode::InibBillValidator))
+                BillAcceptor::uninhibit();
+            }
+            else
+            {
+              // If we are instructed to inhibit bill acceptor, we always
+              // do it right away, since this won't disrupt anything.
+              if(pinInibMode == Protocol::SetPinInibMode::InibBillValidator)
+                BillAcceptor::inhibit();              
+            }
+          }
+          break;
+  
+          case 'S': // Read smiley
+          {
+            TimerLock _;
+  
+            unsigned char result = getSbBillValue();
+  
+            qSend( result );
+            qSend( result );
+          }
+          break;
+  
+          case 'X': // Eat note
+          {
+            TimerLock _;
+  
+            unsigned char result = getSbBillValue();
+  
+            qSend( result );
+            qSend( result );
+  
+            if ( result != 0xF0 )
+            {
+              systemState.in += lastBillValue;
+
+              {
+                TimerLock _;
+
+                mechInLeft += lastBillValue;
+              }
+
+              saveSystemState();
+
+              lastBillValue = 0;
+  
+              if((billAcceptorEnabled && !billAcceptorTainted) && (pinInibMode == Protocol::SetPinInibMode::InibBillValidator))
+                BillAcceptor::uninhibit();
+            }
+          }
+          break;
+  
+          case 'B': // Read buttons
+          {
+            TimerLock _;
+  
+            unsigned char result = 'Z';
+  
+            if ( Buttons::state[ 0 ].pressedNow ) // Payout
+              result = '9';
+            else
+            if ( Buttons::state[ 1 ].pressedNow ) // Number of cards
+              result = '6';
+            else
+            if ( Buttons::state[ 2 ].pressedNow ) // Speed up
+              result = '5';
+            else
+            if ( Buttons::state[ 3 ].pressedNow ) // Creditar
+              result = '9';
+            else
+            if ( Buttons::state[ 4 ].pressedNow ) // Extra
+              result = '8';
+            else
+            if ( Buttons::state[ 5 ].pressedNow ) // Help
+              result = '2';
+            else
+            if ( Buttons::state[ 6 ].pressedNow ) // Numbers on cards
+              result = '7';
+            else
+            if ( Buttons::state[ 7 ].pressedNow ) // Speed down
+              result = '1';
+            else
+            if ( Buttons::state[ 8 ].pressedNow ) // Bet
+              result = '3';
+            else
+            if ( Buttons::state[ 9 ].pressedNow ) // Start
+              result = '4';
+            else
+            if ( Buttons::state[ 10 ].pressedNow ) // Key 1
+              result = 'A';
+            else
+            if ( Buttons::state[ 11 ].pressedNow ) // Key 2
+              result = 'B';
+  
+            qSend( result );
+          }
+          break;
+
+          case '0': // Turn on 'help' lamp
+          {
+            TimerLock _;
+
+            Lamps::set( 5, alwaysLitProgram );
+          }
+          break;
+
+          case '1': // Turn on all lamps
+          {
+            TimerLock _;
+
+            for(idx = Lamps::Count; idx--;)
+              Lamps::set(idx, alwaysLitProgram);
+          }
+          break;
+
+          case '2': // Turn on -,+,extra,play lamps
+          {
+            TimerLock _;
+
+            Lamps::set( 7, alwaysLitProgram );
+            Lamps::set( 2, alwaysLitProgram );
+            Lamps::set( 4, alwaysLitProgram );
+            Lamps::set( 9, alwaysLitProgram );
+          }
+          break;
+
+          case '3': // Turn on 'extra' lamp
+          {
+            TimerLock _;
+
+            Lamps::set( 4, alwaysLitProgram );
+          }
+          break;
+
+          case '4': // Turn on 'creditar' lamps
+          {
+            TimerLock _;
+
+            Lamps::set( 3, alwaysLitProgram );
+            Lamps::set( 0, alwaysLitProgram );
+          }
+          break;
+
+          case 0xFE: // Turn off all lamps
+          {
+            TimerLock _;
+
+            Lamps::reset();
+          }
+          break;
+  
+          case 0xEF: // 'o' | 128
+          {
+            // This is an extension to update money out
+            updatingMoneyOut = 8;
+          }
+          break;
+  
+          case 0xE4: // 'd' | 128
+          {
+            // This is an extension to update display
+            //updatingDisplay = 8;
+          }
+          break;
+  
+          default:
+            break;
+        }
+    }
+  }
+}
+#endif
+
+
+/** 20180529 ********************************************************************
+  * \brief Sends PIC24FJ64GA006 program memory dump;
+  * 
+  * This function reads PIC24FJxxGA006 flash memory contents from 'offset'
+  * position up to 'size' words and returns it to a pointer;
+  * Each word has 4 bytes (1 phantom byte 0x00 + 3 data bytes);
+  * 
+  * \param offset is position from which the flash is to be read;
+  * \param data is the pointer where the memory contents will be returned;
+  * \param size is the total number of words to be read;
+  * 
+  * \return The result is: 
+  * - \c  1: success;
+  * - \c -1: failed;
+  */
+int dumpFlash(uint32_t offset, void *data, uint16_t size)
+{
+  uint16_t i = 0;
+
+  uint16_t offsetLo;
+  uint16_t *ptr = (uint16_t *) (data);
+  
+  TBLPAG = ((offset & 0xFFFF0000) >> 16);
+  offsetLo = offset & 0x0000FFFF;
+  
+  for(i = 0; i < size; i += 2)
+  {
+    *ptr = __builtin_tblrdl(offsetLo);
+    ptr++;
+
+    *ptr = __builtin_tblrdh(offsetLo);
+    ptr++;
+
+    offsetLo += 2;
+  }
+  
+  return(1);
+}
+
+/** 20190426 ***********************************************************
+  * \brief Erase PIC24FJ64GA006 program memory;
+  * 
+  * This function erases all PIC24FJxxGA006 flash memory contents. The
+  * erasing process happens page by page:
+  * 
+  * PIC24F Reference Manual - Section 4. Flash Program Memory
+  * One instruction has 3 bytes + 1 phantom byte;
+  * Rows are blocks of memory;
+  * One row has 64 instructions;
+  * One page has 8 rows, or 512 instructions (64 * 8);
+  * PIC24FJ64GA006 has 64 KB and 22.016 instructions:
+  * Instruction      0 start at address 0x0000;
+  * Instruction      1 start at address 0x0002;
+  * Instruction      2 start at address 0x0004;
+  * ...
+  * Instruction    512 start at address 0x0400;
+  * ...
+  * Instruction 22.016 start at address 0xABFE;
+  * 
+  * Note that the memory has (0xABFE + 0x0002) / 0x0400 = 0x2B, or 43
+  * pages in total.
+  * 
+  * \return The result is: 
+  * - \c  1: success;
+  * - \c -1: failed;
+  */
+int eraseFlash(void)
+{
+  bool eraseDone = false;
+  int addr = 0x5C00;
+
+  /** 20190726 Erase only programmed pages in flash */
+  while(eraseDone == false)
+  {
+    if(addr < 0)
+    {
+      eraseDone = true;
+      addr = 0x6000;
+    }
+
+    // Set ERASE, WREN and configure NVMOP for page erase (see data sheet)
+    NVMCON = 0x4042; // 0b0100000001000010
+
+    // Set target write address
+    TBLPAG = 0x00;
+
+    // Dummy TBLWT to load address
+    __builtin_tblwtl(addr, 0x0000);
+    addr -= 0x0400;
+
+    // Disable interrupts
+    __builtin_disi(0x3FFF);
+
+    /** 20190426 The bultin_write_NVM macro does not compiles. Execute
+     *  the expected procedures manually.
+     */
+    NVMKEY = 0x55;
+    NVMKEY = 0xAA;
+    NVMCONbits.WR = 1;
+    Nop();
+    Nop();
+    while(NVMCONbits.WR == 1) {} /** Wait until erasing is complete */
+  }
+
+  return(1);
+}
