@@ -128,7 +128,7 @@
 #define SHA204_PAUSE                    ((uint8_t) 0x01)       //!< Pause command op-code
 #define SHA204_RANDOM                   ((uint8_t) 0x1B)       //!< Random command op-code
 #define SHA204_READ                     ((uint8_t) 0x02)       //!< Read command op-code
-#define SHA204_SHA						((uint8_t) 0x47)       //!< SHA-256 command op-code
+#define SHA204_SHA						          ((uint8_t) 0x47)       //!< SHA-256 command op-code
 #define SHA204_UPDATE_EXTRA             ((uint8_t) 0x20)       //!< UpdateExtra command op-code
 #define SHA204_WRITE                    ((uint8_t) 0x12)       //!< Write command op-code
 /** @} */
