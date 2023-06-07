@@ -1,0 +1,48 @@
+DIFERENÇA DE PERSISTENCIA -> TESTANDO JOGOS 1 A 1 
+
+teste 1 -> gravei placa, limpei lockbits,  exclui game db1 e db2; subi o jogo, matei sem entrar em nenhum game e subi novamente
+teste 2 -> subi o jogo, entrei no game MACAQUITO e matei, subi de novo 
+teste 3 -> subi o jogo, entrei no game MACAQUITO, inseri credito, joguei, metei e subi de novo 
+teste 4 -> subi o jogo, entrei no game MACAQUITO, inseri credito, joguei, matei e subi de novo ;
+	   subi o jogo, entrei no game DRACULA, inseri credito, joguei, matei o jogo e subi de novo pra ver resultado. 
+teste 5 -> subi o jogo, entrei no game MACAQUITO, inseri credito, joguei, matei e subi de novo ;
+	   subi o jogo, entrei no game DRACULA, inseri credito, joguei, matei o jogo e subi de novo pra ver resultado. 
+	   subi o jogo, entrei no game FORTUNE, inseri credito, joguei bastante, matei o jogo e subi de novo pra ver resultado. 
+teste 6 -> subi o jogo, entrei no game MACAQUITO, inseri credito, joguei, matei e subi de novo ;
+	   subi o jogo, entrei no game DRACULA, inseri credito, joguei, matei o jogo e subi de novo pra ver resultado. 
+	   subi o jogo, entrei no game FORTUNE, inseri credito, joguei bastante, matei o jogo e subi de novo pra ver resultado. 
+	   subi o jogo, entrei no game HECHICERA, inseri credito, joguei bastante, matei o jogo e subi de novo pra ver resultado. 
+
+teste 7 -> subi o jogo, entrei no game MACAQUITO, inseri credito, joguei, matei e subi de novo ;
+	   subi o jogo, entrei no game DRACULA, inseri credito, joguei, matei o jogo e subi de novo pra ver resultado. 
+	   subi o jogo, entrei no game FORTUNE, inseri credito, joguei bastante, matei o jogo e subi de novo pra ver resultado. 
+	   subi o jogo, entrei no game HECHICERA, inseri credito, joguei bastante, matei o jogo e subi de novo pra ver resultado. 
+	   subi o jogo, entrei no game OJOS, inseri credito, joguei bastante, matei o jogo e subi de novo pra ver resultado. 
+
+teste 8 -> sem formatar o jogo, entrei nos jogos: 
+	   FORTUNE, inseri créditos e joguei;
+	   MACAQUITO, inseri créditos e joguei;
+	   FEITICEIRA, inseri créditos e joguei;
+	   matei o game, subi de novo e peguei o log.
+	   
+teste 9-> sem formatar o jogo, entrei nos jogos: 
+	  FORTUNE, inseri créditos e joguei;
+	  MACAQUITO, inseri créditos e joguei;
+	  FEITICEIRA, inseri créditos e joguei.
+	  OJOS, inseri crédito e joguei. 
+	  DRACULA, inseri crédito e joguei. 
+	  matei o game, subi de novo e peguei o log
+	  
+diff teste 1 e teste 2 = 0 
+
+diff teste 2 e teste 3 = 0 
+
+diff teste 3 e teste 4 = 0 
+
+diff teste 4 e teste 5 = 0 
+
+diff teste 5 e teste 6 = 0 
+
+diff teste 6 e teste 7 = 0 
+
+diff teste 8 e teste 9 = 0 

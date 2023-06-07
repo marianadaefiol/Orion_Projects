@@ -1,0 +1,684 @@
+TESTE 1: subi o jogo, entrei no game MACAQUITO e matei
+
+
+
+
+
+
+
+Section 0 (24 sections, 0 keys)
+  Section JackpotServerConfiguration (1 sections, 0 keys)
+    Section JackpotServerConfiguration (0 sections, 13 keys)
+      Key progressive2Enabled
+      Key progressive3Enabled
+      Key progressive1Min
+      Key progressive1Max
+      Key progressive2Prize
+      Key progressive3Min
+      Key progressive3Max
+      Key progressive1Percentage
+      Key progressive1
+      Key progressive3Prize
+      Key progressive1Forced
+      Key progressive1Probability
+      Key progressive1GamesLeft
+  Section MachineConfiguration (0 sections, 40 keys)
+    Key currency
+    Key jackpotServerEnabled
+    Key validBills
+    Key isdemoEnabled
+    Key billCommValidatorProtocol
+    Key printerDenomination
+    Key pulseMultiplier
+    Key printerProtocol
+    Key establishment
+    Key ticketExpiration
+    Key touchMinX
+    Key touchMaxX
+    Key touchMinY
+    Key touchMaxY
+    Key outOfService
+    Key billAcceptorEnabled
+    Key progressiveCtrl
+    Key receiptPrinterProtocol
+    Key totalUsedMonitors
+    Key selectedLanguage
+    Key audioLevel
+    Key audioVolume
+    Key doorEnabledMask
+    Key jackpotPaymentMode
+    Key touchInterface
+    Key touchSerialDevice
+    Key touchSerialMode
+    Key debugShow
+    Key machineNumber
+    Key SASaddr
+    Key SASport
+    Key SASProgGroupId
+    Key SASProgEnabledLevel
+    Key SASserialNumber
+    Key SASassetNumber
+    Key machineIDs
+    Key characterType
+    Key notesValues
+    Key betmultiplier
+    Key resetdeviantion
+  Section CurrencyDecimalPlaces (0 sections, 1 keys)
+    Key decimalPlaces
+  Section HliGameConfigurationPersistence (1 sections, 0 keys)
+    Section HliGameConfigurationPersistence (0 sections, 10 keys)
+      Key denomination
+      Key newDenomination
+      Key autoPayoutLimit
+      Key percentage
+      Key doubleUpEnabled
+      Key doubleUpLimit
+      Key maxDoubleUps
+      Key pulseMultiplier
+      Key layoutButton
+      Key jackpotLimit
+  Section HLIStatePersistance (0 sections, 23 keys)
+    Key credits
+    Key cashoutAmount
+    Key cashoutFlags
+    Key billCurrentCredits
+    Key billValueToSet
+    Key billMeterStacked
+    Key billCurrencyToSet
+    Key billTransferFlag
+    Key enableNoteAcceptor
+    Key currentDenom
+    Key denomMask
+    Key total_game_num
+    Key enabled_game_mask
+    Key game_num
+    Key status
+    Key denom_cfg
+    Key action_flag
+    Key game1Metters
+    Key game2Metters
+    Key game3Metters
+    Key machineMetters
+    Key hpAmount
+    Key hpType
+  Section HLIApiStatus (0 sections, 39 keys)
+    Key canEnterAftLock
+    Key ganlotStatusMask
+    Key aftTransPending
+    Key aftMsgTransPendingPersist
+    Key lastTransType
+    Key lastTransCashAmount
+    Key lastTransNonresAmount
+    Key lastTransResAmount
+    Key lastTransactionId
+    Key lastTransactionStatus
+    Key cashoutStarted
+    Key cashoutFinished
+    Key sendCashierEvent
+    Key pendingTransType
+    Key pendingTransCashAmount
+    Key pendingTransNonresAmount
+    Key pendingTransResAmount
+    Key pendingTransactionId
+    Key backupTransCashAmount
+    Key backupTransNonresAmount
+    Key backupTransResAmount
+    Key backupTransactionId
+    Key cashToSet
+    Key nonResToSet
+    Key resToSet
+    Key creditsToSet
+    Key jackpotHandpayPersist
+    Key aftJackpotHandpayPersist
+    Key cashoutAmount
+    Key progLevel
+    Key lastTransCashout
+    Key cashoutFlags
+    Key multiPayingOut
+    Key billCurrentCredits
+    Key billValueToSet
+    Key billMeterStacked
+    Key billCurrencyToSet
+    Key billTransferFlag
+    Key enableNoteAcceptor
+  Section HliBingoLastGames (0 sections, 1 keys)
+    Key lastGamesLog
+  Section HliBillsLogs (0 sections, 1 keys)
+    Key insertionLog
+  Section HliLastGamesLogs (0 sections, 1 keys)
+    Key lastGamesLog
+  Section HliPaymentsLogs (0 sections, 2 keys)
+    Key lastPaymentsLog
+    Key paymentLog
+  Section HLIMachineConfiguration (0 sections, 2 keys)
+    Key configReboot
+    Key automaticValidation
+  Section HliProgressiveServer (0 sections, 3 keys)
+    Key machineStates
+    Key progressive2
+    Key progressive2Finish
+  Section SlotStatHli (1 sections, 12 keys)
+    Section HliGameStat (0 sections, 66 keys)
+      Key totalIn
+      Key totalOut
+      Key totalBet
+      Key totalWin
+      Key totalGames
+      Key billIn
+      Key validation
+      Key lastGames
+      Key lastPeriodicReset
+      Key ticketNumber
+      Key totalWonGames
+      Key totalProgressiveLv1
+      Key totalProgressiveLv2
+      Key totalProgressiveLv3
+      Key totalInOffset
+      Key totalOutOffset
+      Key totalBetOffset
+      Key totalWinOffset
+      Key totalGamesOffset
+      Key totalWonGamesOffset
+      Key totalProgressiveLv1Offset
+      Key totalProgressiveLv2Offset
+      Key totalProgressiveLv3Offset
+      Key totalMoneyInOffset
+      Key billInOffset
+      Key totalMoneyOutOffset
+      Key jackpotHpOffset
+      Key cashoutHpOffset
+      Key totalCoinInOffset
+      Key totalCoinOutOffset
+      Key regularOutOffset
+      Key progressiveOutOffset
+      Key totalCanceledCreditsOffset
+      Key numOfLoggedSASEvents
+      Key numOfLoggedSASEventsOffset
+      Key totalHandpayAmmountOffset
+      Key suggestedDoubleUps
+      Key acceptedDoubleUps
+      Key wonDoubleUps
+      Key gamesPlayedLastSystemReset
+      Key averagePayAmmountOffset
+      Key averageBetAmmountOffset
+      Key suggestedDoubleUpsOffset
+      Key acceptedDoubleUpsOffset
+      Key wonDoubleUpsOffset
+      Key totalGamesPlayedOffset
+      Key gamesPlayedLastSystemResetOffset
+      Key progressiveLevelsPaid
+      Key progressiveLevelsCounter
+      Key progressiveLevelsPaidOffset
+      Key progressiveLevelsCounterOffset
+      Key gamesCoinInOffset
+      Key gamesCoinOutOffset
+      Key gamesPlayedOffset
+      Key gamesWonOffset
+      Key gamesJackpotHandpayOffset
+      Key gamesCanceledCreditsHandpay
+      Key gamesCanceledCreditsHandpayOffset
+      Key totalDoubleUpBetMoney
+      Key totalDoubleUpWinMoney
+      Key totalDoubleUpBetMoneyOffset
+      Key totalDoubleUpWinMoneyOffset
+      Key allBillsOffsetList
+      Key totalNetWinOffset
+      Key payment
+      Key coinInAuxPersist
+    Key totalDoubleUpBet
+    Key totalDoubleUpWin
+    Key totalDoubleUpGames
+    Key totalDoubleUpWonGames
+    Key deviationPerBet
+    Key totalDoubleUpBetOffset
+    Key totalDoubleUpWinOffset
+    Key totalDoubleUpGamesOffset
+    Key totalDoubleUpWonGamesOffset
+    Key progressiveLv1
+    Key progressiveLv2
+    Key progressiveLv3
+  Section SlotMathHli (2 sections, 0 keys)
+    Section HliGameMathPersistence (0 sections, 2 keys)
+      Key payingOut
+      Key credits
+    Section HLISlotMathPersistance (0 sections, 32 keys)
+      Key win
+      Key bet
+      Key paid
+      Key prevCredits
+      Key gameIsOver
+      Key lines
+      Key reelsWin
+      Key reelStanding
+      Key reelSpinning
+      Key reelWinning
+      Key doublingUp
+      Key doubleUpDone
+      Key halvedWin
+      Key winHalved
+      Key doubleUpsDone
+      Key doubleUpCancelled
+      Key winBeforeDoubleUp
+      Key progLevel
+      Key winDoubleUp
+      Key doubleUpSuggested
+      Key progressive1_2Win
+      Key progressive3_Win
+      Key progressive1_gain
+      Key progressive2_gain
+      Key progressive3_gain
+      Key jackpotLimitGain
+      Key sasProgWin1
+      Key sasProgWin2
+      Key inProg1
+      Key inProg2
+      Key inProg3
+      Key gameStarted
+  Section HechizeraPlusMath (1 sections, 0 keys)
+    Section HalloweenMath (1 sections, 0 keys)
+      Section HLIHalloweenMathPersistance (0 sections, 25 keys)
+        Key deviationPerBet
+        Key screenshot
+        Key upperLine
+        Key bonus1Multiplier
+        Key bonus2Multiplier
+        Key inBonus1
+        Key inBonus1_2
+        Key inBonus2
+        Key bonus1Win
+        Key bonus1_2Win
+        Key bonus2Win
+        Key firstPick
+        Key inFreeSpinning
+        Key inFreeStanding
+        Key inFreeWinning
+        Key bonusEntryScreenshot
+        Key bonusScreenshots
+        Key inBonusFree
+        Key inBonusIntro
+        Key bonusFreeSpins
+        Key bonusSpinIndex
+        Key iMultiSpinFree
+        Key winFree
+        Key bonusPos
+        Key openedBonusPos
+  Section DraculaPlusMath (1 sections, 0 keys)
+    Section HalloweenMath (1 sections, 0 keys)
+      Section HLIHalloweenMathPersistance (0 sections, 25 keys)
+        Key deviationPerBet
+        Key screenshot
+        Key upperLine
+        Key bonus1Multiplier
+        Key bonus2Multiplier
+        Key inBonus1
+        Key inBonus1_2
+        Key inBonus2
+        Key bonus1Win
+        Key bonus1_2Win
+        Key bonus2Win
+        Key firstPick
+        Key inFreeSpinning
+        Key inFreeStanding
+        Key inFreeWinning
+        Key bonusEntryScreenshot
+        Key bonusScreenshots
+        Key inBonusFree
+        Key inBonusIntro
+        Key bonusFreeSpins
+        Key bonusSpinIndex
+        Key iMultiSpinFree
+        Key winFree
+        Key bonusPos
+        Key openedBonusPos
+  Section MacaquitoPlusMath (1 sections, 0 keys)
+    Section GaminatorMathHLI (2 sections, 0 keys)
+      Section HliGaminatorMathPersistence (0 sections, 20 keys)
+        Key deviationPerBet
+        Key screenshot
+        Key upperLine
+        Key inFreeSpinning
+        Key inFreeStanding
+        Key inFreeWinning
+        Key initialFreeSpin
+        Key inFreeExpanderWinning
+        Key bonusEntryScreenshot
+        Key bonusScreenshots
+        Key inBonusFree
+        Key inBonusIntro
+        Key expandSymbols
+        Key bonusFreeSpins
+        Key bonusSpinIndex
+        Key expanderSymbols
+        Key expanderSymbol
+        Key giveExtraSpins
+        Key iMultiSpinFree
+        Key winFree
+      Section SlotMathHli (2 sections, 0 keys)
+        Section HliGameMathPersistence (0 sections, 2 keys)
+          Key payingOut
+          Key credits
+        Section HLISlotMathPersistance (0 sections, 32 keys)
+          Key win
+          Key bet
+          Key paid
+          Key prevCredits
+          Key gameIsOver
+          Key lines
+          Key reelsWin
+          Key reelStanding
+          Key reelSpinning
+          Key reelWinning
+          Key doublingUp
+          Key doubleUpDone
+          Key halvedWin
+          Key winHalved
+          Key doubleUpsDone
+          Key doubleUpCancelled
+          Key winBeforeDoubleUp
+          Key progLevel
+          Key winDoubleUp
+          Key doubleUpSuggested
+          Key progressive1_2Win
+          Key progressive3_Win
+          Key progressive1_gain
+          Key progressive2_gain
+          Key progressive3_gain
+          Key jackpotLimitGain
+          Key sasProgWin1
+          Key sasProgWin2
+          Key inProg1
+          Key inProg2
+          Key inProg3
+          Key gameStarted
+  Section FortunePlusMath (1 sections, 0 keys)
+    Section HalloweenMath (1 sections, 0 keys)
+      Section HLIHalloweenMathPersistance (0 sections, 25 keys)
+        Key deviationPerBet
+        Key screenshot
+        Key upperLine
+        Key bonus1Multiplier
+        Key bonus2Multiplier
+        Key inBonus1
+        Key inBonus1_2
+        Key inBonus2
+        Key bonus1Win
+        Key bonus1_2Win
+        Key bonus2Win
+        Key firstPick
+        Key inFreeSpinning
+        Key inFreeStanding
+        Key inFreeWinning
+        Key bonusEntryScreenshot
+        Key bonusScreenshots
+        Key inBonusFree
+        Key inBonusIntro
+        Key bonusFreeSpins
+        Key bonusSpinIndex
+        Key iMultiSpinFree
+        Key winFree
+        Key bonusPos
+        Key openedBonusPos
+  Section OjosDeRaPlusMath (1 sections, 0 keys)
+    Section GaminatorMathHLI (2 sections, 0 keys)
+      Section HliGaminatorMathPersistence (0 sections, 20 keys)
+        Key deviationPerBet
+        Key screenshot
+        Key upperLine
+        Key inFreeSpinning
+        Key inFreeStanding
+        Key inFreeWinning
+        Key initialFreeSpin
+        Key inFreeExpanderWinning
+        Key bonusEntryScreenshot
+        Key bonusScreenshots
+        Key inBonusFree
+        Key inBonusIntro
+        Key expandSymbols
+        Key bonusFreeSpins
+        Key bonusSpinIndex
+        Key expanderSymbols
+        Key expanderSymbol
+        Key giveExtraSpins
+        Key iMultiSpinFree
+        Key winFree
+      Section SlotMathHli (2 sections, 0 keys)
+        Section HliGameMathPersistence (0 sections, 2 keys)
+          Key payingOut
+          Key credits
+        Section HLISlotMathPersistance (0 sections, 32 keys)
+          Key win
+          Key bet
+          Key paid
+          Key prevCredits
+          Key gameIsOver
+          Key lines
+          Key reelsWin
+          Key reelStanding
+          Key reelSpinning
+          Key reelWinning
+          Key doublingUp
+          Key doubleUpDone
+          Key halvedWin
+          Key winHalved
+          Key doubleUpsDone
+          Key doubleUpCancelled
+          Key winBeforeDoubleUp
+          Key progLevel
+          Key winDoubleUp
+          Key doubleUpSuggested
+          Key progressive1_2Win
+          Key progressive3_Win
+          Key progressive1_gain
+          Key progressive2_gain
+          Key progressive3_gain
+          Key jackpotLimitGain
+          Key sasProgWin1
+          Key sasProgWin2
+          Key inProg1
+          Key inProg2
+          Key inProg3
+          Key gameStarted
+  Section GameTest1Math (1 sections, 0 keys)
+    Section HalloweenMath (1 sections, 0 keys)
+      Section HLIHalloweenMathPersistance (0 sections, 25 keys)
+        Key deviationPerBet
+        Key screenshot
+        Key upperLine
+        Key bonus1Multiplier
+        Key bonus2Multiplier
+        Key inBonus1
+        Key inBonus1_2
+        Key inBonus2
+        Key bonus1Win
+        Key bonus1_2Win
+        Key bonus2Win
+        Key firstPick
+        Key inFreeSpinning
+        Key inFreeStanding
+        Key inFreeWinning
+        Key bonusEntryScreenshot
+        Key bonusScreenshots
+        Key inBonusFree
+        Key inBonusIntro
+        Key bonusFreeSpins
+        Key bonusSpinIndex
+        Key iMultiSpinFree
+        Key winFree
+        Key bonusPos
+        Key openedBonusPos
+  Section GameTest2Math (1 sections, 0 keys)
+    Section HalloweenMath (1 sections, 0 keys)
+      Section HLIHalloweenMathPersistance (0 sections, 25 keys)
+        Key deviationPerBet
+        Key screenshot
+        Key upperLine
+        Key bonus1Multiplier
+        Key bonus2Multiplier
+        Key inBonus1
+        Key inBonus1_2
+        Key inBonus2
+        Key bonus1Win
+        Key bonus1_2Win
+        Key bonus2Win
+        Key firstPick
+        Key inFreeSpinning
+        Key inFreeStanding
+        Key inFreeWinning
+        Key bonusEntryScreenshot
+        Key bonusScreenshots
+        Key inBonusFree
+        Key inBonusIntro
+        Key bonusFreeSpins
+        Key bonusSpinIndex
+        Key iMultiSpinFree
+        Key winFree
+        Key bonusPos
+        Key openedBonusPos
+  Section GameTest3Math (1 sections, 0 keys)
+    Section GaminatorMathHLI (2 sections, 0 keys)
+      Section HliGaminatorMathPersistence (0 sections, 20 keys)
+        Key deviationPerBet
+        Key screenshot
+        Key upperLine
+        Key inFreeSpinning
+        Key inFreeStanding
+        Key inFreeWinning
+        Key initialFreeSpin
+        Key inFreeExpanderWinning
+        Key bonusEntryScreenshot
+        Key bonusScreenshots
+        Key inBonusFree
+        Key inBonusIntro
+        Key expandSymbols
+        Key bonusFreeSpins
+        Key bonusSpinIndex
+        Key expanderSymbols
+        Key expanderSymbol
+        Key giveExtraSpins
+        Key iMultiSpinFree
+        Key winFree
+      Section SlotMathHli (2 sections, 0 keys)
+        Section HliGameMathPersistence (0 sections, 2 keys)
+          Key payingOut
+          Key credits
+        Section HLISlotMathPersistance (0 sections, 32 keys)
+          Key win
+          Key bet
+          Key paid
+          Key prevCredits
+          Key gameIsOver
+          Key lines
+          Key reelsWin
+          Key reelStanding
+          Key reelSpinning
+          Key reelWinning
+          Key doublingUp
+          Key doubleUpDone
+          Key halvedWin
+          Key winHalved
+          Key doubleUpsDone
+          Key doubleUpCancelled
+          Key winBeforeDoubleUp
+          Key progLevel
+          Key winDoubleUp
+          Key doubleUpSuggested
+          Key progressive1_2Win
+          Key progressive3_Win
+          Key progressive1_gain
+          Key progressive2_gain
+          Key progressive3_gain
+          Key jackpotLimitGain
+          Key sasProgWin1
+          Key sasProgWin2
+          Key inProg1
+          Key inProg2
+          Key inProg3
+          Key gameStarted
+  Section GameTest4Math (1 sections, 0 keys)
+    Section HalloweenMath (1 sections, 0 keys)
+      Section HLIHalloweenMathPersistance (0 sections, 25 keys)
+        Key deviationPerBet
+        Key screenshot
+        Key upperLine
+        Key bonus1Multiplier
+        Key bonus2Multiplier
+        Key inBonus1
+        Key inBonus1_2
+        Key inBonus2
+        Key bonus1Win
+        Key bonus1_2Win
+        Key bonus2Win
+        Key firstPick
+        Key inFreeSpinning
+        Key inFreeStanding
+        Key inFreeWinning
+        Key bonusEntryScreenshot
+        Key bonusScreenshots
+        Key inBonusFree
+        Key inBonusIntro
+        Key bonusFreeSpins
+        Key bonusSpinIndex
+        Key iMultiSpinFree
+        Key winFree
+        Key bonusPos
+        Key openedBonusPos
+  Section GameTest5Math (1 sections, 0 keys)
+    Section GaminatorMathHLI (2 sections, 0 keys)
+      Section HliGaminatorMathPersistence (0 sections, 20 keys)
+        Key deviationPerBet
+        Key screenshot
+        Key upperLine
+        Key inFreeSpinning
+        Key inFreeStanding
+        Key inFreeWinning
+        Key initialFreeSpin
+        Key inFreeExpanderWinning
+        Key bonusEntryScreenshot
+        Key bonusScreenshots
+        Key inBonusFree
+        Key inBonusIntro
+        Key expandSymbols
+        Key bonusFreeSpins
+        Key bonusSpinIndex
+        Key expanderSymbols
+        Key expanderSymbol
+        Key giveExtraSpins
+        Key iMultiSpinFree
+        Key winFree
+      Section SlotMathHli (2 sections, 0 keys)
+        Section HliGameMathPersistence (0 sections, 2 keys)
+          Key payingOut
+          Key credits
+        Section HLISlotMathPersistance (0 sections, 32 keys)
+          Key win
+          Key bet
+          Key paid
+          Key prevCredits
+          Key gameIsOver
+          Key lines
+          Key reelsWin
+          Key reelStanding
+          Key reelSpinning
+          Key reelWinning
+          Key doublingUp
+          Key doubleUpDone
+          Key halvedWin
+          Key winHalved
+          Key doubleUpsDone
+          Key doubleUpCancelled
+          Key winBeforeDoubleUp
+          Key progLevel
+          Key winDoubleUp
+          Key doubleUpSuggested
+          Key progressive1_2Win
+          Key progressive3_Win
+          Key progressive1_gain
+          Key progressive2_gain
+          Key progressive3_gain
+          Key jackpotLimitGain
+          Key sasProgWin1
+          Key sasProgWin2
+          Key inProg1
+          Key inProg2
+          Key inProg3
+          Key gameStarted
