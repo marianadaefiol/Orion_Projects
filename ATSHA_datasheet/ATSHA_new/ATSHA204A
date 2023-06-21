@@ -1,0 +1,1059 @@
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ ATSHA204A                                                                                                 ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+Duas características principais são exploradas no ATSHA204A:
+ 1) Autenticação;
+ 2) Senha (chaves secretas) armazenada;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ REFERENCES                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+• ATSHA204A Datasheet;
+• AN8752 Secure Password Operations;
+• AN8849 Command Sequences;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 2.1.1 EEPROM DATA ZONE - 512 BYTES (4kb)                                                                  ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+Table 2-3. Data Zone Slots
+┏━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓
+┃ SlotID ┃ Byte Address ┃ Word Address ┃
+┣━━━━━━━━╋━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━┫
+┃  0x00  ┃    0x0000    ┃    0x0000    ┃
+┃  0x01  ┃    0x0020    ┃    0x0008    ┃
+┃  0x02  ┃    0x0040    ┃    0x0010    ┃
+┃  ...   ┃    ...       ┃    ...       ┃
+┃  0x0E  ┃    0x01C0    ┃    0x0070    ┃
+┃  0x0F  ┃    0x01E0    ┃    0x0078    ┃
+┗━━━━━━━━┻━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━┛
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 2.1.2 CONFIGURATION ZONE                                                                                  ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+┏━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ NAME           ┃ SIZE    ┃ DESCRIPTION                                                                    ┃
+┣━━━━━━━━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ MODO OTP       ┃ 1 BYTE  ┃ Modo 0xAA de leitura apenas: (OTP bloqueado) a escrita está desabilitada e a leitura está habilitada; 
+┃                ┃         ┃ Modo 0x55 de consumo: (OTP bloqueado) a escrita faz com que os bits mudem apenas de 
+┃                ┃         ┃ um para zero, e a leitura está habilitada;                                        
+┃                ┃         ┃ Modo legado 0x00: (OTP bloqueado) a escrita e a leitura estão desabilitadas;                
+┣━━━━━━━━━━━━━━━━╋━━━━━━━━━╉────────────────────────────────────────────────────────────────────────────────┤
+┃ SelectorMode   ┃ 1 BYTE  ┃ 0x00 permitir que o Selector esteja sempre atualizado com o comando UpdateExtra;        
+┃                ┃         ┃ 0x?? qualquer outro valor em SelectorMode permite que o Selector seja atualizado apenas    
+┃                ┃         ┃      uma vez (de 0x00 para qualquer outro valor) executando o comando UpdateExtra;     
+┣━━━━━━━━━━━━━━━━╋━━━━━━━━━╉────────────────────────────────────────────────────────────────────────────────┤
+┃ Selector       ┃ 1 BYTE  ┃ Endereço de byte 0x85. Mantém o dispositivo ativo após executar o comando Pause;        
+┣━━━━━━━━━━━━━━━━╋━━━━━━━━━╉────────────────────────────────────────────────────────────────────────────────┤
+┃ UserExtra      ┃ 1 BYTE  ┃ Endereço de byte 0x84. Um byte não volátil de uso geral para uso personalizado pelo host 
+┃                ┃         ┃ sistema. Só pode ser atualizado uma vez (de 0x00 para qualquer outro valor) executando   
+┃                ┃         ┃ o Comando UpdateExtra;                                                   
+┣━━━━━━━━━━━━━━━━╋━━━━━━━━━╉────────────────────────────────────────────────────────────────────────────────┤
+┃ CheckMACConfig ┃ 1 BYTE  ┃ Este byte aplica-se apenas aos comandos CheckMAC, Read e Write. especifica     
+┃                ┃         ┃ se a TempKey deve ser gerada a partir de uma fonte aleatória (0b0) ou inserida 
+┃                ┃         ┃ de uma entrada (0b1):                                                           
+┃                ┃         ┃ • Leitura e gravação: CheckMACConfig[0] controla Slots[0:1], CheckMACConfig[1]     
+┃                ┃         ┃   controla Slots [2:3] e assim por diante. Qualquer comando de leitura ou gravação criptografado falha se
+┃                ┃         ┃   o valor em TempKey.SourceFlag não corresponde ao bit correspondente em
+┃                ┃         ┃   CheckMACConfig;                                                              
+┃                ┃         ┃ • CheckMAC: CheckMACConfig[0] controla Slot[1], controles CheckMACConfig[1] 
+┃                ┃         ┃   Slot[3] e assim por diante. O conteúdo do slot de destino será copiado apenas para TempKey
+┃                ┃         ┃   se o valor CheckMACSource correspondente ao slot de destino corresponder ao     
+┃                ┃         ┃   valor de MODE[2] do comando CheckMAC                                   
+┃                ┃         ┃ O comando falha se MODE[2] não corresponder a TempKey.SourceFlag (é necessário
+┃                ┃         ┃ o bit correspondente em CheckMACSource para corresponder a TempKey.SourceFlag).
+┣━━━━━━━━━━━━━━━━╋━━━━━━━━━╉────────────────────────────────────────────────────────────────────────────────┤
+┃ SlotConfig     ┃ 2 BYTES ┃ Check section 2.1.2.14;                                                        
+┣━━━━━━━━━━━━━━━━╋━━━━━━━━━╉────────────────────────────────────────────────────────────────────────────────┤
+┃ UseFlag        ┃ 1 BYTE  ┃ Slots de uso limitado: a quantidade de 0b1 bits representa o número de vezes   
+┃                ┃         ┃ que Slots[0:7] podem ser usados antes de serem desabilitados;                            
+┣━━━━━━━━━━━━━━━━╋━━━━━━━━━╉────────────────────────────────────────────────────────────────────────────────┤
+┃ UpdateCount    │ 1 BYTE  ┃ Indica quantas vezes Slots[0:7] foram atualizados com DeriveKey;        
+┣━━━━━━━━━━━━━━━━╋━━━━━━━━━╉────────────────────────────────────────────────────────────────────────────────┤
+┃ LastKeyUsed    ┃ 1 BYTE  ┃ Cada bit 0b1 representa um uso restante para Slot[15]. Aplica-se apenas se        
+┃                ┃         ┃ SlotConfig[5] LimitedUse está definido;                                         
+┣━━━━━━━━━━━━━━━━╋━━━━━━━━━╉────────────────────────────────────────────────────────────────────────────────┤
+┃ LockValue      ┃ 1 BYTE  ┃ 0x55 As zonas de dados e OTP estão desbloqueadas, as gravações estão habilitadas;   
+┃                ┃         ┃ 0x00 As zonas de dados e OTP são bloqueadas e assumem as políticas de acesso definidas em 
+┃                ┃         ┃ a zona de Configuração;                                                        
+┣━━━━━━━━━━━━━━━━╋━━━━━━━━━╉────────────────────────────────────────────────────────────────────────────────┤
+┃ LockConfig     ┃ 1 BYTE  ┃ 0x55 A zona de configuração está desbloqueada e as gravações estão habilitadas;                    
+┃                ┃         ┃ 0x00 A zona de configuração está bloqueada e as gravações estão desativadas;                   
+┗━━━━━━━━━━━━━━━━┻━━━━━━━━━┹────────────────────────────────────────────────────────────────────────────────┘
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 2.1.2.14 SlotConfig                                                                                       ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+• Localizado em bytes [20:51] na Zona de Configuração;
+• Se a zona de dados estiver desbloqueada:
+   • não se aplicam restrições;
+   • leitura e gravação estão habilitadas para todos os Slots na zona de dados;
+• Se a zona de dados estiver bloqueada, SlotConfig é interpretado de acordo com a tabela abaixo:
+
+┏━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ BYTE    ┃ NAME        ┃ DESCRIPTION                                                                       ┃
+┣━━━━━━━━━╋━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ <15:12> ┃ WriteConfig ┃ Check TABLE 2-6;                                                                  │
+┣━━━━━━━━━╋━━━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────────┤
+┃ <11:8>  ┃ WriteKey    ┃ SlotID da chave a ser usada para validar gravações criptografadas;                        
+┣━━━━━━━━━╋━━━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────────┤
+┃ <7>     ┃ IsSecret    ┃ Check TABLE 8-35;                                                                 │
+┃         ┃             ┃ 0b0 Comandos simples de leitura e gravação são ativados;                                  
+┃         ┃             ┃     Os comandos CheckMAC e DeriveKey estão desabilitados;                                 
+┃         ┃             ┃ 0b1 Os comandos de leitura e gravação, se ativados, devem ser criptografados;                      
+┣━━━━━━━━━╋━━━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────────┤
+┃ <6>     ┃ EncryptRead ┃ Check TABLE 8-35;                                                                 │
+┃         ┃             ┃ 0b0 If IsSecret = 0b0, read is enabled.                                           │
+┃         ┃             ┃     If IsSecret = 0b1, read is disabled;                                          │
+┃         ┃             ┃ 0b1 If IsSecret = 0b0,   este estado é proibido;                                  │
+┃         ┃             ┃     If IsSecret = 0b1,   encrypted read is enabled;                               │
+┃         ┃             ┃     A chave de criptografia é especificada em ReadKey;                            │
+┣━━━━━━━━━╋━━━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────────┤
+┃ <5>     ┃ LimitedUse  ┃ 0b0 Sem limite de uso de chaves;                                                          
+┃         ┃             ┃ 0b1 Limite o uso da chave de acordo com UseFlag (ou LastKeyUsed);                    
+┣━━━━━━━━━╋━━━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────────┤
+┃ <4>     ┃ CheckOnly   ┃ 0b0 Este slot pode ser usado para todos os comandos criptográficos;                         
+┃         ┃             ┃ 0b1 Este slot só pode ser usado para comandos CheckMAC e GenDig;                  │
+┣━━━━━━━━━╋━━━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────────┤
+┃ <3:0>   ┃ ReadKey     ┃ SlotID da chave a ser usada para leituras criptografadas.                               
+┃         ┃             ┃ Se 0x0, este slot pode ser usado como o slot de origem para o comando CheckMAC/Copy;  
+┗━━━━━━━━━┻━━━━━━━━━━━━━┹───────────────────────────────────────────────────────────────────────────────────┘
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ TABLE 2-6 WriteConfig                                                                                     ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+• Este campo de configuração é compartilhado entre os comandos DeriveKey e Write;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ DERIVE KEY COMMAND                                                                                        ┃
+┣━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃ BIT  ┃ DESCRIPTION                                                                                        ┃
+┣━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ <15> ┃ 0b0 Disable authorizing MAC;                                                                       |
+┃      ┃ 0b1 Enforce authorizing MAC;                                                                       |
+┣━━━━━━╉────────────────────────────────────────────────────────────────────────────────────────────────────┤
+┃ <14> ┃ Does not care;                                                                                     |
+┣━━━━━━╉────────────────────────────────────────────────────────────────────────────────────────────────────┤
+┃ <13> ┃ 0b0 Disable DeriveKey command;                                                                     |
+┃      ┃ 0b1 Enable DeriveKey command;                                                                      |
+┣━━━━━━╉────────────────────────────────────────────────────────────────────────────────────────────────────┤
+┃ <12> ┃ 0b0 A chave de origem é especificada em PARAM2;                                                          
+┃      ┃ 0b1 A chave de origem é especificada em SlotConfig[PARAM2].WriteKey;                                   
+┗━━━━━━┹────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ WRITE COMMAND                                                                                             ┃
+┣━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃ BIT  ┃ DESCRIPTION                                                                                        ┃
+┣━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ <15> ┃ 0b0 Enable write command;                                                                          |
+┃ <13> ┃ 0b1 Disable write command;                                                                         |
+┣━━━━━━╉────────────────────────────────────────────────────────────────────────────────────────────────────┤
+┃ <14> ┃ 0b0 Habilita o comando de escrita simples ou desabilita o comando de escrita - de acordo com os bits <15> e <13>;      
+┃      ┃ 0b1 Ativar comando de gravação criptografada e impor autorização de MAC (padrão);                          
+┣━━━━━━╉────────────────────────────────────────────────────────────────────────────────────────────────────┤
+┃ <12> ┃ Does not care;                                                                                     |
+┗━━━━━━┹────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ !! RECOMENDAÇÕES IMPORTANTES PARA SLOTS UTILIZADOS COMO CHAVES ESTÁTICAS!! 
+┃ 
+┃ • SlotConfig.IsSecret deve ser definido para todos os slots usados como chaves, inclusive aqueles editados com DeriveKey; 
+┃ • Para segurança máxima: 
+┃ • SlotConfig.IsSecret definido como 0b1; 
+┃ • SlotConfig.WriteConfig definido como 0b10X ou 0bX01 (desativa a gravação); 
+┃ • SlotConfig.EncryptRead definido como 0b0 (desativa leitura); 
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ !! RECOMENDAÇÕES IMPORTANTES PARA SLOTS UTILIZADOS COMO CHAVES DINÂMICAS !! 
+┃ 
+┃ • SlotConfig.IsSecret deve ser definido para todos os slots usados como chaves, inclusive aqueles editados com DeriveKey; 
+┃ • Para segurança máxima: 
+┃ • SlotConfig.IsSecret definido como 0b1; 
+┃ • SlotConfig.WriteConfig<14> definido como 0b1 (habilita gravação criptografada); 
+┃ • SlotConfig.WriteKey deve apontar para o mesmo slot; 
+┃ • Um comando de escrita pode atribuir um novo valor, desde que um MAC de autenticação usando a chave antiga; 
+┃ • SlotConfig.EncryptRead definido como 0b0 (leitura desabilitada); 
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+
+
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 8.5 COMMAND SEQUENCE                                                                                      ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 8.5.1 COMMAND PACKETS                                                                                     ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+┏━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ NAME    ┃ BYTE     ┃ DESCRIPTION                                                                          ┃
+┣━━━━━━━━━╋━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ COMMAND ┃ [0]      ┃ 0x00 Redefina o contador de endereços.                                                      
+┃         ┃          ┃      A próxima leitura ou gravação começa com o início do buffer de E/S;           
+┃         ┃          ┃ 0x01 Suspensão (baixo consumo de energia): entra no modo de suspensão de baixo consumo de energia e ignora todos os    
+┃         ┃          ┃      Transições de E/S até o próximo sinalizador Wake. Todo o estado volátil do      │
+┃         ┃          ┃      dispositivo é redefinido;                                                       │
+┃         ┃          ┃ 0x02 Ocioso: entra no estado ocioso e ignora todas as transições de E/S subsequentes    
+┃         ┃          ┃      até o próximo sinalizador Wake. O conteúdo dos registradores TempKey e RNG Seed são    
+┃         ┃          ┃      retida;                                                                      
+┃         ┃          ┃ 0x03 Write: bytes subseqüentes para endereços sequenciais no buffer de comando de entrada     
+┃         ┃          ┃      que seguem gravações anteriores. Esta é a operação normal;                      │
+┃         ┃          ┃ 0x04:0xFF Esses endereços não devem ser enviados ao dispositivo;                     │
+┣━━━━━━━━━╋━━━━━━━━━━╉──────────────────────────────────────────────────────────────────────────────────────┤
+┃ SIZE    ┃ [1]      ┃ Includes SIZE, OPCODE, PARAM1, PARAM2, DATA and CRC. Does not include Command Flag;  │
+┣━━━━━━━━━╋━━━━━━━━━━╉──────────────────────────────────────────────────────────────────────────────────────┤
+┃ OPCODE  ┃ [2]      ┃ Operação sendo chamada;                                                              │
+┣━━━━━━━━━╋━━━━━━━━━━╉──────────────────────────────────────────────────────────────────────────────────────┤
+┃ PARAM1  ┃ [3]      ┃ Um parâmetro de byte sempre presente;                                                │
+┣━━━━━━━━━╋━━━━━━━━━━╉──────────────────────────────────────────────────────────────────────────────────────┤
+┃ PARAM2  ┃ [4:5]    ┃ Parâmetro de dois bytes sempre presente;                                             │
+┣━━━━━━━━━╋━━━━━━━━━━╉──────────────────────────────────────────────────────────────────────────────────────┤
+┃ DATA    ┃ VARIABLE ┃ Dados opcionais baseados no comando sendo chamado;                                   │
+┣━━━━━━━━━╋━━━━━━━━━━╉──────────────────────────────────────────────────────────────────────────────────────┤
+┃ CRC-16  ┃ [N-1:N]  ┃ Polinômio 0x8005. Inclui TAMANHO, OPCODE, PARAM1, PARAM2 e DATA.                     │
+┃         ┃          ┃ Não inclui command flag;                                                             │
+┗━━━━━━━━━┻━━━━━━━━━━┹──────────────────────────────────────────────────────────────────────────────────────┘
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 8.5.12 NONCE COMMAND                                                                                      ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ INPUT PARAMETERS                                                                                          ┃
+┣━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ OPCODE ┃ MAC   ┃ 1 BYTE         ┃ 0x16                                                                    │
+┣━━━━━━━━╋━━━━━━━╋━━━━━━━━━━━━━━━━╉─────────────────────────────────────────────────────────────────────────┤
+┃ PARAM1 ┃ MODE  ┃ 1 BYTE         ┃ <7:2> Must be zero;                                                     │
+┃        ┃       ┃                ┃ <1:0> 0b00: Combine o novo número aleatório (RandOut) com NumIn e     
+┃        ┃       ┃                ┃             armazene o resultado em TempKey. Atualize automaticamente a EEPROM    
+┃        ┃       ┃                ┃             semeie apenas se necessário antes da geração de números aleatórios    
+┃        ┃       ┃                ┃             (recommended for highest security);                         
+┃        ┃       ┃                ┃       0b01: Combine o novo número aleatório (RandOut) com NumIn, armazene   
+┃        ┃       ┃                ┃             em TempKey. Gerar número aleatório usando EEPROM existente    
+┃        ┃       ┃                ┃             semente, não atualize a semente EEPROM;                          
+┃        ┃       ┃                ┃       0b10: Invalid;                                                    
+┃        ┃       ┃                ┃       0b11: Modo passagem. NumIn é atribuído diretamente a TempKey;   
+┣━━━━━━━━╋━━━━━━━╋━━━━━━━━━━━━━━━━╉─────────────────────────────────────────────────────────────────────────┤
+┃ PARAM2 ┃ ZERO  ┃ 2 BYTES        ┃ Must be zero (0x0000);                                                  │
+┣━━━━━━━━╋━━━━━━━╋━━━━━━━━━━━━━━━━╉─────────────────────────────────────────────────────────────────────────┤
+┃ DATA   ┃ NumIn ┃ 20 or 32 BYTES ┃ Um número aleatório gerado pelo sistema externo - Muito provavelmente     
+┃        ┃       ┃                ┃ sempre terá 20 bytes;                                          
+┗━━━━━━━━┻━━━━━━━┻━━━━━━━━━━━━━━━━┹─────────────────────────────────────────────────────────────────────────┘
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ OUTPUT PARAMETERS                                                                                         ┃
+┣━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ RandOut ┃ 1 OR 32 BYTES ┃ se MODE<1:0> for 0b00 ou 0b01, RandOut é a saída do RNG (32 bytes);             │
+┃         ┃               ┃ if MODE<1:0> is 0b11, RandOut é um único byte com um valor de 0x00;             │
+┗━━━━━━━━━┻━━━━━━━━━━━━━━━┹─────────────────────────────────────────────────────────────────────────────────┘
+
+• Gera um nonce e um número aleatório de 32 bytes;
+   • Este nonce será usado para comandos GenDig, MAC, HMAC, Read ou Write;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃Nonce é o SHA-256 dos seguintes bytes respectivos:                                                         ┃
+┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃ • 32 bytes RandOut;                                                                                       ┃
+┃ • 20 bytes NumIn;                                                                                         ┃
+┃ •  1 byte  OPCODE (always 0x16);                                                                          ┃
+┃ •  1 byte  MODE;                                                                                          ┃
+┃ •  1 byte  LSb of PARAM2 (always 0x00);                                                                   ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+• NumIn é um valor de entrada aleatório projetado para evitar ataques de repetição (?); 
+;O valor de entrada é projetado para evitar ataques de repetição contra o Host e deve ser gerado externamente pelo sistema e passado para o 
+;dispositivo usando este comando. Pode ser qualquer valor que mude consistentemente, como um contador não volátil, hora real do dia e assim por diante
+;ou pode ser um número aleatório gerado externamente.
+• O número aleatório gerado (RandOut - 32 bytes) é retornado ao sistema após a execução do comando Nonce;
+
+• O resumo resultante (nonce) é sempre armazenado no registro TempKey;
+   • Não há como ler o TempKey, mas é possível para o sistema externo calcular esse resumo
+      valorizá-lo e armazená-lo;
+   • TempKey.Valid é definido como 0b1;
+   • TempKey.SourceFlag é definido como “Rand” (0b0);
+
+• Alternativa de modo de passagem:
+   • O valor de entrada NumIn deve ter 32 bytes e é passado diretamente para TempKey sem modificação;
+   • Nenhum cálculo SHA-256 é realizado;
+   • TempKey.SourceFlag está definido como “Input”;
+   • O valor nonce em TempKey não pode ser usado com comandos Read ou Write;
+   • No caso de um valor de número de entrada repetido, o dispositivo não oferece proteção contra ataques de repetição;
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 8.5.8 GENDIG COMMAND                                                                                      ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ INPUT PARAMETERS                                                                                          ┃
+┣━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ OPCODE ┃ GenDig    ┃ 1 BYTE       ┃ 0x15                                                                  │
+┣━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────┤
+┃ PARAM1 ┃ ZONE      ┃ 1 BYTE       ┃ <1:0> 0b00 Configuration Zone. Obs.: Slots[0:1] are available;        │
+┃        ┃           ┃              ┃       0b01 OTP Zone.           Obs.: Slots[0:1] are available;        │
+┃        ┃           ┃              ┃       0b10 Data Zone.          Obs.: Slots[0:16] are available;       │
+┣━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────┤
+┃ PARAM2 ┃ SlotID    ┃ 2 BYTES      ┃ slot identification number;                                           │
+┣━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────┤
+┃  DATA  ┃ OtherData ┃ 0 or 4 BYTES ┃ if CheckOnly = 1, use como dados aleatórios para saída SHA-256;       │
+┃        ┃           ┃              ┃ if CheckOnly = 0, ignore este campo;                                  │
+┗━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━━━━┹───────────────────────────────────────────────────────────────────────┘
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ OUTPUT PARAMETERS                                                                                         ┃
+┣━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ Success ┃ 1 BYTE ┃ retorna 0 se for bem-sucedido;                                                         │
+┗━━━━━━━━━┻━━━━━━━━┹────────────────────────────────────────────────────────────────────────────────────────┘
+
+• Use SHA-256 para combinar um SlotID da zona [Configuration:OTP:Data] com TempKey;
+   • Execute o GenDig somente após executar o comando Nonce;
+   • Se ZONE for 0b10 (zona de dados) e SlotID for [0:15]:
+     • TempKey.GenData é definido como 0b1;
+     • TempKey.SlotID é definido como o SlotID de entrada;
+   • Se ZONE não for 0b10 (zona de dados):
+     • TempKey.GenData é definido como 0b0;
+   • O resultado é armazenado em TempKey e NUNCA pode ser lido do dispositivo;
+   • O bit TempKey.Valid é definido (o bit TempKey.Valid é limpo quando o próximo comando é executado);
+
+• Se o bit CheckOnly estiver definido, significa que o dispositivo é um host e GenDig pode ser usado para gerar chaves
+   que correspondam aos gerados em Clientes usando o comando DeriveKey;
+   • Os bytes OPCODE e PARAM[1:2] são substituídos pelos bytes OtherData 4;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Gera um novo valor de 32 bytes para TempKey:                                                              ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ • 32 bytes Config[SlotID] or OTP[SlotID] or Data.slot[SlotID] or TransportKey[SlotID];                    │
+│ •  1 byte  OPCODE (always 0x15) or OtherData[0];                                                          │
+│ •  1 byte  PARAM1 or OtherData[1];                                                                        │
+│ •  2 bytes PARAM2 or OtherData[2:3];                                                                      │
+│ •  1 byte  SN[8];                                                                                         │
+│ •  2 bytes SN[0:1];                                                                                       │
+│ • 25 bytes Zeros;                                                                                         │
+│ • 32 bytes TempKey.value;                                                                                 │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+**/*/*/*/*/*/*/*/*/*/*/*/*/*/*/**/*/*/*/*/*/*/*/*/*/*/*/*/*/*/**/*/*/*/*/*/*/*/*/*/*/*/*/*/*/**/*/*/*/*/*/*/*/*/*/*/*/*/*/*/**
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 8.5.1 MAC COMMAND                                                                                         ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ INPUT PARAMETERS                                                                                          ┃
+┣━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ OPCODE ┃ MAC       ┃ 1 BYTE        ┃ 0x08                                                                 │
+┣━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━╉──────────────────────────────────────────────────────────────────────┤
+┃ PARAM1 ┃ MODE      ┃ 1 BYTE        ┃ <7> must be zero;                                                    │
+┃        ┃           ┃               ┃ <6> 0b0 use zero instead of SN[2:3] and SN[4:7];                     │
+┃        ┃           ┃               ┃     0b1 use SN[2:3] and SN[4:7];                                     │
+┃        ┃           ┃               ┃ <5> if MODE[4] is set to 0b1, this bit is ignored;                   │
+┃        ┃           ┃               ┃     0b0 use zero instead of OTP[0:7];                                │
+┃        ┃           ┃               ┃     0b1 use OTP[0:7];                                                │
+┃        ┃           ┃               ┃ <4> 0b0 use zero instead of OTP[0:10];                               │
+┃        ┃           ┃               ┃     0b1 use OTP[0:10];                                               │
+┃        ┃           ┃               ┃ <3> must be zero;                                                    │
+┃        ┃           ┃               ┃ <2> if MODE[1] or MODE[0] is set, MODE[2] must match the value in    │
+┃        ┃           ┃               ┃     TempKey.SourceFlag;                                              │
+┃        ┃           ┃               ┃ <1> 0b0 the first 32 bytes are loaded from one of the Data slots;    │
+┃        ┃           ┃               ┃     0b1 the first 32 bytes are loaded from TempKey;                  │
+┃        ┃           ┃               ┃ <0> 0b0 the second 32 bytes are loaded from input Challenge;         │
+┃        ┃           ┃               ┃     0b1 the second 32 bytes are loaded from TempKey (recommended for │
+┃        ┃           ┃               ┃         highest security);                                           │
+┣━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━╉──────────────────────────────────────────────────────────────────────┤
+┃ PARAM2 ┃ SlotID    ┃ 2 BYTES       ┃ slot identification number;                                          │
+┣━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━╉──────────────────────────────────────────────────────────────────────┤
+┃  DATA  ┃ Challenge ┃ 0 or 32 BYTES ┃ if MODE[0] = 1, this field is ignored;                               │
+┃        ┃           ┃               ┃ if MODE[0] = 0, input portion of message to be digested;             │
+┗━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━━━━━┹──────────────────────────────────────────────────────────────────────┘
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ OUTPUT PARAMETERS                                                                                         ┃
+┣━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ Response ┃ 32 BYTES ┃ SHA-256 digest;                                                                     │
+┗━━━━━━━━━━┻━━━━━━━━━━┹─────────────────────────────────────────────────────────────────────────────────────┘
+
+• Calcula SHA-256 a partir de uma chave armazenada, um desafio e outras informações no dispositivo;
+• Fluxo de comando:
+   1) Execute o comando Nonce;
+   2) Execute o comando GenDig (opcional);
+   3) Execute o comando Mac para combinar a saída da etapa 1 (ou etapa 2) com uma chave EEPROM para gerar um resumo;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Generates a new 32-bytes digest:                                                                          ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ • 32 bytes Data.slot[SlotID] or TempKey;                                                                  │
+│ • 32 bytes Challenge or TempKey;                                                                          │
+│ •  1 byte  OPCODE (always 0x08);                                                                          │
+│ •  1 byte  MODE;                                                                                          │
+│ •  2 bytes PARAM2;                                                                                        │
+│ •  8 bytes OTP[0:7] or zeros;                                                                             │
+│ •  3 bytes OTP[8:10] or zeros;                                                                            │
+│ •  1 byte  SN[8];                                                                                         │
+│ •  4 bytes SN[4:7] or zeros;                                                                              │
+│ •  2 bytes SN[0:1];                                                                                       │
+│ •  2 bytes SN[2:3] or zeros;                                                                              │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 8.5.5 CHECKMAC COMMAND                                                                                    ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ INPUT PARAMETERS                                                                                          ┃
+┣━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ OPCODE ┃ MAC        ┃ 1 BYTE   ┃ 0x28                                                                     │
+┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━╉──────────────────────────────────────────────────────────────────────────┤
+┃ PARAM1 ┃ MODE       ┃ 1 BYTE   ┃ <7:6> must be zero;                                                      │
+┃        ┃            ┃          ┃   <5> 0b0 use zeros;                                                     │
+┃        ┃            ┃          ┃       0b1 use OTP Zone;                                                  │
+┃        ┃            ┃          ┃ <4:3> must be zero;                                                      │
+┃        ┃            ┃          ┃   <2> if TempKey is used, match this bit with TempKey.SourceFlag;        │
+┃        ┃            ┃          ┃   <1> 0b0 use a Slot from Data Zone;                                     │
+┃        ┃            ┃          ┃       0b1 use TempKey;                                                   │
+┃        ┃            ┃          ┃   <0> 0b0 use ClientChal parameter;                                      │
+┃        ┃            ┃          ┃       0b1 use TempKey;                                                   │
+┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━╉──────────────────────────────────────────────────────────────────────────┤
+┃ PARAM2 ┃   SlotID   ┃ 2 BYTES  ┃ slot identification number;                                              │
+┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━╉──────────────────────────────────────────────────────────────────────────┤
+┃ DATA1  ┃ ClientChal ┃ 32 BYTES ┃ Challenge sent to Client;                                                │
+┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━╉──────────────────────────────────────────────────────────────────────────┤
+┃ DATA2  ┃ ClientResp ┃ 32 BYTES ┃ Response generated by the Client;                                        │
+┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━╉──────────────────────────────────────────────────────────────────────────┤
+┃ DATA3  ┃ OtherData  ┃ 13 BYTES ┃     [0] MAC OPCODE 0x08;                                                 │
+┃        ┃            ┃          ┃     [1] MODE used in MAC command;                                        │
+┃        ┃            ┃          ┃   [2:3] SlotID used in MAC command;                                      │
+┃        ┃            ┃          ┃   [4:6] OTP[8:10] used in MAC command;                                   │
+┃        ┃            ┃          ┃  [7:10] SN[4:7] used in MAC command;                                     │
+┃        ┃            ┃          ┃ [11:12] SN[2:3] used in MAC command;                                     │
+┗━━━━━━━━┻━━━━━━━━━━━━┻━━━━━━━━━━┹──────────────────────────────────────────────────────────────────────────┘
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ OUTPUT PARAMETERS                                                                                         ┃
+┣━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ Result ┃ 1 BYTE ┃ returns 0b0 on success match, or 0b1 on case of a mismatch;                             │
+┗━━━━━━━━┻━━━━━━━━┹─────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Generates a new 32-bytes digest:                                                                          ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ • 32 bytes Data.slot[SlotID] or TempKey;                                                                  │
+│ • 32 bytes ClientChal or TempKey;                                                                         │
+│ •  4 bytes OtherData[0:3];                                                                                │
+│ •  8 bytes OTP[0:7] or zeros;                                                                             │
+│ •  3 bytes OtherData[4:6];                                                                                │
+│ •  1 byte  SN[8];                                                                                         │
+│ •  4 bytes OtherData[7:10];                                                                               │
+│ •  2 bytes SN[0:1];                                                                                       │
+│ •  2 bytes OtherData[11:12];                                                                              │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+• O comando CheckMAC calcula uma resposta MAC que teria sido gerada em um CryptoAuthentication
+   dispositivo e compara a resposta MAC com algum valor de entrada;
+   • Retorna um resultado booleano para indicar o sucesso ou falha da comparação;
+   • Antes de executar este comando, os comandos Nonce e/ou GenDig podem ter sido executados opcionalmente para criar
+     e carregue uma chave ou valor nonce em TempKey;
+     • Mode[2] = 0b1: TempKey foi gerado usando Nonce(Fixed) (vulnerável a ataques de repetição - NÃO USE!);
+     • Mode[2] = 0b0: TempKey foi gerado usando Nonce(Random);
+
+• Se a comparação corresponder, o valor do slot de destino pode ser copiado para TempKey;
+   • Se SlotID for par, então o slot de destino é SlotID + 1, ou então o slot de destino é SlotID;
+   • Para que a cópia ocorra, as seguintes condições devem ser verdadeiras (se não forem todas verdadeiras, o resultado
+     é retornado ao host, mas o valor da chave de destino não é copiado para TempKey):
+     1. O parâmetro MODE para CheckMAC deve ter o valor 0x01 ou 0x05;
+       • 0x01 é preferível, pois força TempKey a ser Random;
+     2. SlotConfig.ReadKey para a chave alvo (SlotID + 1) DEVE SER ZERO;
+     3. O bit em Config.CheckMACSource deve corresponder a MODE[2];
+
+• O CheckMACConfig associado ao SlotID + 1 (o Data Slot que armazena a chave de senha) deve ser
+   definido como 0b0 (sempre forçar o uso de uma Random TempKey);
+
+
+13.3.6 Verificação de senha
+   • Se o dispositivo determinar que a senha correta foi inserida, o dispositivo pode usar esse fato para
+    libere opcionalmente um segredo secundário de alta entropia;
+   • As senhas devem ser armazenadas em slots de numeração par;
+     • Se a senha for mapeada para um segredo secundário, o slot de destino que contém esse valor é
+       localizado no próximo número de slot mais alto (o número do slot de senha mais um);
+   • APENAS para VERIFICAÇÃO DE SENHA (comando CheckMAC), defina SlotConfig.ReadKey como 0b0 para o SlotID de destino;
+     • Para TODOS OS OUTROS FINS, o SlotConfig.ReadKey DEVE ser DEFINIDO PARA 0b1;
+   • O parâmetro MODE no comando CheckMAC deve ter o valor 0x01 ou 0x05;
+   • O parâmetro MODE[2] no comando CheckMAC deve corresponder a TempKey.SourceFlag;
+
+
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 8.5.15 READ COMMAND                                                                                       ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ INPUT PARAMETERS                                                                                          ┃
+┣━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ OPCODE ┃ MAC       ┃ 1 BYTE  ┃ 0x02                                                                       │
+┣━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━╉────────────────────────────────────────────────────────────────────────────┤
+┃ PARAM1 ┃ ZONE      ┃ 1 BYTE  ┃   <7> 0b0 4 bytes;                                                         │
+┃        ┃           ┃         ┃       0b1 32 bytes;                                                        │
+┃        ┃           ┃         ┃ <6:2> must be zero;                                                        │
+┃        ┃           ┃         ┃ <1:0> 0b00 Configuration Zone;                                             │
+┃        ┃           ┃         ┃       0b01 OTP Zone;                                                       │
+┃        ┃           ┃         ┃       0b10 Data Zone;                                                      │
+┣━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━╉────────────────────────────────────────────────────────────────────────────┤
+┃ PARAM2 ┃ ADDRESS   ┃ 2 BYTES ┃ address of the first word to be read;                                      │
+┗━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━┹────────────────────────────────────────────────────────────────────────────┘
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ OUTPUT PARAMETERS                                                                                         ┃
+┣━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ Contents ┃ 4 or 32 BYTES ┃ the contents of the specified memory location;                                 │
+┗━━━━━━━━━━┻━━━━━━━━━━━━━━━┹────────────────────────────────────────────────────────────────────────────────┘
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ TABLE 8-35 READ OPERATION PERMISSION                                                                      ┃
+┣━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃  IsSecret   ┃ EncryptRead ┃ Description                                                                   ┃
+┣━━━━━━━━━━━━━╋━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ 0           ┃ 0           ┃ Clear read always allowed. Do not use this slot to store a password;          │
+┣━━━━━━━━━━━━━╋━━━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ 0           ┃ 1           ┃ Prohibited;                                                                   │
+┣━━━━━━━━━━━━━╋━━━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ 1           ┃ 0           ┃ Read disabled. Slots in this state can still be used to store a password;     │
+┣━━━━━━━━━━━━━╋━━━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ 1           ┃ 1           ┃ Read encrypted - encryption key is specified in ReadKey;                      │
+┗━━━━━━━━━━━━━┻━━━━━━━━━━━━━┹───────────────────────────────────────────────────────────────────────────────┘
+
+• Run the following commands prior to any encrypted read in order to set TempKey flags as follows:
+  • TempKey.Valid   = 1                  - run Nonce with MODE = 0x00 or 0x01;
+  • TempKey.GenData = 1                  - run GenDig;
+  • TempKey.SlotID  = SlotConfig.ReadKey - run GenDig with SlotID = Slot[ADDRESS].SlotConfig.ReadKey;
+
+• CONCERNING ENCRYPTED DATA:
+  • The device XOR the data with the current TempKey;
+  • Encrypted reads of the Configuration and/or OTP zones are not permitted;
+
+• READ EXAMPLE:
+  • read configuration zone: {COMMAND, COUNT, OPCODE, ZONE, ADDRESS_1, ADDRESS_2, CRC_LSB, CRC_MSB}
+  • read configuration zone: { 0x03,    0x07,   0x02, 0x00,      0x00,      0x00,    0xB2,    0x7E}
+
+
+
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 8.5.18 WRITE COMMAND                                                                                      ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ INPUT PARAMETERS                                                                                          ┃
+┣━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ OPCODE ┃ MAC       ┃ 1 BYTE        ┃ 0x12                                                                 │
+┣━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━╉──────────────────────────────────────────────────────────────────────┤
+┃ PARAM1 ┃ ZONE      ┃ 1 BYTE        ┃   [7] 0b0 4 bytes;                                                   │
+┃        ┃           ┃               ┃       0b1 32 bytes;                                                  │
+┃        ┃           ┃               ┃   [6] 0b0 plain data;                                                │
+┃        ┃           ┃               ┃       0b1 encrypted data;                                            │
+┃        ┃           ┃               ┃ [5:2] must be zero;                                                  │
+┃        ┃           ┃               ┃ [1:0] 0b00 Configuration Zone;                                       │
+┃        ┃           ┃               ┃       0b01 OTP Zone;                                                 │
+┃        ┃           ┃               ┃       0b10 Data Zone;                                                │
+┣━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━╉──────────────────────────────────────────────────────────────────────┤
+┃ PARAM2 ┃ ADDRESS   ┃ 2 BYTES       ┃ address of the first word to be written;                             │
+┣━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━╉──────────────────────────────────────────────────────────────────────┤
+┃ DATA_1 ┃ VALUE     ┃ 4 or 32 BYTES ┃ information to be written to the zone (may be encrypted);            │
+┣━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━╉──────────────────────────────────────────────────────────────────────┤
+┃ DATA_2 ┃ MAC       ┃ 0 or 32 BYTES ┃ message authentication cod to validate address data;                 │
+┗━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━━━━━┹──────────────────────────────────────────────────────────────────────┘
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ OUTPUT PARAMETERS                                                                                         ┃
+┣━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ Success ┃ 1 BYTE ┃ returns 0b0 on success;                                                                │
+┗━━━━━━━━━┻━━━━━━━━┹────────────────────────────────────────────────────────────────────────────────────────┘
+
+• CONCERNING ENCRYPTED DATA:
+  • The host XOR the data with the current TempKey. The result will be put in DATA_1;
+    • The device XOR DATA_1 with the current TempKey to restore the data, prior to writing to the EEPROM;
+    • An authorizing input MAC is always required when writing the Data Zone:
+      SHA-256(TempKey, Opcode, Param1, Param2, SN<8>, SN<0:1>, <25 bytes of 0’s>, PlainTextData)
+      • Prior to locking the OTP/Data zones, ZONE[6] is used to indicate to the device whether or not the
+        input data is encrypted;
+      • After locking of the OTP/Data zones, ZONE[6] is ignored and SlotConfig[14] corresponding to the slot
+        being written is used to determine whether or not the input data is encrypted;
+        • If data encryption is indicated, then TempKey must be valid prior to this command being called and
+          it must be the result of GenDig (both TempKey.Valid and TempKey.GenDig must be 0b1).
+      • Prior to locking the OTP/Data zones, any key can be used to generate TempKey;
+      • After locking of the OTP/Data zones, the last slot used by GenDig for TempKey creation and stored in
+        TempKey.SlotID must match that in SlotConfig.WriteKey;
+        • If the slot number being written is even, then TempKey.SourceFlag must be RAND;
+        • If the slot number is odd, then TempKey.SourceFlag must match the value in Config.CheckMACSource
+          corresponding to the slot.
+
+  -> Apparently, ONLY EVEN slots might be used for storing passwords;
+
+
+
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 1.3 CRYPTOGRAPHIC OPERATIONS                                                                              ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+• RULE OF THUMB: any command that uses a SlotID as input parameter is a cryptographic command;
+  • Exception: encrypted Read and Write commands do not decrement UseFlag;
+  • Exception: DeriveKey command ignores LimitedUse and UseFlag if the target is the SlotID itself;
+
+• The following commands will decrement the UseFlag respective to SlotID:
+  • MAC;
+  • GenDig;
+  • DeriveKey;
+  • CheckMAC;
+
+
+
+
+
+• Slots in Data Zone have the following features:
+
+┏━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ FEATURE          ┃ SYMBOL ┃ DESCRIPTION                                                                   ┃
+┣━━━━━━━━━━━━━━━━━━╋━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ READ             ┃   R    ┃ Plain slot read operation;                                                    │
+┣━━━━━━━━━━━━━━━━━━╋━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ WRITE            ┃   W    ┃ Plain slot write operation;                                                   │
+┣━━━━━━━━━━━━━━━━━━╋━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ READ ENCRYPTION  ┃   X    ┃ Encryption for read operation - must set IS-SECRET;                           │
+┣━━━━━━━━━━━━━━━━━━╋━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ WRITE ENCRYPTION ┃   Y    ┃ Encryption for write operation - must set IS-SECRET;                          │
+┣━━━━━━━━━━━━━━━━━━╋━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ IS-SECRET        ┃   S    ┃ Enforce encryption;                                                           │
+┣━━━━━━━━━━━━━━━━━━╋━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ CHECK-ONLY       ┃   C    ┃ Restrict use to CheckMAC and GenDig+CheckMAC commands;                        │
+┣━━━━━━━━━━━━━━━━━━╋━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ LIMITED-USE      ┃   L    ┃ Restrict use to UseFlag value;                                                │
+┣━━━━━━━━━━━━━━━━━━╋━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ DERIVABLE-ROLL   ┃   R    ┃ Derive slot contents from its own value;                                      │
+┣━━━━━━━━━━━━━━━━━━╋━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ DERIVABLE-CREATE ┃   N    ┃ Derive slot contents from its parent's value;                                 │
+┗━━━━━━━━━━━━━━━━━━┻━━━━━━━━┹───────────────────────────────────────────────────────────────────────────────┘
+
+
+┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ R ┃ W ┃ X ┃ Y ┃ S ┃ C ┃ L ┃ R ┃ N ┃ Function                                                              ┃
+┡━━━╇━━━╇━━━╇━━━╇━━━╇━━━╇━━━╇━━━╇━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ 1 │ 1 │ 0 │ 0 │ 0 │ 0 │ 0 │ 0 │ 0 │ Standard slot for plain data storage;                                 │
+├───┼───┼───┼───┼───┼───┼───┼───┼───┼───────────────────────────────────────────────────────────────────────┤
+│ 1 │ 1 │ 1 │ 1 │ 1 │ 0 │ 0 │ 0 │ 0 │ Encrypted data storage;                                               │
+├───┼───┼───┼───┼───┼───┼───┼───┼───┼───────────────────────────────────────────────────────────────────────┤
+│ 0 │ 0 │ 0 │ 0 │ 1 │ 0 │ 0 │ 0 │ 0 │ Authentication;                                                       │
+├───┼───┼───┼───┼───┼───┼───┼───┼───┼───────────────────────────────────────────────────────────────────────┤
+│ 0 │ 0 │ 0 │ 0 │ 1 │ ? │ ? │ 0 │ 0 │ Password mapping - shared password storage;                           │
+├───┼───┼───┼───┼───┼───┼───┼───┼───┼───────────────────────────────────────────────────────────────────────┤
+│ 0 │ 0 │ 0 │ 0 │ 1 │ 1 │ 1 │ 0 │ 0 │ Password mapping - secret storage;                                    │
+├───┼───┼───┼───┼───┼───┼───┼───┼───┼───────────────────────────────────────────────────────────────────────┤
+│ 0 │ 0 │ 0 │ 0 │ 1 │ 0 │ 0 │ 1 │ 0 │ Derive key from itself (roll key);                                    │
+├───┼───┼───┼───┼───┼───┼───┼───┼───┼───────────────────────────────────────────────────────────────────────┤
+│ 0 │ 0 │ x │ y │ 1 │ 0 │ 0 │ 0 │ 1 │ Derive key from parent (create key);                                  │
+└───┴───┴───┴───┴───┴───┴───┴───┴───┴───────────────────────────────────────────────────────────────────────┘
+
+• NOTE: A Data Slot with any Derivable (roll or create) feature enabled or with the authorizing MAC feature
+        enabled will disable the Write command;
+  • However, it can still be writable if EncryptWrite (SlotConfig[14]) is enabled;
+
+• CHECK-ONLY feature in Password Mapping: the AN8849 Command Sequences defines that the CHECK-ONLY feature
+  be enabled in order to protect against exahustive attack - the main issue seems to be to block MAC command;
+  • If CHECK-ONLY is enabled, will an encrypted read command succeed?
+
+• LIMITED-USE feature in Password Mapping: the AN8849 Command Sequences defines that the LIMITED-USE feature
+  be disabled in order to be used many times with CheckMAC command;
+  • It is probably possible to enable LIMITED-USE, reminded the keys change every eight crypto commands;
+  • If its value is lost it might never be recovered;
+
+
+
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ VALIDATION TEST: READABLE KEYS AND LIMITED-USED TEST                                                      ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+• NOTE:
+  • The DeriveKey feature enforce use of encryption for write and consequently read commands;
+  • Encryption keys are editable in order to validate features;
+  • A WriteKey or ReadKey that points to itself implies that the host should know its value prior to issue
+    the command - if its value is lost, most problably it can not be read (and consequently) changed;
+
+• Default UseFlags[0:7] are set to 0xFF (eight uses), except;
+  • SECRET Slots must set UseFlag to 0x00;
+
+• For all Data Slots, TempKey should be a random number internally generated:
+
+┏━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ CheckMACConfig ┃ VALUE ┃ DESCRIPTION                                                                      ┃
+┣━━━━━━━━━━━━━━━━╋━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ Read and Write ┃ 0x00  ┃ Any encrypted Read or Write command, or CheckMAC command must be issued from an  │
+┣━━━━━━━━━━━━━━━━┫       ┃ internally generated random number;                                              │
+┃ CheckMAC       ┃       ┃                                                                                  │
+┗━━━━━━━━━━━━━━━━┻━━━━━━━┹──────────────────────────────────────────────────────────────────────────────────┘
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ DATA ZONE MAP                                                                                             ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+┏━━━━━━━━┳━━━━━━━━━━━━━━━┓ ┏━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃ SlotID ┃ NAME          ┃ ┃ SlotID ┃ NAME          ┃
+┣━━━━━━━━╋━━━━━━━━━━━━━━━┩ ┣━━━━━━━━╋━━━━━━━━━━━━━━━┩
+┃ 0x00   ┃ WritePwd1     │ ┃ 0x01   ┃ ReadPwd1      │
+┣━━━━━━━━╉───────────────┤ ┣━━━━━━━━╉───────────────┤
+┃ 0x02   ┃ DATA0         │ ┃ 0x03   ┃ DATA1         │
+┣━━━━━━━━╉───────────────┤ ┣━━━━━━━━╉───────────────┤
+┃ 0x04   ┃ PASSWORD1     │ ┃ 0x05   ┃ SECRET1       │
+┣━━━━━━━━╉───────────────┤ ┣━━━━━━━━╉───────────────┤
+┃ 0x06   ┃ PASSWORD2     │ ┃ 0x07   ┃ SECRET2       │
+┣━━━━━━━━╉───────────────┤ ┣━━━━━━━━╉───────────────┤
+┃ 0x08   ┃ ReadPwd2      │ ┃ 0x09   ┃ WritePwd2     │
+┣━━━━━━━━╉───────────────┤ ┣━━━━━━━━╉───────────────┤
+┃ 0x0A   ┃ DATA2         │ ┃ 0x0B   ┃ DATA3         │
+┣━━━━━━━━╉───────────────┤ ┣━━━━━━━━╉───────────────┤
+┃ 0x0C   ┃ PASSWORD3     │ ┃ 0x0D   ┃ SECRET3       │
+┣━━━━━━━━╉───────────────┤ ┣━━━━━━━━╉───────────────┤
+┃ 0x0E   ┃ MASTERKEY     │ ┃ 0x0F   ┃ DATA4         │
+┗━━━━━━━━┹───────────────┘ ┗━━━━━━━━┹───────────────┘
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 00 01 02 03 04 05 06 07 08 09 0A 00 01 02 03 04 05 06 07 08 09 0A 00 01 02 03 04 05 06 07 08 09           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• WritePwd1: (DERIVE KEY) encrypted read/write, derivable from itself;
+  • WriteConfig: 0b0110: Disable authorizing MAC; Enable encrypted write; Enable DeriveKey from itself;
+  • WriteKey   : 0x00  : Write encryption key or Parent Key;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 1     : Enable encrypted read;
+  • SingleUse  : 1     : Limit use according to UseFlag;
+  • CheckOnly  : 0     : Enable use for any command;
+  • ReadKey    : 0x09  : Read encryption key - WritePwd2;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 10 11 12 13 14 15 16 17 18 19 1A 10 11 12 13 14 15 16 17 18 19 1A 10 11 12 13 14 15 16 17 18 19           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• ReadPwd1: (CREATE KEY) encrypted read/write, derivable from WritePwd1;
+  • WriteConfig: 0b0111: Disable authorizing MAC; Enable encrypted write; Enable DeriveKey from Parent Key;
+  • WriteKey   : 0x00  : Write encryption key or Parent Key;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 1     : Enable encrypted read;
+  • SingleUse  : 1     : Limit use according to UseFlag;
+  • CheckOnly  : 0     : Enable use for any command;
+  • ReadKey    : 0x08  : Read encryption key - ReadPwd2;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 20 21 22 23 24 25 26 27 28 29 2A 20 21 22 23 24 25 26 27 28 29 2A 20 21 22 23 24 25 26 27 28 29           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• DATA0: encrypted read/write;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x00  : Write encryption key;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 1     : Enable encrypted read;
+  • SingleUse  : 1     : Limit use according to UseFlag;
+  • CheckOnly  : 0     : This Data Slot can be used for any command;
+  • ReadKey    : 0x01  : Probably does not care - ReadPwd1;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 30 31 32 33 34 35 36 37 38 39 3A 30 31 32 33 34 35 36 37 38 39 3A 30 31 32 33 34 35 36 37 38 39           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• DATA1: For LimitedUse Test: disable read/write;
+  • WriteConfig: 0b1000: Disable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x00  : Write encryption key - probably does not care;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 0     : Disable encrypted read;
+  • SingleUse  : 1     : Limit use according to UseFlag;
+  • CheckOnly  : 0     : This Data Slot can be used for any command;
+  • ReadKey    : 0x01  : Probably does not care - ReadPwd1;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 40 41 42 43 44 45 46 47 48 49 4A 40 41 42 43 44 45 46 47 48 49 4A 40 41 42 43 44 45 46 47 48 49           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• PASSWORD1: authentication key: encrypted read/write, derivable from WritePwd1;
+  • WriteConfig: 0b0111: Disable authorizing MAC; Enable encrypted write; Enable DeriveKey from Parent Key;
+  • WriteKey   : 0x05  : Write encryption key or Parent Key;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 1     : Enable encrypted read;
+  • SingleUse  : 0     : No limit use with CheckMAC;
+  • CheckOnly  : 0     : Enable use for any command (imperative for DeriveKey and CheckMAC);
+  • ReadKey    : 0x01  : Read encryption key - ReadPwd1;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 50 51 52 53 54 55 56 57 58 59 5A 50 51 52 53 54 55 56 57 58 59 5A 50 51 52 53 54 55 56 57 58 59           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• SECRET1: encrypted write, derivable from itself;
+  • WriteConfig: 0b0110: Disable authorizing MAC; Enable encrypted write; Enable DeriveKey from itself;
+  • WriteKey   : 0x00  : Write encryption key or Parent Key - WritePwd1;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 0     : Disable read;
+  • SingleUse  : 1     : set UseFlag to zero so any command but CheckMAC is blocked;
+  • CheckOnly  : 0     : Enable use for any command (imperative for DeriveKey and CheckMAC);
+  • ReadKey    : 0x00  : Must be zero (enable CheckMAC copy function);
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 60 61 62 63 64 65 66 67 68 69 6A 60 61 62 63 64 65 66 67 68 69 6A 60 61 62 63 64 65 66 67 68 69           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• PASSWORD2: encrypted read/write, disable DeriveKey;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x07  : Write encryption key;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 1     : Enable encrypted read;
+  • SingleUse  : 0     : No limit use with CheckMAC;
+  • CheckOnly  : 1     : Enable use only for CheckMAC and GenDig+CheckMAC commands;
+  • ReadKey    : 0x01  : Read encryption key - ReadPwd1;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 70 71 72 73 74 75 76 77 78 79 7A 70 71 72 73 74 75 76 77 78 79 7A 70 71 72 73 74 75 76 77 78 79           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• SECRET2: encrypted write, disable DeriveKey;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x00  : Write encryption key - WritePwd1;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 0     : Disable read;
+  • SingleUse  : 1     : set UseFlag to zero so any command but CheckMAC is blocked;
+  • CheckOnly  : 1     : Enable use for any command (imperative for DeriveKey and CheckMAC);
+  • ReadKey    : 0x00  : Must be zero (enable CheckMAC copy function);
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 80 81 82 83 84 85 86 87 88 89 8A 80 81 82 83 84 85 86 87 88 89 8A 80 81 82 83 84 85 86 87 88 89           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• ReadPwd2: encrypted read/write, not derivable, check only = 0;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x09  : Write encryption key;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 1     : Enable encrypted read;
+  • SingleUse  : 0     : No use limit;
+  • CheckOnly  : 0     : Enable use for any command;
+  • ReadKey    : 0x0E  : Read encryption key - MASTERKEY;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 90 91 92 93 94 95 96 97 98 99 9A 90 91 92 93 94 95 96 97 98 99 9A 90 91 92 93 94 95 96 97 98 99           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• WritePwd2: encrypted read/write, not derivable;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x09  : Write encryption key;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 1     : Enable encrypted read;
+  • SingleUse  : 0     : No use limit;
+  • CheckOnly  : 0     : Enable use for any command;
+  • ReadKey    : 0x0E  : Read encryption key - MASTERKEY;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ A0 A1 A2 A3 A4 A5 A6 A7 A8 A9 AA A0 A1 A2 A3 A4 A5 A6 A7 A8 A9 AA A0 A1 A2 A3 A4 A5 A6 A7 A8 A9           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• DATA[2]: encrypted read/writable, unlimited use;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x09  : Write encryption key WritePwd2;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 1     : Enable encrypted read;
+  • SingleUse  : 0     : No limit use
+  • CheckOnly  : 0     : Enable use for any command;
+  • ReadKey    : 0x08  : Read encryption key ReadPwd2;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ B0 B1 B2 B3 B4 B5 B6 B7 B8 B9 BA B0 B1 B2 B3 B4 B5 B6 B7 B8 B9 BA B0 B1 B2 B3 B4 B5 B6 B7 B8 B9           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• DATA[3]: not readable, not writable;
+  • WriteConfig: 0b1000: Disable write; Disable DeriveKey;
+  • WriteKey   : 0x09  : Write encryption key WritePwd2 - probably does not care;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 0     : Disable read;
+  • SingleUse  : 0     : No use limit;
+  • CheckOnly  : 0     : Enable use for any command;
+  • ReadKey    : 0x08  : Read encryption key ReadPwd2 - probably does not care;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ C0 C1 C2 C3 C4 C5 C6 C7 C8 C9 CA  C0 C1 C2 C3 C4 C5 C6 C7 C8 C9 CA C0 C1 C2 C3 C4 C5 C6 C7 C8 C9          ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• PASSWORD[3]: encrypted read/write, unlimited use;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x0D  : Write encryption - Parent key that will be copied into TempKey;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 1     : Read encryption key ReadPwd2;
+  • SingleUse  : 0     : No use limit -  this Data Slot does not have an associated UseFlag;
+  • CheckOnly  : 1     : Enable use only for CheckMAC and GenDig+CheckMAC commands;
+  • ReadKey    : 0x08  : Read encryption key ReadPwd2;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ D0 D1 D2 D3 D4 D5 D6 D7 D8 D9 DA  D0 D1 D2 D3 D4 D5 D6 D7 D8 D9 DA D0 D1 D2 D3 D4 D5 D6 D7 D8 D9          ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• SECRET[3]: encrypted read, disable write;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x09  : Write encryption key WritePwd2;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 0     : Disable read;
+  • SingleUse  : 0     : No use limit -  this Data Slot does not have an associated UseFlag;
+  • CheckOnly  : 1     : Enable use only for CheckMAC and GenDig+CheckMAC commands;
+  • ReadKey    : 0x00  : Must be zero (enable CheckMAC copy function);
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ E0 E1 E2 E3 E4 E5 E6 E7 E8 E9 EA  E0 E1 E2 E3 E4 E5 E6 E7 E8 E9 EA E0 E1 E2 E3 E4 E5 E6 E7 E8 E9          ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• MASTERKEY: plain read and write;
+  • WriteConfig: 0b0000: Plain write; Disable DeriveKey;
+  • WriteKey   : 0x0E  : Write encryption key;
+  • IsSecret   : 0     : No encryption;
+  • EncryptRead: 0     : Plain read;
+  • SingleUse  : 0     : No limit use
+  • CheckOnly  : 0     : Enable use for any command;
+  • ReadKey    : 0x0E  : Read encryption key;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA  F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA F0 F1 F2 F3 F4 F5 F6 F7 F8 F9          ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• DATA[4]:  disable read, encrypted write;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x09  : Write encryption key WritePwd2;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 0     : Disable read;
+  • SingleUse  : 0     : No limit use
+  • CheckOnly  : 0     : Enable use for any command;
+  • ReadKey    : 0x08  : Read encryption key ReadPwd2 - probably does not care;
+
+
+
+• Slot P (0x08) is the PASSWORD, and should be stored in an even numbered Data Slot;
+
+┏━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ SlotConfig    ┃ VALUE     ┃ DESCRIPTION                                                                   ┃
+┣━━━━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ WriteConfig   ┃ 0b0100    ┃ Enable encrypted write; Disable DeriveKey;                                    │
+┣━━━━━━━━━━━━━━━╋━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ WriteKey      ┃ 0x03      ┃ Points to the key that can be used to write a recovery value into Slot P;     │
+┣━━━━━━━━━━━━━━━╋━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ IsSecret      ┃ 1         ┃ Disable read;                                                                 │
+┣━━━━━━━━━━━━━━━╋━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ EncryptRead   ┃ 0         ┃ Disable read - the host should know its value;                                │
+┣━━━━━━━━━━━━━━━╋━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ SingleUse     ┃ 0         ┃ Unlimited use with CheckMAC;                                                  │
+┣━━━━━━━━━━━━━━━╋━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ CheckOnly     ┃ 1         ┃ This Data Slot can only be used for CheckMAC and GenDig+CheckMAC commands;    │
+┃               ┃           ┃ Prevents exahustive password attack on a stolen drive;                        │
+┣━━━━━━━━━━━━━━━╋━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ ReadKey       ┃ 0x02      ┃ Do not matter as read is disabled;                                            │
+┗━━━━━━━━━━━━━━━┻━━━━━━━━━━━┹───────────────────────────────────────────────────────────────────────────────┘
+
+• Slot S is the "secret", andh should be stored in the immediate next Data Slot from Slot P (Slot P + 1);
+
+┏━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ SlotConfig    ┃ VALUE     ┃ DESCRIPTION                                                                   ┃
+┣━━━━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+┃ WriteConfig   ┃ 0b1000    ┃ Disable write; Disable DeriveKey;                                             │
+┣━━━━━━━━━━━━━━━╋━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ WriteKey      ┃ 0x0A      ┃ Disable write;                                                                │
+┣━━━━━━━━━━━━━━━╋━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ IsSecret      ┃ 1         ┃ Disable read;                                                                 │
+┣━━━━━━━━━━━━━━━╋━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ EncryptRead   ┃ 0         ┃ Disable read;                                                                 │
+┣━━━━━━━━━━━━━━━╋━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ SingleUse     ┃ 1         ┃ Set UseFlag to zero. This key can not be used with any command other than     │
+┃               ┃           ┃ CheckMAC copy operation;                                                      │
+┣━━━━━━━━━━━━━━━╋━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ CheckOnly     ┃ 1         ┃ This Data Slot can only be used for CheckMAC and GenDig+CheckMAC commands;    │
+┃               ┃           ┃ Prevents exahustive password attack on a stolen drive;                        │
+┣━━━━━━━━━━━━━━━╋━━━━━━━━━━━╉───────────────────────────────────────────────────────────────────────────────┤
+┃ ReadKey       ┃ 0x00      ┃ Must be zero in order to enable special mode;                                 │
+┗━━━━━━━━━━━━━━━┻━━━━━━━━━━━┹───────────────────────────────────────────────────────────────────────────────┘
+
+
+
+
+
+
+
+
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ USAGE EXAMPLE                                                                                             ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ AN8849 COMMAND SEQUENCES - SECTION 7.1 PASSWORD MAP                                                       ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+• Run Nonce command with as internally generated random number;
+• Run CheckMAC command;
+  • The secret will be copied into the TempKey;
+• Run MAC command;
+  • The return from MAC (a 32-bytes digest), is returned to the host to be used as encryption/decryption key;
+
+→ Duvida:
+  1) O comando encrypted read funciona se o bit respectivo CheckOnly estiver setado?
+  2) De acordo com o AN 8752 (seção 3.4) O fluxo recomendado é:
+    2.1) Nonce + GenDig(optional);
+    2.2) Externamente, os seguintes processos devem ser realizados:
+      2.2.1) A TempKey pode ser calculada externamente;
+      2.2.2) Uma PASSWORD externa deve ser inserida, por exemplo, por um usuário;
+        2.2.2.1) A PASSWORD deve coincidir com o conteúdo de Slot<ID>;
+      2.2.3) A partir de uma PASSWORD + TempKey é gerada um digest (ClientResp);
+    2.3) CheckMAC irá rodar o MAC(key<SlotID> + TempKey) e comparar o resultado com o ClientResp;
+      2.3.1) Se os resultados coincidirem, o SECRET que está em key<SlotID + 1> será carregado na TempKey;
+      2.3.2) O fato de o byte MODE compor a SHA-256 com MODE[2] forçando que a TempKey seja aleatória,
+             garante uma proteção contra replay attacks (não se pode forçar um valor de INPUT na TempKey -
+             a TempKey PRECISA ser RANDOM!);
+      2.3.3) O datasheet não descreve que o comando CheckMAC altera as flags de TempKey;
+    2.2) O resultado da digest de MAC(TempKey + Challenge) (lembre que a TempKey contém o valor do SECRET
+         em key<SlotID + 1>, e o Challenge é uma entrada do tipo blob binário de 32 bytes) é a senha para
+         encriptar/decriptar arquivos;
+    O digest gerado no passo 2.2 não é SEMPRE O MESMO e APARECERÁ NO BARRAMENTO? Um atacante que está
+    fisicamente monitorando as trilhas SDA e SCL do dispositivo não pode acabar lendo a saída do passo 2.2?
+    Não seria possível, em vez de executar o passo 2.2, fazer uma Encrypted Read da key<SlotID>? Eu entendo
+    que a leitura irá retornar sempre o mesmo valor key<SlotID> XOR key<SlotID + 1>, da mesma forma que o
+    passo 2.2 retorna sempre o mesmo valor, mas é o resultado do XOR de dois números aleatórios (que pode ser
+    qualquer número).
+    Nesse cenário, SlotID deve estar com IsSecret = 1 e EncryptRead = 1, e GenDig deve ser executado a partir
+    de SlotID como parâmetro de entrada;
+
+
+    O documento AN 8849 Command Sequences, na seção 7.1 Password Map, especifica que os Data Slots que
+    guarda as informações de PASSWORD e SECRET deve ter o bit CheckOnly setado em '1', pare prevenir contra
+    "exaustive password attacks". É possível rodar o comando Encrypted Read se o Slot respectivo estiver
+    configurado como CheckOnly?
+
+
+Question regarding CryptoAuthenticator ATSHA204A.
+
+In AN 8752 Using the ATSHA204A for Secure Password Operations section 3.4, it is given an example of procedure to retrieve a SECRET from one of the Data Slots in ATSHA204A:
+
+1) run Nonce command using the internal random number generator;
+2) run the CheckMAC command using key<SlotID> and the TempKey generated in step 1. If the command is successful, the contents of SlotID+1 will be loaded into the TempKey;
+3) run the Mac command using TempKey and a 32-byte ClientChal (a binary blob inserted by the host). This will return a SHA-256 digest that could be used as an encryption key;
+
+Question 1) Someone physically monitoring the I2C interface lines between a microcontroller and ATSHA204A wouldn't be able to spy the key generated in step 3?
+
+Question 2) Can I use an encrypted read command (instead of the Mac command in step 3) to read the contents of key<SlotID> XORed with TempKey (that would hold key<SlotID + 1>)? Wouldn't it be a safer option?
+
+Question 3) If question 2 is possible, can SlotID be configured as CheckOnly set to '1'? Would the encrypt read command still be possible in a Data Slot configured with CheckOnly set to '1'?
+
+Best regards,
+Mauricio Yui
+
