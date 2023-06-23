@@ -207,7 +207,7 @@ uint8_t i2c_send_wake()
 	uint8_t rec_data = 0x00;
 	ret1 = HAL_I2C_Mem_Read(&hi2c1, 0x64, 0x01, 1, (uint8_t*)&rec_data, sizeof(rec_data), 100);
 */
-    I2C
+
 
   }
   /* USER CODE END 3 */
