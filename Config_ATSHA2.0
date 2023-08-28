@@ -1,0 +1,211 @@
+┏━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓ ┏━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓
+┃ SlotID ┃ NAME                ┃ ┃ SlotID ┃ NAME                ┃
+┣━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━┩ ┣━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━┩
+┃  0x00  ┃ SECRET-KEY          │ ┃  0x01  ┃ RESERVED (BOOT-KEY) │
+┣━━━━━━━━╉─────────────────────┤ ┣━━━━━━━━╉─────────────────────┤
+┃  0x02  ┃ LOBBY-KEY_1         │ ┃  0x03  ┃ GAME-KEY            │
+┣━━━━━━━━╉─────────────────────┤ ┣━━━━━━━━╉─────────────────────┤
+┃  0x04  ┃ LOBBY-KEY_2         │ ┃  0x05  ┃ GAMESET-KEY         │
+┣━━━━━━━━╉─────────────────────┤ ┣━━━━━━━━╉─────────────────────┤
+┃  0x06  ┃ GAMESET_01          │ ┃  0x07  ┃ GAMESET_02          │
+┣━━━━━━━━╉─────────────────────┤ ┣━━━━━━━━╉─────────────────────┤
+┃  0x08  ┃ GAMESET_03          │ ┃  0x09  ┃ GAMESET_04          │
+┣━━━━━━━━╉─────────────────────┤ ┣━━━━━━━━╉─────────────────────┤
+┃  0x0A  ┃ GAMESET_05          │ ┃  0x0B  ┃ GAMESET_06          │
+┣━━━━━━━━╉─────────────────────┤ ┣━━━━━━━━╉─────────────────────┤
+┃  0x0C  ┃ GAMESET_07          │ ┃  0x0D  ┃ GAMESET_08          │
+┣━━━━━━━━╉─────────────────────┤ ┣━━━━━━━━╉─────────────────────┤
+┃  0x0E  ┃ GAMESET_09          │ ┃  0x0F  ┃ GAMESET_10          │
+┗━━━━━━━━┹─────────────────────┘ ┗━━━━━━━━┹─────────────────────┘
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 00 01 02 03 04 05 06 07 08 09 0A 00 01 02 03 04 05 06 07 08 09 0A 00 01 02 03 04 05 06 07 08 09           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• SECRET-KEY : encrypted read/write, derivable from itself;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x00  : Write encryption key or Parent Key;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 1     : Enable encrypted read;
+  • SingleUse  : 0     : Limit use according to UseFlag;
+  • CheckOnly  : 0     : Enable use for any command;
+  • ReadKey    : 0x01  : Read encryption key - RESERVED;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 10 11 12 13 14 15 16 17 18 19 1A 10 11 12 13 14 15 16 17 18 19 1A 10 11 12 13 14 15 16 17 18 19           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• RESERVED: (BOOT KEY) encrypted read/write, derivable from WritePwd1;
+  • WriteConfig: 0b0101: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x00  : Write encryption key or Parent Key;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 1     : Enable encrypted read;
+  • SingleUse  : 0     : Limit use according to UseFlag;
+  • CheckOnly  : 0     : Enable use for any command;
+  • ReadKey    : 0x00  : Read encryption key - SECRET-KEY
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 20 21 22 23 24 25 26 27 28 29 2A 20 21 22 23 24 25 26 27 28 29 2A 20 21 22 23 24 25 26 27 28 29           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+•  LOBBY-KEY_1 : encrypted read/write;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x00  : Write encryption key;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 1     : Enable encrypted read;
+  • SingleUse  : 0     : No limit use;
+  • CheckOnly  : 0     : This Data Slot can be used for any command;
+  • ReadKey    : 0x00  : Probably does not care - SECRET-KEY;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 30 31 32 33 34 35 36 37 38 39 3A 30 31 32 33 34 35 36 37 38 39 3A 30 31 32 33 34 35 36 37 38 39           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• GAME-KEY: disable read/write;
+  • WriteConfig: 0b1000: Disable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x00  : Write encryption key - probably does not care;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 0     : Disable encrypted read;
+  • SingleUse  : 0     : No limit use;
+  • CheckOnly  : 0     : Enable use only for CheckMAC and GenDig+CheckMAC commands;
+  • ReadKey    : 0x00  : Probably does not care - SECRET-KEY;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 40 41 42 43 44 45 46 47 48 49 4A 40 41 42 43 44 45 46 47 48 49 4A 40 41 42 43 44 45 46 47 48 49           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• LOBBY-KEY_2: authentication key: encrypted read/write, derivable from WritePwd1;
+  • WriteConfig: 0b0101: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x05  : Write encryption key or Parent Key;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 1     : Enable encrypted read;
+  • SingleUse  : 0     : No limit use;
+  • CheckOnly  : 1     : Enable use for any command (imperative for DeriveKey and CheckMAC);
+  • ReadKey    : 0x02  : Read encryption key -  LOBBY-KEY_1;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 50 51 52 53 54 55 56 57 58 59 5A 50 51 52 53 54 55 56 57 58 59 5A 50 51 52 53 54 55 56 57 58 59           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• GAMESET-KEY: encrypted write, derivable from itself;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x00  : Write encryption key or Parent Key - WritePwd1;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 0     : Disable read;
+  • SingleUse  : 0     : No limit use;
+  • CheckOnly  : 0     : Enable use for any command (imperative for DeriveKey and CheckMAC);
+  • ReadKey    : 0x00  : Must be zero (enable CheckMAC copy function);
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 60 61 62 63 64 65 66 67 68 69 6A 60 61 62 63 64 65 66 67 68 69 6A 60 61 62 63 64 65 66 67 68 69           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• GAMESET_01: encrypted read/write, disable DeriveKey;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x03  : Write encryption key;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 1     : Enable encrypted read;
+  • SingleUse  : 0     : No limit use;
+  • CheckOnly  : 0     : Enable use only for CheckMAC and GenDig+CheckMAC commands;
+  • ReadKey    : 0x05  : Read encryption key - GAMESET-KEY ;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 70 71 72 73 74 75 76 77 78 79 7A 70 71 72 73 74 75 76 77 78 79 7A 70 71 72 73 74 75 76 77 78 79           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• GAMESET_02: encrypted write, disable DeriveKey;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x00  : Write encryption key - 
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 0     : Disable read;
+  • SingleUse  : 0     : No limit use;
+  • CheckOnly  : 0     : Enable use for any command (imperative for DeriveKey and CheckMAC);
+  • ReadKey    : 0x05  : GAMESET-KEY;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 80 81 82 83 84 85 86 87 88 89 8A 80 81 82 83 84 85 86 87 88 89 8A 80 81 82 83 84 85 86 87 88 89           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• GAMESET_03: encrypted read/write, not derivable, check only = 0;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x03  : Write encryption key;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 1     : Enable encrypted read;
+  • SingleUse  : 0     : No use limit;
+  • CheckOnly  : 0     : Enable use for any command;
+  • ReadKey    : 0x05  : GAMESET-KEY ;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 90 91 92 93 94 95 96 97 98 99 9A 90 91 92 93 94 95 96 97 98 99 9A 90 91 92 93 94 95 96 97 98 99           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• GAMESET_04: encrypted read/write, not derivable;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x03  : Write encryption key;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 1     : Enable encrypted read;
+  • SingleUse  : 0     : No use limit;
+  • CheckOnly  : 0     : Enable use for any command;
+  • ReadKey    : 0x05  : GAMESET-KEY ;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ A0 A1 A2 A3 A4 A5 A6 A7 A8 A9 AA A0 A1 A2 A3 A4 A5 A6 A7 A8 A9 AA A0 A1 A2 A3 A4 A5 A6 A7 A8 A9           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• GAMESET_05: encrypted read/writable, unlimited use;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x03  : Write encryption key WritePwd2;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 1     : Enable encrypted read;
+  • SingleUse  : 0     : No limit use;
+  • CheckOnly  : 0     : Enable use for any command;
+  • ReadKey    : 0x05  : Read encryption key GAMESET-KEY ;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ B0 B1 B2 B3 B4 B5 B6 B7 B8 B9 BA B0 B1 B2 B3 B4 B5 B6 B7 B8 B9 BA B0 B1 B2 B3 B4 B5 B6 B7 B8 B9           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• GAMESET_06: not readable, not writable;
+  • WriteConfig: 0b1000: Disable write; Disable DeriveKey;
+  • WriteKey   : 0x03  : Write encryption key WritePwd2 - probably does not care;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 0     : Disable read;
+  • SingleUse  : 0     : No limit use;
+  • CheckOnly  : 0     : 
+  • ReadKey    : 0x05  : Read encryption key GAMESET-KEY - probably does not care;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ C0 C1 C2 C3 C4 C5 C6 C7 C8 C9 CA  C0 C1 C2 C3 C4 C5 C6 C7 C8 C9 CA C0 C1 C2 C3 C4 C5 C6 C7 C8 C9          ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• GAMESET_07 : encrypted read/write, unlimited use;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x0D  : Write encryption - Parent key that will be copied into TempKey;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 1     : Read encryption key ReadPwd2;
+  • SingleUse  : 0     : No use limit -  this Data Slot does not have an associated UseFlag;
+  • CheckOnly  : 0     : 
+  • ReadKey    : 0x05  : Read encryption key GAMESET-KEY;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ D0 D1 D2 D3 D4 D5 D6 D7 D8 D9 DA  D0 D1 D2 D3 D4 D5 D6 D7 D8 D9 DA D0 D1 D2 D3 D4 D5 D6 D7 D8 D9          ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• GAMESET_08: encrypted read, disable write;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x03  : Write encryption key GAMESET;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 0     : Disable read;
+  • SingleUse  : 0     : No use limit -  this Data Slot does not have an associated UseFlag;
+  • CheckOnly  : 0     : Enable use only for CheckMAC and GenDig+CheckMAC commands;
+  • ReadKey    : 0x05  :  GAMESET-KEY;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ E0 E1 E2 E3 E4 E5 E6 E7 E8 E9 EA  E0 E1 E2 E3 E4 E5 E6 E7 E8 E9 EA E0 E1 E2 E3 E4 E5 E6 E7 E8 E9          ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• GAMESET_09: plain read and write;
+  • WriteConfig: 0b0000: Plain write; Disable DeriveKey;
+  • WriteKey   : 0x03  : Write encryption key;
+  • IsSecret   : 0     : No encryption;
+  • EncryptRead: 0     : Plain read;
+  • SingleUse  : 0     : No limit use
+  • CheckOnly  : 0     : Enable use for any command;
+  • ReadKey    : 0x05  : GAMESET-KEY;
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA  F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA F0 F1 F2 F3 F4 F5 F6 F7 F8 F9          ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+• GAMESET_10:  disable read, encrypted write;
+  • WriteConfig: 0b0100: Disable authorizing MAC; Enable encrypted write; Disable DeriveKey;
+  • WriteKey   : 0x03  : Write encryption key GAME-KEY;
+  • IsSecret   : 1     : Enforce encryption;
+  • EncryptRead: 0     : Disable read;
+  • SingleUse  : 0     : No limit use
+  • CheckOnly  : 0     : Enable use for any command;
+  • ReadKey    : 0x05  : Read encryption key GAMESET-KEY - probably does not care;
